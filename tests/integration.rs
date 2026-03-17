@@ -13,6 +13,7 @@ async fn mock_llm_returns_compressed_response() {
         server.uri(),
         "test-model".into(),
         [Duration::ZERO, Duration::ZERO, Duration::ZERO],
+        0,
     );
 
     let result = client.complete("system prompt", "user input").await;

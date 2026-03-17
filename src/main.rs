@@ -82,6 +82,7 @@ async fn run() -> error::Result<()> {
         config.api_key,
         config.api_base,
         config.model,
+        cli.verbose,
     ));
 
     // Compress based on mode

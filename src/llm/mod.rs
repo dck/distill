@@ -20,6 +20,7 @@ pub struct LlmClient {
     api_base: String,
     model: String,
     retry_delays: [Duration; 3],
+    verbosity: u8,
 }
 
 #[derive(Serialize)]
@@ -50,8 +51,8 @@ struct ResponseMessage {
 }
 
 impl LlmClient {
-    pub fn new(api_key: String, api_base: String, model: String) -> Self {
-        Self::new_with_retry_delays(api_key, api_base, model, DEFAULT_RETRY_DELAYS)
+    pub fn new(api_key: String, api_base: String, model: String, verbosity: u8) -> Self {
+        Self::new_with_retry_delays(api_key, api_base, model, DEFAULT_RETRY_DELAYS, verbosity)
     }
 
     pub fn new_with_retry_delays(
@@ -59,6 +60,7 @@ impl LlmClient {
         api_base: String,
         model: String,
         retry_delays: [Duration; 3],
+        verbosity: u8,
     ) -> Self {
         let http = reqwest::Client::builder()
             .timeout(REQUEST_TIMEOUT)
@@ -71,11 +73,30 @@ impl LlmClient {
             api_base,
             model,
             retry_delays,
+            verbosity,
         }
     }
 
     pub async fn complete(&self, system: &str, user: &str) -> Result<String> {
         let url = format!("{}/chat/completions", self.api_base);
+
+        // -v: show request info
+        if self.verbosity >= 1 {
+            eprintln!(
+                "\x1b[2m[llm]\x1b[0m POST {} | model={} | system={}B user={}B",
+                url,
+                self.model,
+                system.len(),
+                user.len()
+            );
+        }
+
+        // -vv: show full prompts
+        if self.verbosity >= 2 {
+            eprintln!("\x1b[2m[llm] system prompt:\x1b[0m\n{system}");
+            eprintln!("\x1b[2m[llm] user prompt:\x1b[0m\n{user}");
+        }
+
         let body = ChatRequest {
             model: self.model.clone(),
             messages: vec![
@@ -91,9 +112,16 @@ impl LlmClient {
         };
 
         let mut last_err = None;
+        let start = std::time::Instant::now();
 
         for attempt in 0..=MAX_RETRIES {
             if attempt > 0 {
+                if self.verbosity >= 1 {
+                    eprintln!(
+                        "\x1b[2m[llm]\x1b[0m retry {attempt}/{MAX_RETRIES} after {:?}",
+                        self.retry_delays[(attempt - 1) as usize]
+                    );
+                }
                 tokio::time::sleep(self.retry_delays[(attempt - 1) as usize]).await;
             }
 
@@ -109,21 +137,35 @@ impl LlmClient {
             match response {
                 Ok(resp) => {
                     let status = resp.status();
+
+                    if self.verbosity >= 1 {
+                        eprintln!("\x1b[2m[llm]\x1b[0m response: HTTP {status}");
+                    }
+
                     if status.is_success() {
                         let body_text =
                             resp.text().await.map_err(|e| DistillError::Llm {
                                 cause: format!("failed to read response body: {e}"),
                             })?;
+
+                        // -vv: show full response
+                        if self.verbosity >= 2 {
+                            eprintln!(
+                                "\x1b[2m[llm] response body ({} bytes):\x1b[0m\n{body_text}",
+                                body_text.len()
+                            );
+                        }
+
                         let chat_resp: ChatResponse = serde_json::from_str(&body_text)
                             .map_err(|e| {
-                                let preview = if body_text.len() > 200 {
-                                    format!("{}...", &body_text[..200])
+                                let preview = if body_text.len() > 500 {
+                                    format!("{}...", &body_text[..500])
                                 } else {
                                     body_text.clone()
                                 };
                                 DistillError::Llm {
                                     cause: format!(
-                                        "failed to parse LLM response: {e}\n  -> response body: {preview}"
+                                        "failed to parse LLM response: {e}\n  \x1b[2m->\x1b[0m response body: {preview}"
                                     ),
                                 }
                             })?;
@@ -136,11 +178,36 @@ impl LlmClient {
                             })?
                             .message
                             .content;
+
+                        if self.verbosity >= 1 {
+                            eprintln!(
+                                "\x1b[2m[llm]\x1b[0m done in {:.1}s | response={}B",
+                                start.elapsed().as_secs_f64(),
+                                content.len()
+                            );
+                        }
+
                         return Ok(content);
                     }
 
+                    // Non-success: read body for error details
+                    let err_body = resp.text().await.unwrap_or_default();
                     let should_retry = status.as_u16() == 429 || status.is_server_error();
-                    let err_msg = format!("HTTP {status}");
+                    let err_msg = if err_body.is_empty() {
+                        format!("HTTP {status}")
+                    } else {
+                        let preview = if err_body.len() > 300 {
+                            format!("{}...", &err_body[..300])
+                        } else {
+                            err_body
+                        };
+                        format!("HTTP {status}\n  \x1b[2m->\x1b[0m body: {preview}")
+                    };
+
+                    if self.verbosity >= 1 {
+                        eprintln!("\x1b[2m[llm]\x1b[0m error: {err_msg}");
+                    }
+
                     if should_retry && attempt < MAX_RETRIES {
                         last_err = Some(err_msg);
                         continue;
@@ -150,6 +217,11 @@ impl LlmClient {
                 Err(e) => {
                     let is_timeout = e.is_timeout() || e.is_connect();
                     let err_msg = e.to_string();
+
+                    if self.verbosity >= 1 {
+                        eprintln!("\x1b[2m[llm]\x1b[0m connection error: {err_msg}");
+                    }
+
                     if is_timeout && attempt < MAX_RETRIES {
                         last_err = Some(err_msg);
                         continue;
@@ -179,6 +251,7 @@ mod tests {
             uri,
             "test-model".into(),
             [Duration::ZERO, Duration::ZERO, Duration::ZERO],
+            0,
         )
     }
 
