@@ -6,6 +6,7 @@ mod export;
 mod ingest;
 mod llm;
 mod mode;
+mod progress;
 mod segment;
 mod state;
 
