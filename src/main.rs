@@ -2,6 +2,8 @@ mod cli;
 mod config;
 mod error;
 mod mode;
+mod segment;
+mod state;
 
 use clap::Parser;
 
