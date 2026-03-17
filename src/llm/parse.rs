@@ -46,7 +46,7 @@ mod tests {
 Compressed content here.
 </compressed>
 <ledger>
-{"new_concepts": [{"id": "concept-001", "name": "Test Concept", "first_seen_chunk": 0, "description": "A test"}], "new_examples": []}
+{"new_concepts": [{"id": "concept-001", "name": "Test Concept", "first_seen_chunk": 0, "description": "A test"}], "new_definitions": [], "new_principles": [], "new_examples": [], "new_anti_patterns": [], "new_relationships": []}
 </ledger>"#;
 
         let parsed = parse_llm_response(response).unwrap();
@@ -72,7 +72,7 @@ Compressed content here.
 
     #[test]
     fn test_parse_empty_compressed() {
-        let response = "<compressed></compressed>\n<ledger>{\"new_concepts\": [], \"new_examples\": []}</ledger>";
+        let response = "<compressed></compressed>\n<ledger>{\"new_concepts\": [], \"new_definitions\": [], \"new_principles\": [], \"new_examples\": [], \"new_anti_patterns\": [], \"new_relationships\": []}</ledger>";
         let parsed = parse_llm_response(response).unwrap();
         assert_eq!(parsed.compressed, "");
     }
