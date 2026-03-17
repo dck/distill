@@ -3,6 +3,7 @@ mod compress;
 mod config;
 mod error;
 mod export;
+mod ingest;
 mod llm;
 mod mode;
 mod segment;
