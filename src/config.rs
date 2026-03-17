@@ -32,7 +32,11 @@ impl Config {
                 cause: "Model name required. Set DISTILL_MODEL or pass --model".into(),
             })?;
 
-        Ok(Self { api_key, api_base, model })
+        Ok(Self {
+            api_key,
+            api_base,
+            model,
+        })
     }
 }
 

@@ -1,6 +1,7 @@
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use std::time::Instant;
 
+#[allow(dead_code)]
 pub struct ProgressReporter {
     multi: MultiProgress,
     pass_bars: Vec<ProgressBar>,
@@ -8,6 +9,7 @@ pub struct ProgressReporter {
     quiet: bool,
 }
 
+#[allow(dead_code)]
 impl ProgressReporter {
     pub fn new(quiet: bool, is_multi_pass: bool) -> Self {
         let multi = MultiProgress::new();
@@ -23,7 +25,12 @@ impl ProgressReporter {
             }
         }
 
-        Self { multi, pass_bars, start_time: Instant::now(), quiet }
+        Self {
+            multi,
+            pass_bars,
+            start_time: Instant::now(),
+            quiet,
+        }
     }
 
     fn create_bar(multi: &MultiProgress, label: &str, total: u64) -> ProgressBar {
@@ -61,7 +68,13 @@ impl ProgressReporter {
         self.pass_bars[pass].finish_with_message("done");
     }
 
-    pub fn finish_all(&self, chunks: usize, input_tokens: usize, output_tokens: usize, output_path: &str) {
+    pub fn finish_all(
+        &self,
+        chunks: usize,
+        input_tokens: usize,
+        output_tokens: usize,
+        output_path: &str,
+    ) {
         if self.quiet {
             return;
         }

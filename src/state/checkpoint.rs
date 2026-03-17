@@ -1,8 +1,8 @@
-use std::path::{Path, PathBuf};
-use serde::{Deserialize, Serialize};
 use crate::cli::CompressionLevel;
-use crate::state::StateLedger;
 use crate::error::Result;
+use crate::state::StateLedger;
+use serde::{Deserialize, Serialize};
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ChunkStatus {
@@ -36,28 +36,30 @@ impl Checkpoint {
         input_path.with_file_name(format!("{}.distill-cache", stem.to_string_lossy()))
     }
 
+    #[allow(dead_code)]
     pub fn save(&self, path: &Path) -> Result<()> {
-        let json = serde_json::to_string_pretty(self)
-            .map_err(|e| crate::error::DistillError::Checkpoint {
+        let json = serde_json::to_string_pretty(self).map_err(|e| {
+            crate::error::DistillError::Checkpoint {
                 path: path.to_path_buf(),
                 cause: e.to_string(),
-            })?;
-        std::fs::write(path, json)
-            .map_err(|e| crate::error::DistillError::Checkpoint {
-                path: path.to_path_buf(),
-                cause: e.to_string(),
-            })?;
+            }
+        })?;
+        std::fs::write(path, json).map_err(|e| crate::error::DistillError::Checkpoint {
+            path: path.to_path_buf(),
+            cause: e.to_string(),
+        })?;
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub fn load(path: &Path) -> Result<Self> {
-        let json = std::fs::read_to_string(path)
-            .map_err(|e| crate::error::DistillError::Checkpoint {
+        let json =
+            std::fs::read_to_string(path).map_err(|e| crate::error::DistillError::Checkpoint {
                 path: path.to_path_buf(),
                 cause: e.to_string(),
             })?;
-        let checkpoint: Self = serde_json::from_str(&json)
-            .map_err(|e| crate::error::DistillError::Checkpoint {
+        let checkpoint: Self =
+            serde_json::from_str(&json).map_err(|e| crate::error::DistillError::Checkpoint {
                 path: path.to_path_buf(),
                 cause: e.to_string(),
             })?;
@@ -66,11 +68,10 @@ impl Checkpoint {
 
     pub fn delete(path: &Path) -> Result<()> {
         if path.exists() {
-            std::fs::remove_file(path)
-                .map_err(|e| crate::error::DistillError::Checkpoint {
-                    path: path.to_path_buf(),
-                    cause: e.to_string(),
-                })?;
+            std::fs::remove_file(path).map_err(|e| crate::error::DistillError::Checkpoint {
+                path: path.to_path_buf(),
+                cause: e.to_string(),
+            })?;
         }
         Ok(())
     }
@@ -125,7 +126,10 @@ mod tests {
     fn test_cache_path_naming() {
         let path = Path::new("/home/user/books/thinking-fast.pdf");
         let cache = Checkpoint::cache_path(path);
-        assert_eq!(cache, Path::new("/home/user/books/thinking-fast.distill-cache"));
+        assert_eq!(
+            cache,
+            Path::new("/home/user/books/thinking-fast.distill-cache")
+        );
     }
 
     #[test]

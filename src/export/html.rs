@@ -171,17 +171,14 @@ fn build_full_html(content: &str, title: Option<&str>) -> String {
     )
 }
 
-pub fn export_html(
-    content: &str,
-    title: Option<&str>,
-    output_path: Option<&Path>,
-) -> Result<()> {
+pub fn export_html(content: &str, title: Option<&str>, output_path: Option<&Path>) -> Result<()> {
     let html = build_full_html(content, title);
 
     match output_path {
         Some(path) => {
-            std::fs::write(path, &html)
-                .map_err(|e| DistillError::Export { cause: e.to_string() })?;
+            std::fs::write(path, &html).map_err(|e| DistillError::Export {
+                cause: e.to_string(),
+            })?;
         }
         None => {
             print!("{html}");

@@ -19,7 +19,7 @@ fn parse_header(line: &str) -> Option<(usize, String)> {
     }
     let level = trimmed.chars().take_while(|&c| c == '#').count();
     let rest = trimmed[level..].trim();
-    if level >= 1 && level <= 6 && !rest.is_empty() {
+    if (1..=6).contains(&level) && !rest.is_empty() {
         Some((level, rest.to_string()))
     } else {
         None
@@ -157,14 +157,13 @@ fn merge_small_chunks(chunks: Vec<Chunk>) -> Vec<Chunk> {
     let mut merged: Vec<Chunk> = Vec::new();
 
     for chunk in chunks {
-        if let Some(last) = merged.last_mut() {
-            if last.token_estimate < MIN_CHUNK_TOKENS
-                && top_level_header(last) == top_level_header(&chunk)
-            {
-                last.content = format!("{}\n\n{}", last.content, chunk.content);
-                last.token_estimate = estimate_tokens(&last.content);
-                continue;
-            }
+        if let Some(last) = merged.last_mut()
+            && last.token_estimate < MIN_CHUNK_TOKENS
+            && top_level_header(last) == top_level_header(&chunk)
+        {
+            last.content = format!("{}\n\n{}", last.content, chunk.content);
+            last.token_estimate = estimate_tokens(&last.content);
+            continue;
         }
         merged.push(chunk);
     }
@@ -185,21 +184,23 @@ fn merge_small_chunks(chunks: Vec<Chunk>) -> Vec<Chunk> {
     merged
 }
 
-fn add_overlap(chunks: &mut Vec<Chunk>) {
+fn add_overlap(chunks: &mut [Chunk]) {
     if chunks.len() < 2 {
         return;
     }
 
     // Work backwards to avoid mutating content we still need to read
-    let mut overlaps: Vec<String> = Vec::new();
-    for i in 0..chunks.len() - 1 {
-        let words: Vec<&str> = chunks[i].content.split_whitespace().collect();
-        let overlap_count = (words.len() as f64 * OVERLAP_RATIO).ceil() as usize;
-        let overlap_count = overlap_count.max(1);
-        let start = words.len().saturating_sub(overlap_count);
-        let overlap_text = words[start..].join(" ");
-        overlaps.push(overlap_text);
-    }
+    let overlaps: Vec<String> = chunks
+        .iter()
+        .take(chunks.len() - 1)
+        .map(|chunk| {
+            let words: Vec<&str> = chunk.content.split_whitespace().collect();
+            let overlap_count = (words.len() as f64 * OVERLAP_RATIO).ceil() as usize;
+            let overlap_count = overlap_count.max(1);
+            let start = words.len().saturating_sub(overlap_count);
+            words[start..].join(" ")
+        })
+        .collect();
 
     for (i, overlap_text) in overlaps.into_iter().enumerate() {
         let target = &mut chunks[i + 1];
@@ -287,8 +288,7 @@ mod tests {
 
     #[test]
     fn test_chunk_indices_sequential() {
-        let input =
-            "# One\n\nSome text for one.\n\n# Two\n\nSome text for two.\n\n# Three\n\nSome text for three.";
+        let input = "# One\n\nSome text for one.\n\n# Two\n\nSome text for two.\n\n# Three\n\nSome text for three.";
         let chunks = segment(input);
         for (i, chunk) in chunks.iter().enumerate() {
             assert_eq!(chunk.index, i);
@@ -302,10 +302,7 @@ mod tests {
             parse_header("## Sub Title"),
             Some((2, "Sub Title".to_string()))
         );
-        assert_eq!(
-            parse_header("### Deep"),
-            Some((3, "Deep".to_string()))
-        );
+        assert_eq!(parse_header("### Deep"), Some((3, "Deep".to_string())));
         assert_eq!(parse_header("Not a header"), None);
         assert_eq!(parse_header("##"), None); // no title text
     }

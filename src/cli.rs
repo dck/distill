@@ -23,7 +23,10 @@ pub enum Mode {
 }
 
 #[derive(Debug, Parser)]
-#[command(name = "distill", about = "Structure-preserving semantic compression engine")]
+#[command(
+    name = "distill",
+    about = "Structure-preserving semantic compression engine"
+)]
 pub struct Cli {
     /// Input file path (PDF/EPUB) or URL
     pub input: String,
@@ -99,8 +102,20 @@ mod tests {
     #[test]
     fn test_parse_all_flags() {
         let args = Cli::parse_from([
-            "distill", "-o", "out.epub", "-f", "epub", "-l", "dense",
-            "-m", "book", "--parallel", "-j", "8", "-v", "input.pdf",
+            "distill",
+            "-o",
+            "out.epub",
+            "-f",
+            "epub",
+            "-l",
+            "dense",
+            "-m",
+            "book",
+            "--parallel",
+            "-j",
+            "8",
+            "-v",
+            "input.pdf",
         ]);
         assert_eq!(args.output, Some("out.epub".into()));
         assert_eq!(args.format, Some(OutputFormat::Epub));

@@ -31,11 +31,8 @@ async fn main() -> Result<()> {
     }
 
     // Resolve config
-    let config = config::Config::resolve(
-        cli.api_key.clone(),
-        cli.api_base.clone(),
-        cli.model.clone(),
-    )?;
+    let config =
+        config::Config::resolve(cli.api_key.clone(), cli.api_base.clone(), cli.model.clone())?;
 
     // Ingest
     let doc = ingest::ingest(&cli.input).await?;
@@ -57,7 +54,10 @@ async fn main() -> Result<()> {
 
     // Header
     if !cli.quiet {
-        eprintln!("distill | {} | {:?} | {:?}", cli.input, detected_mode, level);
+        eprintln!(
+            "distill | {} | {:?} | {:?}",
+            cli.input, detected_mode, level
+        );
     }
 
     // Segment
@@ -65,7 +65,11 @@ async fn main() -> Result<()> {
     let chunk_count = chunks.len();
 
     // Create LLM client
-    let client = Arc::new(llm::LlmClient::new(config.api_key, config.api_base, config.model));
+    let client = Arc::new(llm::LlmClient::new(
+        config.api_key,
+        config.api_base,
+        config.model,
+    ));
 
     // Compress based on mode
     let is_multi = detected_mode == Mode::Book;

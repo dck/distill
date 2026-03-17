@@ -1,12 +1,14 @@
 use crate::error::{DistillError, Result};
-use crate::ingest::{Document, InputSource};
+use crate::ingest::Document;
 use crate::mode::estimate_tokens;
 
 pub async fn ingest_url(url: &str) -> Result<Document> {
-    let response = reqwest::get(url).await.map_err(|e| DistillError::Ingestion {
-        source: url.into(),
-        cause: e.to_string(),
-    })?;
+    let response = reqwest::get(url)
+        .await
+        .map_err(|e| DistillError::Ingestion {
+            source: url.into(),
+            cause: e.to_string(),
+        })?;
 
     let content_type = response
         .headers()
@@ -48,13 +50,10 @@ pub async fn ingest_url(url: &str) -> Result<Document> {
     }
 
     // HTML — extract article
-    let html = response
-        .text()
-        .await
-        .map_err(|e| DistillError::Ingestion {
-            source: url.into(),
-            cause: e.to_string(),
-        })?;
+    let html = response.text().await.map_err(|e| DistillError::Ingestion {
+        source: url.into(),
+        cause: e.to_string(),
+    })?;
 
     let content = extract_article(&html, url)?;
     let tokens = estimate_tokens(&content);
@@ -63,17 +62,15 @@ pub async fn ingest_url(url: &str) -> Result<Document> {
         title: extract_title(&html),
         author: None,
         content,
-        source: InputSource::Url(url.into()),
         estimated_tokens: tokens,
     })
 }
 
 fn extract_article(html: &str, url: &str) -> Result<String> {
-    let parsed_url =
-        ::url::Url::parse(url).map_err(|e| DistillError::Ingestion {
-            source: url.into(),
-            cause: format!("invalid URL: {e}"),
-        })?;
+    let parsed_url = ::url::Url::parse(url).map_err(|e| DistillError::Ingestion {
+        source: url.into(),
+        cause: format!("invalid URL: {e}"),
+    })?;
 
     let product =
         readability::extractor::extract(&mut html.as_bytes(), &parsed_url).map_err(|e| {

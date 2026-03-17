@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use crate::error::{DistillError, Result};
-use crate::ingest::{Document, InputSource};
+use crate::ingest::Document;
 use crate::mode::estimate_tokens;
 
 pub fn ingest_epub(path: &Path) -> Result<Document> {
@@ -33,7 +33,6 @@ pub fn ingest_epub(path: &Path) -> Result<Document> {
         title,
         author,
         content,
-        source: InputSource::File(path.to_path_buf()),
         estimated_tokens: tokens,
     })
 }

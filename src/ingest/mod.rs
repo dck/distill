@@ -2,22 +2,14 @@ pub mod epub;
 pub mod pdf;
 pub mod url;
 
-use std::path::PathBuf;
-
 use crate::error::Result;
-
-#[derive(Debug, Clone)]
-pub enum InputSource {
-    File(PathBuf),
-    Url(String),
-}
+use std::path::PathBuf;
 
 #[derive(Debug)]
 pub struct Document {
     pub title: Option<String>,
     pub author: Option<String>,
     pub content: String,
-    pub source: InputSource,
     pub estimated_tokens: usize,
 }
 

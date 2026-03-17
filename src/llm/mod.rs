@@ -110,11 +110,10 @@ impl LlmClient {
                 Ok(resp) => {
                     let status = resp.status();
                     if status.is_success() {
-                        let chat_resp: ChatResponse = resp.json().await.map_err(|e| {
-                            DistillError::Llm {
+                        let chat_resp: ChatResponse =
+                            resp.json().await.map_err(|e| DistillError::Llm {
                                 cause: format!("failed to parse response: {e}"),
-                            }
-                        })?;
+                            })?;
                         let content = chat_resp
                             .choices
                             .into_iter()
@@ -176,11 +175,11 @@ mod tests {
 
         wiremock::Mock::given(wiremock::matchers::method("POST"))
             .and(wiremock::matchers::path("/chat/completions"))
-            .respond_with(wiremock::ResponseTemplate::new(200).set_body_json(
-                serde_json::json!({
+            .respond_with(
+                wiremock::ResponseTemplate::new(200).set_body_json(serde_json::json!({
                     "choices": [{"message": {"content": "compressed output"}}]
-                }),
-            ))
+                })),
+            )
             .mount(&server)
             .await;
 
@@ -204,11 +203,11 @@ mod tests {
 
         wiremock::Mock::given(wiremock::matchers::method("POST"))
             .and(wiremock::matchers::path("/chat/completions"))
-            .respond_with(wiremock::ResponseTemplate::new(200).set_body_json(
-                serde_json::json!({
+            .respond_with(
+                wiremock::ResponseTemplate::new(200).set_body_json(serde_json::json!({
                     "choices": [{"message": {"content": "success after retry"}}]
-                }),
-            ))
+                })),
+            )
             .mount(&server)
             .await;
 

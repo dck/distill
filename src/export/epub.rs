@@ -46,11 +46,9 @@ fn split_chapters(content: &str) -> Vec<Chapter> {
             }
             current_title = trimmed.trim_start_matches("# ").to_string();
             current_body = String::new();
-        } else {
-            if !current_body.is_empty() || !trimmed.is_empty() {
-                current_body.push_str(line);
-                current_body.push('\n');
-            }
+        } else if !current_body.is_empty() || !trimmed.is_empty() {
+            current_body.push_str(line);
+            current_body.push('\n');
         }
     }
 
@@ -110,18 +108,11 @@ pub fn export_epub(
     let book_title = title.unwrap_or("Untitled");
     let book_author = author.unwrap_or("Unknown");
 
-    let mut builder = EpubBuilder::new(ZipLibrary::new().map_err(epub_err)?)
-        .map_err(epub_err)?;
+    let mut builder = EpubBuilder::new(ZipLibrary::new().map_err(epub_err)?).map_err(epub_err)?;
 
-    builder
-        .metadata("title", book_title)
-        .map_err(epub_err)?;
-    builder
-        .metadata("author", book_author)
-        .map_err(epub_err)?;
-    builder
-        .stylesheet(EPUB_CSS.as_bytes())
-        .map_err(epub_err)?;
+    builder.metadata("title", book_title).map_err(epub_err)?;
+    builder.metadata("author", book_author).map_err(epub_err)?;
+    builder.stylesheet(EPUB_CSS.as_bytes()).map_err(epub_err)?;
 
     let chapters = split_chapters(content);
 
@@ -131,14 +122,13 @@ pub fn export_epub(
         let filename = format!("chapter_{i}.xhtml");
 
         builder
-            .add_content(
-                EpubContent::new(&filename, xhtml.as_bytes()).title(&chapter.title),
-            )
+            .add_content(EpubContent::new(&filename, xhtml.as_bytes()).title(&chapter.title))
             .map_err(epub_err)?;
     }
 
-    let output_file =
-        File::create(path).map_err(|e| DistillError::Export { cause: e.to_string() })?;
+    let output_file = File::create(path).map_err(|e| DistillError::Export {
+        cause: e.to_string(),
+    })?;
 
     builder.generate(output_file).map_err(epub_err)?;
 

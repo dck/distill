@@ -60,11 +60,13 @@ pub async fn multi_pass(
 
         let mut results = Vec::new();
         for handle in handles {
-            let result = handle.await.map_err(|e| crate::error::DistillError::Compression {
-                chunk_index: 0,
-                section: String::new(),
-                cause: e.to_string(),
-            })??;
+            let result = handle
+                .await
+                .map_err(|e| crate::error::DistillError::Compression {
+                    chunk_index: 0,
+                    section: String::new(),
+                    cause: e.to_string(),
+                })??;
             ledger.apply_delta(&result.ledger_updates);
             results.push(result);
         }
