@@ -12,13 +12,26 @@ mod state;
 
 use clap::Parser;
 use cli::{Cli, CompressionLevel, Mode, OutputFormat};
-use error::Result;
 use std::path::PathBuf;
+use std::process::ExitCode;
 use std::sync::Arc;
 
 #[tokio::main]
-async fn main() -> Result<()> {
-    color_eyre::install()?;
+async fn main() -> ExitCode {
+    match run().await {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(e) => {
+            print_error(e.as_ref());
+            ExitCode::FAILURE
+        }
+    }
+}
+
+fn print_error(err: &dyn std::fmt::Display) {
+    eprintln!("\x1b[1;31merror\x1b[0m: {err}");
+}
+
+async fn run() -> error::Result<()> {
     let cli = Cli::parse();
 
     // Handle --clean

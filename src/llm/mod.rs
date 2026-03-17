@@ -110,16 +110,29 @@ impl LlmClient {
                 Ok(resp) => {
                     let status = resp.status();
                     if status.is_success() {
-                        let chat_resp: ChatResponse =
-                            resp.json().await.map_err(|e| DistillError::Llm {
-                                cause: format!("failed to parse response: {e}"),
+                        let body_text =
+                            resp.text().await.map_err(|e| DistillError::Llm {
+                                cause: format!("failed to read response body: {e}"),
+                            })?;
+                        let chat_resp: ChatResponse = serde_json::from_str(&body_text)
+                            .map_err(|e| {
+                                let preview = if body_text.len() > 200 {
+                                    format!("{}...", &body_text[..200])
+                                } else {
+                                    body_text.clone()
+                                };
+                                DistillError::Llm {
+                                    cause: format!(
+                                        "failed to parse LLM response: {e}\n  -> response body: {preview}"
+                                    ),
+                                }
                             })?;
                         let content = chat_resp
                             .choices
                             .into_iter()
                             .next()
                             .ok_or_else(|| DistillError::Llm {
-                                cause: "empty response from LLM".into(),
+                                cause: "LLM returned empty choices array".into(),
                             })?
                             .message
                             .content;
