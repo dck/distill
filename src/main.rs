@@ -1,6 +1,7 @@
 mod cli;
 mod config;
 mod error;
+mod llm;
 mod mode;
 mod segment;
 mod state;
