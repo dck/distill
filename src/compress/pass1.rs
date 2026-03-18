@@ -1,8 +1,7 @@
-use crate::cli::CompressionLevel;
 use crate::error::Result;
 use crate::llm::LlmClient;
 use crate::llm::parse::{ParsedResponse, parse_llm_response};
-use crate::llm::prompt;
+use crate::llm::strategy::CompressionStrategy;
 use crate::segment::Chunk;
 use crate::state::{CompressedChunk, LedgerDelta, StateLedger};
 use crate::ui;
@@ -10,11 +9,11 @@ use crate::ui;
 pub async fn compress_chunk(
     client: &LlmClient,
     chunk: &Chunk,
-    level: &CompressionLevel,
+    strategy: &dyn CompressionStrategy,
     ledger: &StateLedger,
 ) -> Result<CompressedChunk> {
-    let system = prompt::pass1_system(level);
-    let user = prompt::pass1_user(&chunk.content, chunk.index, ledger);
+    let system = strategy.pass1_system();
+    let user = strategy.pass1_user(&chunk.content, chunk.index, ledger);
 
     let response = client.complete(&system, &user).await?;
 
@@ -55,10 +54,10 @@ pub async fn compress_chunk(
 pub async fn compress_chunk_single_pass(
     client: &LlmClient,
     chunk: &Chunk,
-    level: &CompressionLevel,
+    strategy: &dyn CompressionStrategy,
 ) -> Result<CompressedChunk> {
-    let system = prompt::single_pass_system(level);
-    let user = prompt::single_pass_user(&chunk.content);
+    let system = strategy.single_pass_system();
+    let user = strategy.single_pass_user(&chunk.content);
 
     let response = client.complete(&system, &user).await?;
 

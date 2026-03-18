@@ -66,21 +66,23 @@ async fn run() -> error::Result<()> {
     let chunks = segment::segment(&doc.content);
     let chunk_count = chunks.len();
 
-    // Create LLM client
+    // Create LLM client and compression strategy
     let client = Arc::new(llm::LlmClient::new(
         config.api_key,
         config.api_base,
         config.model,
         cli.verbose,
     ));
+    let strategy = llm::strategy::strategy_for(&level);
 
     // Compress
-    let is_multi = detected_mode == Mode::Book;
+    let is_multi = detected_mode == Mode::Book && strategy.supports_multi_pass();
     let compressed = if is_multi {
-        compress::multi_pass(client, chunks, &level, cli.parallel, cli.jobs, &console).await?
+        let strategy: Arc<dyn llm::strategy::CompressionStrategy> = strategy.into();
+        compress::multi_pass(client, chunks, strategy, cli.parallel, cli.jobs, &console).await?
     } else {
         let sp = console.spinner(&format!("Compressing {chunk_count} chunks..."));
-        let result = compress::single_pass(&client, chunks, &level).await?;
+        let result = compress::single_pass(&client, chunks, strategy.as_ref()).await?;
         sp.finish();
         console.compressed(chunk_count);
         result

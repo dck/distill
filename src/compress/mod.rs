@@ -2,9 +2,9 @@ pub mod pass1;
 pub mod pass2;
 pub mod pass3;
 
-use crate::cli::CompressionLevel;
 use crate::error::Result;
 use crate::llm::LlmClient;
+use crate::llm::strategy::CompressionStrategy;
 use crate::segment::Chunk;
 use crate::state::{CompressedChunk, StateLedger};
 use crate::ui::Console;
@@ -13,12 +13,12 @@ use std::sync::Arc;
 pub async fn single_pass(
     client: &LlmClient,
     chunks: Vec<Chunk>,
-    level: &CompressionLevel,
+    strategy: &dyn CompressionStrategy,
 ) -> Result<String> {
     let mut compressed = Vec::new();
 
     for chunk in &chunks {
-        let result = pass1::compress_chunk_single_pass(client, chunk, level).await?;
+        let result = pass1::compress_chunk_single_pass(client, chunk, strategy).await?;
         compressed.push(result);
     }
 
@@ -34,7 +34,7 @@ pub async fn single_pass(
 pub async fn multi_pass(
     client: Arc<LlmClient>,
     chunks: Vec<Chunk>,
-    level: &CompressionLevel,
+    strategy: Arc<dyn CompressionStrategy>,
     parallel: bool,
     jobs: usize,
     console: &Console,
@@ -54,12 +54,12 @@ pub async fn multi_pass(
             let sem = semaphore.clone();
             let client = client.clone();
             let chunk = chunk.clone();
-            let level = level.clone();
+            let strategy = strategy.clone();
             let ledger_snapshot = ledger.clone();
 
             handles.push(tokio::spawn(async move {
                 let _permit = sem.acquire().await.unwrap();
-                pass1::compress_chunk(&client, &chunk, &level, &ledger_snapshot).await
+                pass1::compress_chunk(&client, &chunk, strategy.as_ref(), &ledger_snapshot).await
             }));
         }
 
@@ -80,7 +80,8 @@ pub async fn multi_pass(
     } else {
         let mut results = Vec::new();
         for chunk in &chunks {
-            let result = pass1::compress_chunk(&client, chunk, level, &ledger).await?;
+            let result =
+                pass1::compress_chunk(&client, chunk, strategy.as_ref(), &ledger).await?;
             ledger.apply_delta(&result.ledger_updates);
             results.push(result);
             pb.inc();
