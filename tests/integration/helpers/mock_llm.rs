@@ -2,6 +2,24 @@ use serde_json::json;
 use wiremock::matchers;
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
+pub async fn start_mock_llm_tldr() -> MockServer {
+    let server = MockServer::start().await;
+
+    Mock::given(matchers::method("POST"))
+        .and(matchers::path("/chat/completions"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "choices": [{
+                "message": {
+                    "content": "<compressed>\n## TL;DR\nThis article covers testing strategies.\n\n## Key Ideas\n- Unit tests verify individual components\n- Integration tests verify system behavior\n\n## Insights & Takeaways\n- Fast tests encourage more testing\n</compressed>"
+                }
+            }]
+        })))
+        .mount(&server)
+        .await;
+
+    server
+}
+
 pub async fn start_mock_llm() -> MockServer {
     let server = MockServer::start().await;
 
