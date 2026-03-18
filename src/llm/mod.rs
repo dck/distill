@@ -5,6 +5,7 @@ use std::time::Duration;
 
 pub mod parse;
 pub mod prompt;
+pub mod strategy;
 
 const MAX_RETRIES: u32 = 3;
 const REQUEST_TIMEOUT: Duration = Duration::from_secs(120);
