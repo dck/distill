@@ -19,6 +19,7 @@ readability = "0.3"
 sha2 = "0.10"
 html2md = "0.2"
 url = "2"
+owo-colors = { version = "4", features = ["supports-colors"] }
 
 [dev-dependencies]
 wiremock = "0.6"

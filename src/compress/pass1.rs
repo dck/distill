@@ -5,6 +5,7 @@ use crate::llm::parse::{ParsedResponse, parse_llm_response};
 use crate::llm::prompt;
 use crate::segment::Chunk;
 use crate::state::{CompressedChunk, LedgerDelta, StateLedger};
+use crate::ui;
 
 pub async fn compress_chunk(
     client: &LlmClient,
@@ -30,11 +31,11 @@ pub async fn compress_chunk(
                 )
                 .await?;
             parse_llm_response(&retry_response).unwrap_or_else(|_| {
-                eprintln!(
-                    "warning: chunk {} could not be parsed after retry, keeping original\n  -> section: \"{}\"",
+                ui::warning(&format!(
+                    "chunk {} could not be parsed after retry, keeping original (section: \"{}\")",
                     chunk.index,
                     chunk.header_path.join(" > ")
-                );
+                ));
                 ParsedResponse {
                     compressed: chunk.content.clone(),
                     ledger: LedgerDelta::default(),
@@ -64,11 +65,11 @@ pub async fn compress_chunk_single_pass(
     let parsed = match parse_llm_response(&response) {
         Ok(p) => p,
         Err(_) => {
-            eprintln!(
-                "warning: chunk {} could not be parsed, keeping original\n  -> section: \"{}\"",
+            ui::warning(&format!(
+                "chunk {} could not be parsed, keeping original (section: \"{}\")",
                 chunk.index,
                 chunk.header_path.join(" > ")
-            );
+            ));
             ParsedResponse {
                 compressed: chunk.content.clone(),
                 ledger: LedgerDelta::default(),

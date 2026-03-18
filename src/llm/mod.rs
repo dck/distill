@@ -1,4 +1,5 @@
 use crate::error::{DistillError, Result};
+use owo_colors::OwoColorize;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 
@@ -83,7 +84,8 @@ impl LlmClient {
         // -v: show request info
         if self.verbosity >= 1 {
             eprintln!(
-                "\x1b[2m[llm]\x1b[0m POST {} | model={} | system={}B user={}B",
+                "{} POST {} | model={} | system={}B user={}B",
+                "[llm]".dimmed(),
                 url,
                 self.model,
                 system.len(),
@@ -93,8 +95,8 @@ impl LlmClient {
 
         // -vv: show full prompts
         if self.verbosity >= 2 {
-            eprintln!("\x1b[2m[llm] system prompt:\x1b[0m\n{system}");
-            eprintln!("\x1b[2m[llm] user prompt:\x1b[0m\n{user}");
+            eprintln!("{}\n{system}", "[llm] system prompt:".dimmed());
+            eprintln!("{}\n{user}", "[llm] user prompt:".dimmed());
         }
 
         let body = ChatRequest {
@@ -118,7 +120,8 @@ impl LlmClient {
             if attempt > 0 {
                 if self.verbosity >= 1 {
                     eprintln!(
-                        "\x1b[2m[llm]\x1b[0m retry {attempt}/{MAX_RETRIES} after {:?}",
+                        "{} retry {attempt}/{MAX_RETRIES} after {:?}",
+                        "[llm]".dimmed(),
                         self.retry_delays[(attempt - 1) as usize]
                     );
                 }
@@ -139,7 +142,7 @@ impl LlmClient {
                     let status = resp.status();
 
                     if self.verbosity >= 1 {
-                        eprintln!("\x1b[2m[llm]\x1b[0m response: HTTP {status}");
+                        eprintln!("{} response: HTTP {status}", "[llm]".dimmed());
                     }
 
                     if status.is_success() {
@@ -151,8 +154,9 @@ impl LlmClient {
                         // -vv: show full response
                         if self.verbosity >= 2 {
                             eprintln!(
-                                "\x1b[2m[llm] response body ({} bytes):\x1b[0m\n{body_text}",
-                                body_text.len()
+                                "{}\n{body_text}",
+                                format!("[llm] response body ({} bytes):", body_text.len())
+                                    .dimmed()
                             );
                         }
 
@@ -165,7 +169,7 @@ impl LlmClient {
                                 };
                                 DistillError::Llm {
                                     cause: format!(
-                                        "failed to parse LLM response: {e}\n  \x1b[2m->\x1b[0m response body: {preview}"
+                                        "failed to parse LLM response: {e}\n  -> response body: {preview}"
                                     ),
                                 }
                             })?;
@@ -181,7 +185,8 @@ impl LlmClient {
 
                         if self.verbosity >= 1 {
                             eprintln!(
-                                "\x1b[2m[llm]\x1b[0m done in {:.1}s | response={}B",
+                                "{} done in {:.1}s | response={}B",
+                                "[llm]".dimmed(),
                                 start.elapsed().as_secs_f64(),
                                 content.len()
                             );
@@ -201,11 +206,11 @@ impl LlmClient {
                         } else {
                             err_body
                         };
-                        format!("HTTP {status}\n  \x1b[2m->\x1b[0m body: {preview}")
+                        format!("HTTP {status}\n  -> body: {preview}")
                     };
 
                     if self.verbosity >= 1 {
-                        eprintln!("\x1b[2m[llm]\x1b[0m error: {err_msg}");
+                        eprintln!("{} error: {err_msg}", "[llm]".dimmed());
                     }
 
                     if should_retry && attempt < MAX_RETRIES {
@@ -219,7 +224,7 @@ impl LlmClient {
                     let err_msg = e.to_string();
 
                     if self.verbosity >= 1 {
-                        eprintln!("\x1b[2m[llm]\x1b[0m connection error: {err_msg}");
+                        eprintln!("{} connection error: {err_msg}", "[llm]".dimmed());
                     }
 
                     if is_timeout && attempt < MAX_RETRIES {

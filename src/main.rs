@@ -9,6 +9,7 @@ mod mode;
 mod progress;
 mod segment;
 mod state;
+mod ui;
 
 use clap::Parser;
 use cli::{Cli, CompressionLevel, Mode, OutputFormat};
@@ -21,14 +22,10 @@ async fn main() -> ExitCode {
     match run().await {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
-            print_error(e.as_ref());
+            ui::print_error(e.as_ref());
             ExitCode::FAILURE
         }
     }
-}
-
-fn print_error(err: &dyn std::fmt::Display) {
-    eprintln!("\x1b[1;31merror\x1b[0m: {err}");
 }
 
 async fn run() -> error::Result<()> {
@@ -39,7 +36,7 @@ async fn run() -> error::Result<()> {
         let path = PathBuf::from(&cli.input);
         let cache_path = state::checkpoint::Checkpoint::cache_path(&path);
         state::checkpoint::Checkpoint::delete(&cache_path)?;
-        eprintln!("Cleaned cache for {}", cli.input);
+        ui::cleaned(&cli.input);
         return Ok(());
     }
 
@@ -48,6 +45,9 @@ async fn run() -> error::Result<()> {
         config::Config::resolve(cli.api_key.clone(), cli.api_base.clone(), cli.model.clone())?;
 
     // Ingest
+    if !cli.quiet {
+        ui::ingesting(&cli.input);
+    }
     let doc = ingest::ingest(&cli.input).await?;
 
     // Detect mode
@@ -67,15 +67,20 @@ async fn run() -> error::Result<()> {
 
     // Header
     if !cli.quiet {
-        eprintln!(
-            "distill | {} | {:?} | {:?}",
-            cli.input, detected_mode, level
+        ui::header(
+            &cli.input,
+            &format!("{detected_mode:?}"),
+            &format!("{level:?}"),
         );
     }
 
     // Segment
     let chunks = segment::segment(&doc.content);
     let chunk_count = chunks.len();
+
+    if !cli.quiet {
+        ui::segmented(chunk_count, doc.estimated_tokens);
+    }
 
     // Create LLM client
     let client = Arc::new(llm::LlmClient::new(
@@ -125,17 +130,11 @@ async fn run() -> error::Result<()> {
             .as_ref()
             .map(|p| p.display().to_string())
             .unwrap_or_else(|| "stdout".into());
-        eprintln!(
-            "\nDone | {} chunks | {} -> {} tokens (~{}%)\n-> {}",
+        ui::done(
             chunk_count,
             doc.estimated_tokens,
             output_tokens,
-            if doc.estimated_tokens > 0 {
-                (output_tokens as f64 / doc.estimated_tokens as f64 * 100.0) as usize
-            } else {
-                100
-            },
-            output_display,
+            &output_display,
         );
     }
 

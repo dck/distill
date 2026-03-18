@@ -37,7 +37,7 @@ pub async fn deduplicate(
             Ok(deduped_chunks)
         }
         Err(_) => {
-            eprintln!("warning: pass 2 (deduplication) failed to parse, keeping pass 1 output");
+            crate::ui::warning("pass 2 (deduplication) failed to parse, keeping pass 1 output");
             Ok(chunks.to_vec())
         }
     }

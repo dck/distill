@@ -19,7 +19,7 @@ pub async fn refine(client: &LlmClient, chunks: &[CompressedChunk]) -> Result<St
     match parse_llm_response(&response) {
         Ok(parsed) => Ok(parsed.compressed),
         Err(_) => {
-            eprintln!("warning: pass 3 (refinement) failed to parse, keeping pass 2 output");
+            crate::ui::warning("pass 3 (refinement) failed to parse, keeping pass 2 output");
             Ok(combined)
         }
     }

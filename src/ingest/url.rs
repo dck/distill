@@ -56,6 +56,15 @@ pub async fn ingest_url(url: &str) -> Result<Document> {
     })?;
 
     let content = extract_article(&html, url)?;
+
+    if content.split_whitespace().count() < 20 {
+        return Err(DistillError::Ingestion {
+            source: url.into(),
+            cause: "extracted content is too short (fewer than 20 words). This URL may be a JavaScript-rendered SPA — distill cannot process pages that require a browser to render.".into(),
+        }
+        .into());
+    }
+
     let tokens = estimate_tokens(&content);
 
     Ok(Document {
