@@ -59,10 +59,8 @@ async fn run() -> error::Result<()> {
         Mode::Article => OutputFormat::Md,
     });
 
-    sp.done(&format!(
-        "Ingested ~{} tokens · {:?} · {:?}",
-        doc.estimated_tokens, detected_mode, level
-    ));
+    sp.finish();
+    console.ingested(doc.estimated_tokens, &format!("{detected_mode:?}"), &format!("{level:?}"));
 
     // Segment
     let chunks = segment::segment(&doc.content);
@@ -83,7 +81,8 @@ async fn run() -> error::Result<()> {
     } else {
         let sp = console.spinner(&format!("Compressing {chunk_count} chunks..."));
         let result = compress::single_pass(&client, chunks, &level).await?;
-        sp.done(&format!("Compressed {chunk_count} chunks"));
+        sp.finish();
+        console.compressed(chunk_count);
         result
     };
 

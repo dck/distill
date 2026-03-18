@@ -24,11 +24,7 @@ impl Console {
 
     pub fn spinner(&self, msg: &str) -> Spinner {
         if self.quiet {
-            return Spinner {
-                bar: None,
-                multi: self.multi.clone(),
-                color: self.color,
-            };
+            return Spinner { bar: None };
         }
         let bar = self.multi.add(ProgressBar::new_spinner());
         bar.set_style(
@@ -38,20 +34,12 @@ impl Console {
         );
         bar.set_message(msg.to_string());
         bar.enable_steady_tick(Duration::from_millis(80));
-        Spinner {
-            bar: Some(bar),
-            multi: self.multi.clone(),
-            color: self.color,
-        }
+        Spinner { bar: Some(bar) }
     }
 
     pub fn progress(&self, total: u64, label: &str) -> Progress {
         if self.quiet {
-            return Progress {
-                bar: None,
-                multi: self.multi.clone(),
-                color: self.color,
-            };
+            return Progress { bar: None };
         }
         let bar = self.multi.add(ProgressBar::new(total));
         let template = format!(
@@ -65,10 +53,52 @@ impl Console {
                 .progress_chars("━╸─"),
         );
         bar.enable_steady_tick(Duration::from_millis(80));
-        Progress {
-            bar: Some(bar),
-            multi: self.multi.clone(),
-            color: self.color,
+        Progress { bar: Some(bar) }
+    }
+
+    pub fn ingested(&self, tokens: usize, mode: &str, level: &str) {
+        if self.quiet {
+            return;
+        }
+        if self.color {
+            self.check(format!(
+                "{} ~{} tokens {} {} {} {}",
+                "Ingested".bold(),
+                tokens.to_string().white().bold(),
+                "·".dimmed(),
+                mode.cyan(),
+                "·".dimmed(),
+                level.yellow(),
+            ));
+        } else {
+            self.check(format!("Ingested ~{tokens} tokens · {mode} · {level}"));
+        }
+    }
+
+    pub fn compressed(&self, chunks: usize) {
+        if self.quiet {
+            return;
+        }
+        if self.color {
+            self.check(format!(
+                "{} {} {}",
+                "Compressed".bold(),
+                chunks.to_string().white().bold(),
+                "chunks".bold(),
+            ));
+        } else {
+            self.check(format!("Compressed {chunks} chunks"));
+        }
+    }
+
+    pub fn pass_done(&self, label: &str, detail: &str) {
+        if self.quiet {
+            return;
+        }
+        if self.color {
+            self.check(format!("{}{} {}", label.bold(), ":".dimmed(), detail));
+        } else {
+            self.check(format!("{label}: {detail}"));
         }
     }
 
@@ -82,48 +112,53 @@ impl Console {
             100
         };
         if self.color {
-            let _ = self.multi.println(format!(
-                "  {} {} chunks | {} {} {} tokens (~{}%) {} {}",
-                "✓".green(),
-                chunks,
-                input_tokens,
+            self.check(format!(
+                "{} {} {} {} {} tokens {} {} {}",
+                format!("{chunks} chunks").bold(),
+                "|".dimmed(),
+                input_tokens.to_string().dimmed(),
                 "→".dimmed(),
                 output_tokens.to_string().white().bold(),
-                ratio,
+                format!("(~{ratio}%)").dimmed(),
                 "→".dimmed(),
-                output.cyan(),
+                output.cyan().bold(),
             ));
         } else {
-            let _ = self.multi.println(format!(
-                "  ✓ {chunks} chunks | {input_tokens} → {output_tokens} tokens (~{ratio}%) → {output}"
+            self.check(format!(
+                "{chunks} chunks | {input_tokens} → {output_tokens} tokens (~{ratio}%) → {output}"
             ));
         }
     }
 
     pub fn cleaned(&self, input: &str) {
         if self.color {
-            let _ = self.multi.println(format!(
-                "  {} Cleaned cache for {}",
-                "✓".green(),
+            self.check(format!(
+                "{} cache for {}",
+                "Cleaned".bold(),
                 input.dimmed()
             ));
         } else {
-            let _ = self.multi.println(format!("  ✓ Cleaned cache for {input}"));
+            self.check(format!("Cleaned cache for {input}"));
+        }
+    }
+
+    fn check(&self, msg: String) {
+        if self.color {
+            let _ = self.multi.println(format!("  {} {msg}", "✓".green().bold()));
+        } else {
+            let _ = self.multi.println(format!("  ✓ {msg}"));
         }
     }
 }
 
 pub struct Spinner {
     bar: Option<ProgressBar>,
-    multi: MultiProgress,
-    color: bool,
 }
 
 impl Spinner {
-    pub fn done(mut self, msg: &str) {
+    pub fn finish(mut self) {
         if let Some(bar) = self.bar.take() {
             bar.finish_and_clear();
-            print_check(&self.multi, self.color, msg);
         }
     }
 }
@@ -138,8 +173,6 @@ impl Drop for Spinner {
 
 pub struct Progress {
     bar: Option<ProgressBar>,
-    multi: MultiProgress,
-    color: bool,
 }
 
 impl Progress {
@@ -149,10 +182,9 @@ impl Progress {
         }
     }
 
-    pub fn finish(mut self, msg: &str) {
+    pub fn finish(mut self) {
         if let Some(bar) = self.bar.take() {
             bar.finish_and_clear();
-            print_check(&self.multi, self.color, msg);
         }
     }
 }
@@ -162,14 +194,6 @@ impl Drop for Progress {
         if let Some(bar) = self.bar.take() {
             bar.finish_and_clear();
         }
-    }
-}
-
-fn print_check(multi: &MultiProgress, color: bool, msg: &str) {
-    if color {
-        let _ = multi.println(format!("  {} {msg}", "✓".green()));
-    } else {
-        let _ = multi.println(format!("  ✓ {msg}"));
     }
 }
 

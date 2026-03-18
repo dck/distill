@@ -88,17 +88,20 @@ pub async fn multi_pass(
         compressed = results;
     }
 
-    pb.finish(&format!("Pass 1: Compressed {chunk_count} chunks"));
+    pb.finish();
+    console.pass_done("Pass 1", &format!("Compressed {chunk_count} chunks"));
 
     // Pass 2: Global deduplication
     let sp = console.spinner("Pass 2: Deduplicating...");
     let deduped = pass2::deduplicate(&client, &compressed, &ledger).await?;
-    sp.done("Pass 2: Deduplicated");
+    sp.finish();
+    console.pass_done("Pass 2", "Deduplicated");
 
     // Pass 3: Refinement
     let sp = console.spinner("Pass 3: Refining...");
     let refined = pass3::refine(&client, &deduped).await?;
-    sp.done("Pass 3: Refined");
+    sp.finish();
+    console.pass_done("Pass 3", "Refined");
 
     Ok(refined)
 }
