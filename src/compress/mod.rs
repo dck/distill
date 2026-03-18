@@ -7,6 +7,7 @@ use crate::error::Result;
 use crate::llm::LlmClient;
 use crate::segment::Chunk;
 use crate::state::{CompressedChunk, StateLedger};
+use crate::ui::Console;
 use std::sync::Arc;
 
 pub async fn single_pass(
@@ -36,10 +37,14 @@ pub async fn multi_pass(
     level: &CompressionLevel,
     parallel: bool,
     jobs: usize,
+    console: &Console,
 ) -> Result<String> {
-    // Pass 1: Local compression
+    let chunk_count = chunks.len();
     let mut ledger = StateLedger::default();
     let compressed: Vec<CompressedChunk>;
+
+    // Pass 1: Local compression
+    let pb = console.progress(chunk_count as u64, "Pass 1: Compressing");
 
     if parallel {
         let semaphore = Arc::new(tokio::sync::Semaphore::new(jobs));
@@ -69,6 +74,7 @@ pub async fn multi_pass(
                 })??;
             ledger.apply_delta(&result.ledger_updates);
             results.push(result);
+            pb.inc();
         }
         compressed = results;
     } else {
@@ -77,15 +83,22 @@ pub async fn multi_pass(
             let result = pass1::compress_chunk(&client, chunk, level, &ledger).await?;
             ledger.apply_delta(&result.ledger_updates);
             results.push(result);
+            pb.inc();
         }
         compressed = results;
     }
 
+    pb.finish(&format!("Pass 1: Compressed {chunk_count} chunks"));
+
     // Pass 2: Global deduplication
+    let sp = console.spinner("Pass 2: Deduplicating...");
     let deduped = pass2::deduplicate(&client, &compressed, &ledger).await?;
+    sp.done("Pass 2: Deduplicated");
 
     // Pass 3: Refinement
+    let sp = console.spinner("Pass 3: Refining...");
     let refined = pass3::refine(&client, &deduped).await?;
+    sp.done("Pass 3: Refined");
 
     Ok(refined)
 }
