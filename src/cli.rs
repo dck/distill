@@ -14,6 +14,7 @@ pub enum CompressionLevel {
     Tight,
     Dense,
     Distilled,
+    Tldr,
 }
 
 #[derive(Debug, Clone, ValueEnum, PartialEq)]

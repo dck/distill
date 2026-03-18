@@ -21,6 +21,11 @@ pub fn compression_level_policy(level: &CompressionLevel) -> &'static str {
              - Keep only the strongest example per concept\n\
              - Allow intra-section restructuring for clarity"
         }
+        CompressionLevel::Tldr => {
+            "COMPRESSION LEVEL: tldr\n\
+             - Extract key ideas only\n\
+             - Structured output"
+        }
     }
 }
 
