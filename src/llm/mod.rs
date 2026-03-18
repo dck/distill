@@ -78,7 +78,12 @@ impl LlmClient {
     }
 
     pub async fn complete(&self, system: &str, user: &str) -> Result<String> {
-        let url = format!("{}/chat/completions", self.api_base);
+        let base = self.api_base.trim_end_matches('/');
+        let url = if base.ends_with("/v1") {
+            format!("{base}/chat/completions")
+        } else {
+            format!("{base}/v1/chat/completions")
+        };
 
         // -v: show request info
         if self.verbosity >= 1 {
@@ -260,7 +265,7 @@ mod tests {
         let server = wiremock::MockServer::start().await;
 
         wiremock::Mock::given(wiremock::matchers::method("POST"))
-            .and(wiremock::matchers::path("/chat/completions"))
+            .and(wiremock::matchers::path("/v1/chat/completions"))
             .respond_with(
                 wiremock::ResponseTemplate::new(200).set_body_json(serde_json::json!({
                     "choices": [{"message": {"content": "compressed output"}}]
@@ -281,14 +286,14 @@ mod tests {
         let server = wiremock::MockServer::start().await;
 
         wiremock::Mock::given(wiremock::matchers::method("POST"))
-            .and(wiremock::matchers::path("/chat/completions"))
+            .and(wiremock::matchers::path("/v1/chat/completions"))
             .respond_with(wiremock::ResponseTemplate::new(429))
             .up_to_n_times(2)
             .mount(&server)
             .await;
 
         wiremock::Mock::given(wiremock::matchers::method("POST"))
-            .and(wiremock::matchers::path("/chat/completions"))
+            .and(wiremock::matchers::path("/v1/chat/completions"))
             .respond_with(
                 wiremock::ResponseTemplate::new(200).set_body_json(serde_json::json!({
                     "choices": [{"message": {"content": "success after retry"}}]
@@ -309,7 +314,7 @@ mod tests {
         let server = wiremock::MockServer::start().await;
 
         wiremock::Mock::given(wiremock::matchers::method("POST"))
-            .and(wiremock::matchers::path("/chat/completions"))
+            .and(wiremock::matchers::path("/v1/chat/completions"))
             .respond_with(wiremock::ResponseTemplate::new(500))
             .mount(&server)
             .await;

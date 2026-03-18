@@ -6,7 +6,7 @@ pub async fn start_mock_llm() -> MockServer {
     let server = MockServer::start().await;
 
     Mock::given(matchers::method("POST"))
-        .and(matchers::path("/chat/completions"))
+        .and(matchers::path("/v1/chat/completions"))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "choices": [{
                 "message": {
