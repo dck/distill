@@ -8,7 +8,6 @@ pub trait CompressionStrategy: Send + Sync {
     fn pass1_system(&self) -> String;
     fn pass1_user(&self, chunk_content: &str, chunk_index: usize, ledger: &StateLedger) -> String;
     fn supports_multi_pass(&self) -> bool;
-    fn produces_ledger(&self) -> bool;
 }
 
 const LEDGER_SCHEMA: &str = "\
@@ -133,10 +132,6 @@ impl CompressionStrategy for ProseStrategy {
     fn supports_multi_pass(&self) -> bool {
         true
     }
-
-    fn produces_ledger(&self) -> bool {
-        true
-    }
 }
 
 /// Strategy for TLDR level: structured knowledge extraction, not prose compression.
@@ -188,10 +183,6 @@ impl CompressionStrategy for TldrStrategy {
     fn supports_multi_pass(&self) -> bool {
         false
     }
-
-    fn produces_ledger(&self) -> bool {
-        false
-    }
 }
 
 /// Create the right strategy for a given compression level.
@@ -229,7 +220,6 @@ mod tests {
     fn prose_distilled_supports_multi_pass() {
         let strategy = ProseStrategy::distilled();
         assert!(strategy.supports_multi_pass());
-        assert!(strategy.produces_ledger());
     }
 
     #[test]
@@ -252,7 +242,6 @@ mod tests {
     fn tldr_does_not_support_multi_pass() {
         let strategy = TldrStrategy;
         assert!(!strategy.supports_multi_pass());
-        assert!(!strategy.produces_ledger());
     }
 
     #[test]
