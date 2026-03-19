@@ -94,8 +94,11 @@ fn extract_article(html: &str, url: &str) -> Result<String> {
 }
 
 fn extract_title(html: &str) -> Option<String> {
-    let start = html.find("<title>")?;
+    let start = html.find("<title>")? + 7;
     let end = html.find("</title>")?;
-    let title = &html[start + 7..end];
-    Some(title.trim().to_string())
+    if start > end || start > html.len() || end > html.len() {
+        return None;
+    }
+    let title = html[start..end].trim();
+    if title.is_empty() { None } else { Some(title.to_string()) }
 }

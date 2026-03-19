@@ -12,6 +12,7 @@ mod ui;
 
 use clap::Parser;
 use cli::{Cli, CompressionLevel, Mode, OutputFormat};
+use owo_colors::OwoColorize;
 use std::path::PathBuf;
 use std::process::ExitCode;
 use std::sync::Arc;
@@ -77,6 +78,22 @@ async fn run() -> error::Result<()> {
 
     // Compress
     let is_multi = detected_mode == Mode::Book && strategy.supports_multi_pass();
+    let pipeline = if is_multi { "multi-pass (compress → dedup → refine)" } else { "single-pass" };
+
+    if cli.verbose >= 1 {
+        eprintln!(
+            "{} level={level:?} pipeline={pipeline} chunks={chunk_count}",
+            "[pipeline]".dimmed()
+        );
+    }
+    if cli.verbose >= 2 {
+        eprintln!(
+            "{}\n{}",
+            "[pipeline] system prompt:".dimmed(),
+            strategy.single_pass_system()
+        );
+    }
+
     let compressed = if is_multi {
         let strategy: Arc<dyn llm::strategy::CompressionStrategy> = strategy.into();
         compress::multi_pass(client, chunks, strategy, cli.parallel, cli.jobs, &console).await?
