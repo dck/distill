@@ -1,0 +1,14 @@
+[project]
+name = "distill-research"
+version = "0.1.0"
+description = "Research: finding best model x algorithm for book distillation"
+requires-python = ">=3.12"
+dependencies = [
+    "deepeval",
+    "anthropic",
+    "openai",
+    "tomli",
+    "httpx",
+    "ebooklib>=0.20",
+    "beautifulsoup4>=4.14.3",
+]
