@@ -206,7 +206,10 @@ def generate_report(eval_report_path: Path, reports_dir: Path) -> None:
 
     for msg, fn, chart_data, path in chart_specs:
         print(msg)
-        fn(chart_data, path)
+        try:
+            fn(chart_data, path)
+        except Exception as e:
+            print(f"  WARNING: chart generation failed: {e}")
 
     # --- Build algorithm analysis table ---
     algo_analysis = []
@@ -244,7 +247,7 @@ def generate_report(eval_report_path: Path, reports_dir: Path) -> None:
     cost_rows = []
     for model, rows in sorted(model_cost.items()):
         avg_cost_per_ch = _safe_avg([r["cost_per_chapter"] for r in rows])
-        total_cost = _safe_avg([r["cost"] for r in rows])
+        total_cost = sum(r["cost"] for r in rows)
         cost_rows.append({
             "model": model,
             "cost_per_chapter": avg_cost_per_ch,
@@ -264,11 +267,14 @@ def generate_report(eval_report_path: Path, reports_dir: Path) -> None:
     best_free = free_models[0] if free_models else None
     best_quality = leaderboard[0] if leaderboard else None
 
-    # Best budget = best paid model (cheapest with decent quality)
-    # Sort paid by cost_per_chapter ascending, pick first with composite > median
+    # Best budget = cheapest paid model with above-median composite score
     if paid_models:
-        paid_by_cost = sorted(paid_models, key=lambda r: r["cost_per_chapter"])
-        best_budget = paid_by_cost[0]
+        median_score = sorted(r["composite_score"] for r in leaderboard)[len(leaderboard) // 2]
+        decent_paid = [r for r in paid_models if r["composite_score"] >= median_score]
+        if decent_paid:
+            best_budget = min(decent_paid, key=lambda r: r["cost_per_chapter"])
+        else:
+            best_budget = min(paid_models, key=lambda r: r["cost_per_chapter"])
     else:
         best_budget = None
 

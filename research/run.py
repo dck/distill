@@ -186,6 +186,8 @@ def cmd_distill(args: argparse.Namespace, config: dict) -> None:
         short_name = model_config["name"]
 
         if mid in failed_models:
+            skipped += len(algos)
+            completed += len(algos)
             continue
 
         for algo in algos:
