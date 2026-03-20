@@ -11,10 +11,12 @@ import time
 from pathlib import Path
 
 import tomli
-
-from algorithms import AlgorithmResult, SkipExperiment, run_algorithm
+from dotenv import load_dotenv
 
 ROOT = Path(__file__).parent
+load_dotenv(ROOT / ".env")
+
+from algorithms import AlgorithmResult, SkipExperiment, run_algorithm
 log = logging.getLogger(__name__)
 
 
@@ -63,6 +65,11 @@ def save_results(experiment_dir: Path, result: AlgorithmResult) -> None:
     experiment_dir.mkdir(parents=True, exist_ok=True)
     for name, text in result.chapters.items():
         (experiment_dir / name).write_text(text, encoding="utf-8")
+    if result.metadata:
+        (experiment_dir / "metadata.json").write_text(
+            json.dumps(result.metadata, indent=2),
+            encoding="utf-8",
+        )
 
 
 def find_model_config(config: dict, model_id: str) -> dict | None:
@@ -82,6 +89,9 @@ def make_llm_caller(client, config: dict):
     retry_attempts = settings["retry_attempts"]
     backoff_base = settings["retry_backoff_base"]
     free_delay = settings["free_model_delay_seconds"]
+
+    if retry_attempts < 1:
+        raise ValueError("config.settings.retry_attempts must be at least 1")
 
     # Track which models are free for delay logic
     free_models = {m["id"] for m in config["models"] if m.get("free", False)}
@@ -115,7 +125,7 @@ def make_llm_caller(client, config: dict):
             except Exception as e:
                 last_err = e
                 if attempt < retry_attempts - 1:
-                    wait = backoff_base ** (attempt + 1)
+                    wait = backoff_base ** (2 * attempt + 1)
                     log.warning(
                         "LLM call failed (attempt %d/%d): %s — retrying in %.0fs",
                         attempt + 1,
@@ -254,7 +264,7 @@ def cmd_eval(args: argparse.Namespace, config: dict) -> None:
         compute_compression_ratio,
         evaluate_chapter,
         create_metrics,
-        WEIGHTS,
+        get_metric_weights,
     )
     from judge import OpusJudge
 
@@ -287,6 +297,7 @@ def cmd_eval(args: argparse.Namespace, config: dict) -> None:
     # Create judge and metrics
     judge = OpusJudge()
     metrics = create_metrics(judge)
+    weights = get_metric_weights(config)
 
     # Load originals
     originals = load_chapters()
@@ -362,6 +373,12 @@ def cmd_eval(args: argparse.Namespace, config: dict) -> None:
         if not chapter_scores:
             continue
 
+        metadata_path = exp_dir / "metadata.json"
+        metadata = {}
+        if metadata_path.exists():
+            with open(metadata_path, encoding="utf-8") as f:
+                metadata = json.load(f)
+
         # Aggregate scores for this experiment
         score_sums: dict[str, float] = {}
         score_counts: dict[str, int] = {}
@@ -371,7 +388,7 @@ def cmd_eval(args: argparse.Namespace, config: dict) -> None:
             cr = ch_result.get("compression_ratio")
             if cr is not None:
                 compression_ratios.append(cr)
-            for metric_name in WEIGHTS:
+            for metric_name in weights:
                 metric_data = ch_result.get(metric_name, {})
                 score = metric_data.get("score") if isinstance(metric_data, dict) else None
                 if score is not None:
@@ -380,33 +397,44 @@ def cmd_eval(args: argparse.Namespace, config: dict) -> None:
 
         averages = {
             k: score_sums[k] / score_counts[k]
-            for k in WEIGHTS
+            for k in weights
             if score_counts.get(k, 0) > 0
         }
-        composite = compute_composite_score(averages, WEIGHTS)
+        composite = compute_composite_score(averages, weights)
         avg_cr = sum(compression_ratios) / len(compression_ratios) if compression_ratios else 0.0
 
         # Build chapter data for report (scores only, not reasons)
         chapters_report = {}
         for ch_name, ch_result in chapter_scores.items():
             scores = {}
-            for metric_name in WEIGHTS:
+            for metric_name in weights:
                 metric_data = ch_result.get(metric_name, {})
                 if isinstance(metric_data, dict):
                     scores[metric_name] = metric_data.get("score")
+            if ch_name.startswith("__"):
+                original_for_sizes = "\n\n".join(originals.values())
+            else:
+                original_for_sizes = originals.get(f"{ch_name}.txt", "")
+            distilled_name = f"{ch_name}.txt"
+            distilled_path = exp_dir / distilled_name
+            distilled_text = distilled_path.read_text(encoding="utf-8") if distilled_path.exists() else ""
             chapters_report[ch_name] = {
                 "scores": scores,
                 "compression_ratio": ch_result.get("compression_ratio"),
+                "input_chars": len(original_for_sizes),
+                "output_chars": len(distilled_text),
             }
 
         exp_entry = {
             "model": model_config["name"] if model_config else slug,
-            "model_id": model_config["id"] if model_config else slug,
+            "model_id": model_config["id"] if model_config else "",
+            "model_slug": slug,
             "algorithm": algo,
             "chapters": chapters_report,
             "averages": averages,
             "composite_score": composite,
             "avg_compression_ratio": avg_cr,
+            "metadata": metadata,
         }
         eval_report["experiments"][exp_name] = exp_entry
 

@@ -11,4 +11,5 @@ dependencies = [
     "httpx",
     "ebooklib>=0.20",
     "beautifulsoup4>=4.14.3",
+    "python-dotenv>=1.0",
 ]

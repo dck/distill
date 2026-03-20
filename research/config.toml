@@ -2,7 +2,7 @@
 judge_model = "claude-opus-4-6"
 temperature = 0.3
 eval_temperature = 0.0
-free_model_delay_seconds = 3
+free_model_delay_seconds = 8
 retry_attempts = 3
 retry_backoff_base = 2
 
@@ -12,53 +12,75 @@ structure = 0.25
 coherence = 0.25
 compression_quality = 0.15
 
-[[models]]
-id = "deepseek/deepseek-v3.2"
-name = "DeepSeek V3.2"
-tier = "strong"
-context_window = 164000
-free = false
-cost_input = 0.255
-cost_output = 0.40
-
-[[models]]
-id = "deepseek/deepseek-r1:free"
-name = "DeepSeek R1 Free"
-tier = "reasoning"
-context_window = 164000
-free = true
-
-[[models]]
-id = "openrouter/hunter-alpha"
-name = "Hunter Alpha"
-tier = "strong"
-context_window = 1048576
-free = true
-note = "Prompts logged by provider"
-
-[[models]]
-id = "meta-llama/llama-3.3-70b-instruct:free"
-name = "Llama 3.3 70B"
-tier = "weak"
-context_window = 131000
-free = true
+# --- Free models ---
 
 [[models]]
 id = "qwen/qwen3-coder:free"
-name = "Qwen3 Coder 480B"
+name = "Qwen3 Coder"
 tier = "strong"
 context_window = 262000
 free = true
 
 [[models]]
-id = "google/gemini-3-flash-preview"
-name = "Gemini 3 Flash"
+id = "nvidia/nemotron-3-super-120b-a12b:free"
+name = "Nemotron 120B"
+tier = "strong"
+context_window = 262144
+free = true
+
+[[models]]
+id = "qwen/qwen3-next-80b-a3b-instruct:free"
+name = "Qwen3 Next 80B"
+tier = "strong"
+context_window = 262144
+free = true
+
+[[models]]
+id = "arcee-ai/trinity-large-preview:free"
+name = "Trinity Large"
+tier = "strong"
+context_window = 131000
+free = true
+note = "Preview model"
+
+# --- Paid models ---
+
+[[models]]
+id = "minimax/minimax-m2.5"
+name = "MiniMax M2.5"
+tier = "strong"
+context_window = 196608
+free = false
+cost_input = 0.20
+cost_output = 1.20
+
+[[models]]
+id = "deepseek/deepseek-v3.2"
+name = "DeepSeek V3.2"
+tier = "strong"
+context_window = 163840
+free = false
+cost_input = 0.26
+cost_output = 0.38
+
+[[models]]
+id = "deepseek/deepseek-r1-0528"
+name = "DeepSeek R1"
+tier = "reasoning"
+context_window = 163840
+free = false
+cost_input = 0.45
+cost_output = 2.15
+
+[[models]]
+id = "google/gemini-2.5-pro"
+name = "Gemini 2.5 Pro"
 tier = "strong"
 context_window = 1048576
 free = false
-cost_input = 0.50
-cost_output = 3.00
-note = "Paid quality ceiling reference"
+cost_input = 1.25
+cost_output = 10.00
+note = "Quality ceiling reference"
 
 [algorithms]
 enabled = [

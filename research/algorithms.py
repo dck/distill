@@ -47,6 +47,11 @@ def _accumulate_usage(metadata: dict, usage: dict) -> None:
     metadata["total_output_tokens"] = metadata.get("total_output_tokens", 0) + usage.get("output_tokens", 0)
 
 
+def _join_distilled_chapters(chapters: dict[str, str]) -> str:
+    """Build a cumulative distilled context from all completed chapter outputs."""
+    return "\n\n".join(f"# {name}\n\n{text}" for name, text in chapters.items())
+
+
 # ---------------------------------------------------------------------------
 # 1. whole_book
 # ---------------------------------------------------------------------------
@@ -279,8 +284,8 @@ def _incremental(
 
         user_msg = get_distill_user_message(text, context=context)
         response, usage = call_llm(model_config["id"], system, user_msg, temperature)
-        accumulated_distilled = response
         results[name] = response
+        accumulated_distilled = _join_distilled_chapters(results)
         _accumulate_usage(metadata, usage)
 
     metadata["elapsed_seconds"] = time.time() - t0

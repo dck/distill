@@ -1,6 +1,7 @@
 """DeepEval metric definitions for evaluating distillation quality."""
 
 import logging
+from collections.abc import Mapping
 
 from deepeval.metrics import GEval, SummarizationMetric
 from deepeval.test_case import LLMTestCase, LLMTestCaseParams
@@ -14,6 +15,13 @@ WEIGHTS: dict[str, float] = {
     "Structure Preservation": 0.25,
     "Coherence": 0.25,
     "Compression Quality": 0.15,
+}
+
+CONFIG_WEIGHT_KEYS = {
+    "completeness": "Completeness",
+    "structure": "Structure Preservation",
+    "coherence": "Coherence",
+    "compression_quality": "Compression Quality",
 }
 
 
@@ -62,6 +70,20 @@ def create_metrics(judge: OpusJudge) -> list:
     )
 
     return [completeness, structure, coherence, compression_quality]
+
+
+def get_metric_weights(config: Mapping | None = None) -> dict[str, float]:
+    """Return display-name weights, optionally overridden from config.toml."""
+    if config is None:
+        return WEIGHTS.copy()
+
+    raw_weights = config.get("metrics_weights", {})
+    weights = WEIGHTS.copy()
+    for raw_key, display_name in CONFIG_WEIGHT_KEYS.items():
+        value = raw_weights.get(raw_key)
+        if value is not None:
+            weights[display_name] = float(value)
+    return weights
 
 
 def compute_composite_score(

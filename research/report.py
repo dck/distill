@@ -13,7 +13,7 @@ from charts import (
     generate_leaderboard_chart,
     generate_model_comparison_chart,
 )
-from eval_metrics import WEIGHTS
+from eval_metrics import get_metric_weights
 
 CONFIG_PATH = Path(__file__).parent / "config.toml"
 
@@ -46,6 +46,15 @@ def _estimate_cost(
     info = pricing.get(model_id)
     if not info or info["free"]:
         return 0.0
+
+    metadata = exp.get("metadata", {})
+    input_tokens = metadata.get("total_input_tokens")
+    output_tokens = metadata.get("total_output_tokens")
+    if input_tokens is not None or output_tokens is not None:
+        return (
+            (float(input_tokens or 0) * info["cost_input"] / 1_000_000)
+            + (float(output_tokens or 0) * info["cost_output"] / 1_000_000)
+        )
 
     chapters = exp.get("chapters", {})
     if not chapters:
@@ -83,6 +92,7 @@ def _safe_avg(values: list[float | None]) -> float:
 def generate_report(eval_report_path: Path, reports_dir: Path) -> None:
     """Generate markdown report + chart PNGs from eval data."""
     config = _load_config()
+    weights = get_metric_weights(config)
     pricing = _model_pricing(config)
 
     with open(eval_report_path) as f:
@@ -248,8 +258,8 @@ def generate_report(eval_report_path: Path, reports_dir: Path) -> None:
     best_algo_score = best_algo["composite"] if best_algo else 0.0
 
     # Best models by category
-    free_models = [r for r in leaderboard if pricing.get(r["model_id"], {}).get("free", True)]
-    paid_models = [r for r in leaderboard if not pricing.get(r["model_id"], {}).get("free", True)]
+    free_models = [r for r in leaderboard if pricing.get(r["model_id"], {}).get("free") is True]
+    paid_models = [r for r in leaderboard if pricing.get(r["model_id"], {}).get("free") is False]
 
     best_free = free_models[0] if free_models else None
     best_quality = leaderboard[0] if leaderboard else None
@@ -321,7 +331,7 @@ def generate_report(eval_report_path: Path, reports_dir: Path) -> None:
         f"and {len(algorithms)} algorithms."
     )
     weight_desc = ", ".join(
-        f"{k} ({v})" for k, v in WEIGHTS.items()
+        f"{k} ({v})" for k, v in weights.items()
     )
     lines.append(f"Metric weights: {weight_desc}.")
     lines.append("")
