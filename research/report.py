@@ -126,6 +126,11 @@ def generate_report(eval_report_path: Path, reports_dir: Path) -> None:
             row[mk] = avgs.get(mk, 0.0)
         row["cost"] = _estimate_cost(exp, pricing)
         row["cost_per_chapter"] = _estimate_cost_per_chapter(exp, pricing)
+        # Throughput: output tokens / elapsed seconds
+        metadata = exp.get("metadata", {})
+        output_tokens = metadata.get("total_output_tokens", 0)
+        elapsed = metadata.get("elapsed_seconds", 0)
+        row["output_tok_s"] = output_tokens / elapsed if elapsed > 0 and output_tokens else 0.0
         leaderboard.append(row)
 
     leaderboard.sort(key=lambda r: r["composite_score"], reverse=True)
@@ -347,18 +352,19 @@ def generate_report(eval_report_path: Path, reports_dir: Path) -> None:
     lines.append("")
     lines.append(
         "| Rank | Model | Algorithm | Composite | Completeness | Structure | "
-        "Coherence | Compression Quality | Avg Compression Ratio |"
+        "Coherence | Compression Quality | Compression Ratio | tok/s |"
     )
     lines.append(
         "|------|-------|-----------|-----------|--------------|-----------|"
-        "-----------|---------------------|-----------------------|"
+        "-----------|---------------------|-------------------|-------|"
     )
     for i, r in enumerate(leaderboard, 1):
+        tok_s = f"{r['output_tok_s']:.1f}" if r["output_tok_s"] else "--"
         lines.append(
             f"| {i} | {r['model']} | {r['algorithm']} | "
             f"{r['composite_score']:.2f} | {r['Completeness']:.2f} | "
             f"{r['Structure Preservation']:.2f} | {r['Coherence']:.2f} | "
-            f"{r['Compression Quality']:.2f} | {r['avg_compression_ratio']:.2f} |"
+            f"{r['Compression Quality']:.2f} | {r['avg_compression_ratio']:.2f} | {tok_s} |"
         )
     lines.append("")
 
@@ -409,6 +415,21 @@ def generate_report(eval_report_path: Path, reports_dir: Path) -> None:
         lines.append(
             f"**Best model: {best_m['model']}** (composite: {best_m['composite']:.2f})"
         )
+    lines.append("")
+
+    # Throughput
+    lines.append("## Throughput (output tok/s)")
+    lines.append("")
+    lines.append("| Model | Avg tok/s | Min | Max |")
+    lines.append("|-------|-----------|-----|-----|")
+    for model, rows in sorted(model_groups.items()):
+        speeds = [r["output_tok_s"] for r in rows if r["output_tok_s"] > 0]
+        if speeds:
+            lines.append(
+                f"| {model} | {_safe_avg(speeds):.1f} | {min(speeds):.1f} | {max(speeds):.1f} |"
+            )
+        else:
+            lines.append(f"| {model} | -- | -- | -- |")
     lines.append("")
 
     # Cost Comparison
