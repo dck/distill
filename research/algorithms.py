@@ -28,6 +28,13 @@ class AlgorithmResult:
 # Signature: (model_id, system_prompt, user_message, temperature) -> (response_text, usage_dict)
 LLMCaller = Callable[[str, str, str, float], tuple[str, dict]]
 
+# Progress callback: (chapter_name, chapter_index, total_chapters, detail) -> None
+ProgressFn = Callable[[str, int, int, str], None]
+
+
+def _noop_progress(name: str, idx: int, total: int, detail: str) -> None:
+    pass
+
 
 def _estimate_tokens(text: str) -> int:
     return len(text) // 4
@@ -61,6 +68,7 @@ def _whole_book(
     model_config: dict,
     call_llm: LLMCaller,
     temperature: float,
+    progress: ProgressFn = _noop_progress,
 ) -> AlgorithmResult:
     full_text = "\n\n".join(
         f"# {name}\n\n{text}" for name, text in chapters.items()
@@ -71,9 +79,11 @@ def _whole_book(
     system = get_system_prompt(model_config["tier"])
     user_msg = get_distill_user_message(full_text)
 
+    progress("all chapters", 1, 1, f"~{input_tokens} tokens")
     t0 = time.time()
     response, usage = call_llm(model_config["id"], system, user_msg, temperature)
     elapsed = time.time() - t0
+    progress("all chapters", 1, 1, f"done ({elapsed:.1f}s)")
 
     metadata = {"elapsed_seconds": elapsed}
     _accumulate_usage(metadata, usage)
@@ -93,20 +103,25 @@ def _independent(
     model_config: dict,
     call_llm: LLMCaller,
     temperature: float,
+    progress: ProgressFn = _noop_progress,
 ) -> AlgorithmResult:
     system = get_system_prompt(model_config["tier"])
     results = {}
     metadata: dict = {}
+    total = len(chapters)
     t0 = time.time()
 
-    for name, text in chapters.items():
+    for i, (name, text) in enumerate(chapters.items(), 1):
         input_tokens = _estimate_tokens(text)
         _check_context(model_config, input_tokens)
 
+        progress(name, i, total, f"~{input_tokens} tokens")
+        ch_t0 = time.time()
         user_msg = get_distill_user_message(text)
         response, usage = call_llm(model_config["id"], system, user_msg, temperature)
         results[name] = response
         _accumulate_usage(metadata, usage)
+        progress(name, i, total, f"done ({time.time() - ch_t0:.1f}s)")
 
     metadata["elapsed_seconds"] = time.time() - t0
     return AlgorithmResult(chapters=results, metadata=metadata)
@@ -122,14 +137,16 @@ def _overlap(
     call_llm: LLMCaller,
     temperature: float,
     pct: float,
+    progress: ProgressFn = _noop_progress,
 ) -> AlgorithmResult:
     system = get_system_prompt(model_config["tier"])
     results = {}
     metadata: dict = {}
+    total = len(chapters)
     t0 = time.time()
 
     prev_raw: str | None = None
-    for name, text in chapters.items():
+    for i, (name, text) in enumerate(chapters.items(), 1):
         context = None
         if prev_raw is not None:
             overlap_len = int(len(prev_raw) * pct)
@@ -139,11 +156,14 @@ def _overlap(
         input_tokens = _estimate_tokens(combined)
         _check_context(model_config, input_tokens)
 
+        progress(name, i, total, f"~{input_tokens} tokens")
+        ch_t0 = time.time()
         user_msg = get_distill_user_message(text, context=context)
         response, usage = call_llm(model_config["id"], system, user_msg, temperature)
         results[name] = response
         _accumulate_usage(metadata, usage)
         prev_raw = text
+        progress(name, i, total, f"done ({time.time() - ch_t0:.1f}s)")
 
     metadata["elapsed_seconds"] = time.time() - t0
     return AlgorithmResult(chapters=results, metadata=metadata)
@@ -154,8 +174,9 @@ def _overlap_10(
     model_config: dict,
     call_llm: LLMCaller,
     temperature: float,
+    progress: ProgressFn = _noop_progress,
 ) -> AlgorithmResult:
-    return _overlap(chapters, model_config, call_llm, temperature, pct=0.10)
+    return _overlap(chapters, model_config, call_llm, temperature, pct=0.10, progress=progress)
 
 
 def _overlap_20(
@@ -163,8 +184,9 @@ def _overlap_20(
     model_config: dict,
     call_llm: LLMCaller,
     temperature: float,
+    progress: ProgressFn = _noop_progress,
 ) -> AlgorithmResult:
-    return _overlap(chapters, model_config, call_llm, temperature, pct=0.20)
+    return _overlap(chapters, model_config, call_llm, temperature, pct=0.20, progress=progress)
 
 
 # ---------------------------------------------------------------------------
@@ -176,16 +198,18 @@ def _running_summary(
     model_config: dict,
     call_llm: LLMCaller,
     temperature: float,
+    progress: ProgressFn = _noop_progress,
 ) -> AlgorithmResult:
     system = get_system_prompt(model_config["tier"])
     summary_system = get_summary_prompt()
     results = {}
     metadata: dict = {}
+    total = len(chapters)
     t0 = time.time()
 
     cumulative_summaries: list[str] = []
 
-    for name, text in chapters.items():
+    for i, (name, text) in enumerate(chapters.items(), 1):
         context = None
         if cumulative_summaries:
             context = "SUMMARIES OF PREVIOUS CHAPTERS:\n\n" + "\n\n---\n\n".join(cumulative_summaries)
@@ -194,18 +218,20 @@ def _running_summary(
         input_tokens = _estimate_tokens(combined)
         _check_context(model_config, input_tokens)
 
-        # Distill the chapter
+        progress(name, i, total, "distilling")
+        ch_t0 = time.time()
         user_msg = get_distill_user_message(text, context=context)
         response, usage = call_llm(model_config["id"], system, user_msg, temperature)
         results[name] = response
         _accumulate_usage(metadata, usage)
 
-        # Generate summary of the distilled chapter
+        progress(name, i, total, "summarizing")
         summary_response, summary_usage = call_llm(
             model_config["id"], summary_system, response, temperature
         )
         _accumulate_usage(metadata, summary_usage)
         cumulative_summaries.append(f"**{name}**: {summary_response}")
+        progress(name, i, total, f"done ({time.time() - ch_t0:.1f}s)")
 
     metadata["elapsed_seconds"] = time.time() - t0
     return AlgorithmResult(chapters=results, metadata=metadata)
@@ -220,21 +246,26 @@ def _hierarchical(
     model_config: dict,
     call_llm: LLMCaller,
     temperature: float,
+    progress: ProgressFn = _noop_progress,
 ) -> AlgorithmResult:
     system = get_system_prompt(model_config["tier"])
     metadata: dict = {}
+    total = len(chapters)
     t0 = time.time()
 
     # Pass 1: independent distillation
     pass1_results = {}
-    for name, text in chapters.items():
+    for i, (name, text) in enumerate(chapters.items(), 1):
         input_tokens = _estimate_tokens(text)
         _check_context(model_config, input_tokens)
 
+        progress(name, i, total, "pass 1")
+        ch_t0 = time.time()
         user_msg = get_distill_user_message(text)
         response, usage = call_llm(model_config["id"], system, user_msg, temperature)
         pass1_results[name] = response
         _accumulate_usage(metadata, usage)
+        progress(name, i, total, f"pass 1 done ({time.time() - ch_t0:.1f}s)")
 
     # Pass 2: coherence refinement
     combined_distilled = "\n\n".join(
@@ -243,9 +274,12 @@ def _hierarchical(
     input_tokens = _estimate_tokens(combined_distilled)
     _check_context(model_config, input_tokens)
 
+    progress("refinement", total + 1, total + 1, "pass 2")
+    ref_t0 = time.time()
     refinement_system = get_refinement_prompt()
     response, usage = call_llm(model_config["id"], refinement_system, combined_distilled, temperature)
     _accumulate_usage(metadata, usage)
+    progress("refinement", total + 1, total + 1, f"pass 2 done ({time.time() - ref_t0:.1f}s)")
 
     metadata["elapsed_seconds"] = time.time() - t0
     return AlgorithmResult(
@@ -263,15 +297,17 @@ def _incremental(
     model_config: dict,
     call_llm: LLMCaller,
     temperature: float,
+    progress: ProgressFn = _noop_progress,
 ) -> AlgorithmResult:
     system = get_system_prompt(model_config["tier"])
     metadata: dict = {}
+    total = len(chapters)
     t0 = time.time()
 
     accumulated_distilled = ""
     results = {}
 
-    for name, text in chapters.items():
+    for i, (name, text) in enumerate(chapters.items(), 1):
         if accumulated_distilled:
             context = f"DISTILLED SO FAR:\n\n{accumulated_distilled}"
             combined = context + text
@@ -282,11 +318,14 @@ def _incremental(
         input_tokens = _estimate_tokens(combined)
         _check_context(model_config, input_tokens)
 
+        progress(name, i, total, f"~{input_tokens} tokens")
+        ch_t0 = time.time()
         user_msg = get_distill_user_message(text, context=context)
         response, usage = call_llm(model_config["id"], system, user_msg, temperature)
         results[name] = response
         accumulated_distilled = _join_distilled_chapters(results)
         _accumulate_usage(metadata, usage)
+        progress(name, i, total, f"done ({time.time() - ch_t0:.1f}s)")
 
     metadata["elapsed_seconds"] = time.time() - t0
     return AlgorithmResult(chapters=results, metadata=metadata)
@@ -301,22 +340,25 @@ def _extract_compress(
     model_config: dict,
     call_llm: LLMCaller,
     temperature: float,
+    progress: ProgressFn = _noop_progress,
 ) -> AlgorithmResult:
     extract_system = get_extract_prompt()
     rewrite_system = get_rewrite_prompt()
     results = {}
     metadata: dict = {}
+    total = len(chapters)
     t0 = time.time()
 
-    for name, text in chapters.items():
+    for i, (name, text) in enumerate(chapters.items(), 1):
         input_tokens = _estimate_tokens(text)
         _check_context(model_config, input_tokens)
 
-        # Phase 1: extract structured elements
+        progress(name, i, total, "extracting")
+        ch_t0 = time.time()
         extracted, usage1 = call_llm(model_config["id"], extract_system, text, temperature)
         _accumulate_usage(metadata, usage1)
 
-        # Phase 2: rewrite into flowing prose
+        progress(name, i, total, "rewriting")
         rewrite_tokens = _estimate_tokens(extracted)
         _check_context(model_config, rewrite_tokens)
 
@@ -324,6 +366,7 @@ def _extract_compress(
         _accumulate_usage(metadata, usage2)
 
         results[name] = rewritten
+        progress(name, i, total, f"done ({time.time() - ch_t0:.1f}s)")
 
     metadata["elapsed_seconds"] = time.time() - t0
     return AlgorithmResult(chapters=results, metadata=metadata)
@@ -351,8 +394,9 @@ def run_algorithm(
     model_config: dict,
     call_llm: LLMCaller,
     temperature: float = 0.3,
+    progress: ProgressFn = _noop_progress,
 ) -> AlgorithmResult:
     """Dispatch to the correct algorithm."""
     if algo_name not in _ALGORITHMS:
         raise ValueError(f"Unknown algorithm: {algo_name!r}. Available: {list(_ALGORITHMS.keys())}")
-    return _ALGORITHMS[algo_name](chapters, model_config, call_llm, temperature)
+    return _ALGORITHMS[algo_name](chapters, model_config, call_llm, temperature, progress=progress)

@@ -27,6 +27,19 @@ class RateLimited(Exception):
 
 
 # ---------------------------------------------------------------------------
+# Colors
+# ---------------------------------------------------------------------------
+
+_BOLD = "\033[1m"
+_DIM = "\033[2m"
+_GREEN = "\033[32m"
+_YELLOW = "\033[33m"
+_RED = "\033[31m"
+_CYAN = "\033[36m"
+_RESET = "\033[0m"
+
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
@@ -215,60 +228,57 @@ def cmd_distill(args: argparse.Namespace, config: dict) -> None:
             # Checkpoint: skip if complete
             if experiment_complete(experiment_dir, expected):
                 print(
-                    f"[{completed}/{total}] {short_name} x {algo} — already complete, skipping"
+                    f"{_DIM}[{completed}/{total}] {short_name} x {algo} — already complete, skipping{_RESET}"
                 )
                 continue
 
             # Skip if model is marked down
             if mid in failed_models:
                 print(
-                    f"[{completed}/{total}] {short_name} x {algo} — model down, skipping"
+                    f"{_DIM}[{completed}/{total}]{_RESET} {_BOLD}{short_name}{_RESET} x {_CYAN}{algo}{_RESET} {_RED}— model down, skipping{_RESET}"
                 )
                 skipped += 1
                 continue
 
-            print(f"[{completed}/{total}] {short_name} x {algo} — running...")
+            prefix = f"{_DIM}[{completed}/{total}]{_RESET} {_BOLD}{short_name}{_RESET} x {_CYAN}{algo}{_RESET}"
+            print(f"{prefix} — running...")
+
+            def _progress(ch_name: str, idx: int, ch_total: int, detail: str) -> None:
+                print(f"  {_DIM}{idx}/{ch_total}{_RESET} {ch_name} — {detail}")
 
             try:
                 t0 = time.time()
-                result = run_algorithm(algo, chapters, model_config, call_llm, temperature)
+                result = run_algorithm(algo, chapters, model_config, call_llm, temperature, progress=_progress)
                 elapsed = time.time() - t0
                 save_results(experiment_dir, result)
                 consec_failures[mid] = 0
 
                 n_outputs = len(result.chapters)
                 print(
-                    f"[{completed}/{total}] {short_name} x {algo} -> "
-                    f"{n_outputs} outputs ({elapsed:.1f}s)"
+                    f"{prefix} {_GREEN}-> {n_outputs} outputs ({elapsed:.1f}s){_RESET}"
                 )
 
             except SkipExperiment as e:
-                print(
-                    f"[{completed}/{total}] {short_name} x {algo} — skipped: {e}"
-                )
+                print(f"{prefix} {_YELLOW}— skipped: {e}{_RESET}")
                 skipped += 1
 
             except RateLimited:
-                print(
-                    f"[{completed}/{total}] {short_name} x {algo} — rate limited, will retry on next run"
-                )
+                print(f"{prefix} {_YELLOW}— rate limited, will retry on next run{_RESET}")
                 skipped += 1
 
             except Exception as e:
                 log.exception("Experiment failed: %s x %s", short_name, algo)
-                print(
-                    f"[{completed}/{total}] {short_name} x {algo} — FAILED: {e}"
-                )
+                print(f"{prefix} {_RED}— FAILED: {e}{_RESET}")
                 consec_failures[mid] = consec_failures.get(mid, 0) + 1
                 if consec_failures[mid] >= 3:
                     print(
-                        f"  {short_name} has failed 3 consecutive times — marking as down"
+                        f"  {_RED}{short_name} has failed 3 consecutive times — marking as down{_RESET}"
                     )
                     failed_models.add(mid)
 
     print(f"\nDone. {completed} experiments attempted, {skipped} skipped.")
     if failed_models:
-        print(f"Models marked down: {', '.join(failed_models)}")
+        print(f"{_RED}Models marked down: {', '.join(failed_models)}{_RESET}")
 
 
 # ---------------------------------------------------------------------------
