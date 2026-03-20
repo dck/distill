@@ -1,22 +1,33 @@
-"""Opus 4.6 judge model for DeepEval metrics."""
+"""Sonnet 4.6 judge model for DeepEval metrics."""
 
 import json
+import os
 import re
 
 import anthropic
 from deepeval.models import DeepEvalBaseLLM
 from pydantic import BaseModel
 
+JUDGE_MODEL = "claude-sonnet-4-6-20250514"
 
-class OpusJudge(DeepEvalBaseLLM):
+
+def _make_client() -> anthropic.Anthropic:
+    """Create Anthropic client using OAuth token or API key."""
+    token = os.environ.get("ANTHROPIC_AUTH_TOKEN")
+    if token:
+        return anthropic.Anthropic(auth_token=token)
+    return anthropic.Anthropic()
+
+
+class SonnetJudge(DeepEvalBaseLLM):
     def __init__(self):
-        super().__init__(model="claude-opus-4-6")
+        super().__init__(model=JUDGE_MODEL)
 
     def get_model_name(self) -> str:
-        return "claude-opus-4-6"
+        return JUDGE_MODEL
 
     def load_model(self):
-        return anthropic.Anthropic()
+        return _make_client()
 
     def generate(
         self, prompt: str, schema: type[BaseModel] | None = None
@@ -28,7 +39,7 @@ class OpusJudge(DeepEvalBaseLLM):
             )
 
         response = self.model.messages.create(
-            model="claude-opus-4-6",
+            model=JUDGE_MODEL,
             max_tokens=4096,
             temperature=0.0,
             messages=[{"role": "user", "content": prompt}],
@@ -50,9 +61,10 @@ class OpusJudge(DeepEvalBaseLLM):
                 f"{json.dumps(schema.model_json_schema())}"
             )
 
-        client = anthropic.AsyncAnthropic()
+        token = os.environ.get("ANTHROPIC_AUTH_TOKEN")
+        client = anthropic.AsyncAnthropic(auth_token=token) if token else anthropic.AsyncAnthropic()
         response = await client.messages.create(
-            model="claude-opus-4-6",
+            model=JUDGE_MODEL,
             max_tokens=4096,
             temperature=0.0,
             messages=[{"role": "user", "content": prompt}],

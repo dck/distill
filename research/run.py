@@ -17,7 +17,13 @@ ROOT = Path(__file__).parent
 load_dotenv(ROOT / ".env")
 
 from algorithms import AlgorithmResult, SkipExperiment, run_algorithm
+
 log = logging.getLogger(__name__)
+
+
+class RateLimited(Exception):
+    """Raised when the model returns a 429 — skip experiment, retry later."""
+    pass
 
 
 # ---------------------------------------------------------------------------
@@ -123,6 +129,10 @@ def make_llm_caller(client, config: dict):
                     }
                 return text, usage
             except Exception as e:
+                # 429 = rate limited — don't retry, skip immediately
+                if getattr(e, "status_code", None) == 429:
+                    raise RateLimited(str(e)) from e
+
                 last_err = e
                 if attempt < retry_attempts - 1:
                     wait = backoff_base ** (2 * attempt + 1)
@@ -238,6 +248,12 @@ def cmd_distill(args: argparse.Namespace, config: dict) -> None:
                 )
                 skipped += 1
 
+            except RateLimited:
+                print(
+                    f"[{completed}/{total}] {short_name} x {algo} — rate limited, will retry on next run"
+                )
+                skipped += 1
+
             except Exception as e:
                 log.exception("Experiment failed: %s x %s", short_name, algo)
                 print(
@@ -268,7 +284,7 @@ def cmd_eval(args: argparse.Namespace, config: dict) -> None:
         create_metrics,
         get_metric_weights,
     )
-    from judge import OpusJudge
+    from judge import SonnetJudge
 
     originals_dir = ROOT / "data" / "originals"
     results_dir = ROOT / "data" / "results"
@@ -297,7 +313,7 @@ def cmd_eval(args: argparse.Namespace, config: dict) -> None:
         sys.exit(1)
 
     # Create judge and metrics
-    judge = OpusJudge()
+    judge = SonnetJudge()
     metrics = create_metrics(judge)
     weights = get_metric_weights(config)
 

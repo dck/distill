@@ -1,5 +1,5 @@
 [settings]
-judge_model = "claude-opus-4-6"
+judge_model = "claude-sonnet-4-6"
 temperature = 0.3
 eval_temperature = 0.0
 free_model_delay_seconds = 8
@@ -100,4 +100,4 @@ skip_front_matter = true
 
 # Chapters to extract (1-indexed). If empty, extracts all content chapters.
 # Selected for content-type diversity and cross-chapter reference density.
-chapters = [1, 4, 7, 11, 14, 20]
+chapters = [3, 6, 9, 13, 16, 22]

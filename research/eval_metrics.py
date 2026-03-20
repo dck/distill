@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from deepeval.metrics import GEval, SummarizationMetric
 from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 
-from judge import OpusJudge
+from judge import SonnetJudge
 
 log = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ CONFIG_WEIGHT_KEYS = {
 }
 
 
-def create_metrics(judge: OpusJudge) -> list:
+def create_metrics(judge: SonnetJudge) -> list:
     """Create and return the 4 evaluation metrics."""
     completeness = SummarizationMetric(model=judge, threshold=0.5, n=5)
 
