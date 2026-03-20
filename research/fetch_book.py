@@ -1,18 +1,19 @@
-"""Download an EPUB book and extract chapters as plain text files.
+"""Extract chapters from an EPUB book as plain text files.
 
 Usage:
-    uv run python fetch_book.py              # download from config URL
-    uv run python fetch_book.py book.epub    # use local EPUB file
+    uv run python fetch_book.py book.epub              # extract configured chapters
+    uv run python fetch_book.py book.epub --list        # list all chapters (for picking)
+    uv run python fetch_book.py book.epub --chapters 1,4,7,11,14,20
 """
 
 from __future__ import annotations
 
+import argparse
 import sys
 import tempfile
 from pathlib import Path
 
 import ebooklib
-import httpx
 import tomli
 from bs4 import BeautifulSoup
 from ebooklib import epub
@@ -26,43 +27,14 @@ def load_config() -> dict:
         return tomli.load(f)
 
 
-def chapters_exist(n: int) -> bool:
-    """Check if all expected chapter files exist and are non-empty."""
-    for i in range(1, n + 1):
-        path = OUTPUT_DIR / f"ch{i:02d}.txt"
-        if not path.exists() or path.stat().st_size == 0:
-            return False
-    return True
+def extract_all_chapters(epub_path: Path, skip_front_matter: bool) -> list[tuple[int, str, str]]:
+    """Extract all content chapters from EPUB. Returns [(1-based index, title, text), ...]."""
+    if epub_path.suffix == ".epub":
+        book = epub.read_epub(str(epub_path))
+    else:
+        # Handle temp file case
+        book = epub.read_epub(str(epub_path))
 
-
-def download_epub(url: str) -> bytes:
-    """Download EPUB file, return raw bytes."""
-    print(f"Downloading {url}...")
-    r = httpx.get(url, follow_redirects=True, timeout=120)
-    if r.status_code != 200:
-        print(f"Download failed: HTTP {r.status_code}", file=sys.stderr)
-        sys.exit(1)
-    print(f"Downloaded {len(r.content):,} bytes")
-    return r.content
-
-
-def html_to_text(html: str) -> str:
-    """Convert HTML content to clean plain text."""
-    soup = BeautifulSoup(html, "html.parser")
-    return soup.get_text(separator="\n", strip=True)
-
-
-def extract_chapters(epub_bytes: bytes, num_chapters: int, skip_front_matter: bool) -> list[tuple[str, str]]:
-    """Extract chapters from EPUB. Returns [(title, text), ...]."""
-    # Write to temp file because ebooklib needs a file path
-    with tempfile.NamedTemporaryFile(suffix=".epub", delete=False) as f:
-        f.write(epub_bytes)
-        tmp_path = f.name
-
-    book = epub.read_epub(tmp_path)
-    Path(tmp_path).unlink()
-
-    # Get spine items (reading order)
     spine_ids = [item_id for item_id, _ in book.spine]
     items_by_id = {item.get_id(): item for item in book.get_items()}
 
@@ -73,96 +45,151 @@ def extract_chapters(epub_bytes: bytes, num_chapters: int, skip_front_matter: bo
             continue
 
         html = item.get_content().decode("utf-8", errors="replace")
-        text = html_to_text(html)
+        soup = BeautifulSoup(html, "html.parser")
+        text = soup.get_text(separator="\n", strip=True)
 
         # Skip very short items (cover pages, copyright, TOC)
         if len(text.split()) < 200:
             continue
 
-        # Try to extract title from HTML
-        soup = BeautifulSoup(html, "html.parser")
         title_tag = soup.find(["h1", "h2", "h3"])
         title = title_tag.get_text(strip=True) if title_tag else f"Chapter {len(chapters) + 1}"
 
-        chapters.append((title, text))
+        chapters.append((len(chapters) + 1, title, text))
 
     if skip_front_matter and chapters:
-        # Heuristic: front matter items (preface, introduction) often come before
-        # the first item with "chapter" or a numeral in the title.
-        # Skip items until we find one that looks like a chapter heading,
-        # or just skip the first item if nothing matches.
         skip = 0
-        for i, (title, _) in enumerate(chapters):
+        for i, (_, title, _) in enumerate(chapters):
             lower = title.lower()
-            if any(kw in lower for kw in ["chapter", "step", "part 1", "i.", "1."]):
+            if any(kw in lower for kw in ["chapter", "step", "part 1", "part one", "i.", "1.", "1:"]):
                 skip = i
                 break
         if skip > 0:
             print(f"Skipping {skip} front matter item(s)")
-            chapters = chapters[skip:]
+            # Re-index after skipping
+            chapters = [
+                (j + 1, title, text)
+                for j, (_, title, text) in enumerate(chapters[skip:])
+            ]
 
-    if len(chapters) < num_chapters:
-        print(
-            f"WARNING: Found {len(chapters)} content chapters, expected {num_chapters}",
-            file=sys.stderr,
-        )
-
-    return chapters[:num_chapters]
+    return chapters
 
 
-def save_chapters(chapters: list[tuple[str, str]]) -> None:
+def select_chapters(
+    all_chapters: list[tuple[int, str, str]],
+    indices: list[int],
+) -> list[tuple[int, str, str]]:
+    """Select specific chapters by 1-based index."""
+    by_index = {idx: (idx, title, text) for idx, title, text in all_chapters}
+    selected = []
+    for i in indices:
+        if i not in by_index:
+            print(
+                f"WARNING: Chapter {i} not found (book has {len(all_chapters)} chapters)",
+                file=sys.stderr,
+            )
+            continue
+        selected.append(by_index[i])
+    return selected
+
+
+def save_chapters(chapters: list[tuple[int, str, str]]) -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    for i, (title, text) in enumerate(chapters, 1):
+    for i, (_, _, text) in enumerate(chapters, 1):
         path = OUTPUT_DIR / f"ch{i:02d}.txt"
         path.write_text(text, encoding="utf-8")
 
 
-def print_info(chapters: list[tuple[str, str]]) -> None:
+def print_chapter_list(chapters: list[tuple[int, str, str]]) -> None:
+    """Print all chapters with indices for selection."""
+    print(f"\n{len(chapters)} content chapters found:")
+    print("-" * 65)
+    for idx, title, text in chapters:
+        words = len(text.split())
+        print(f"  {idx:>3d}. {title:<45s} {words:>6,} words")
+    print("-" * 65)
+    print("\nUse --chapters 1,4,7 to select specific chapters.")
+
+
+def print_info(chapters: list[tuple[int, str, str]]) -> None:
     total = 0
     print(f"\n{len(chapters)} chapters extracted:")
-    print("-" * 55)
-    for i, (title, text) in enumerate(chapters, 1):
+    print("-" * 65)
+    for i, (orig_idx, title, text) in enumerate(chapters, 1):
         words = len(text.split())
         total += words
-        print(f"  ch{i:02d}.txt  {title:<35s} {words:>6,} words")
-    print("-" * 55)
-    print(f"  {'Total':<42s} {total:>6,} words")
+        print(f"  ch{i:02d}.txt  (book ch {orig_idx:>2d}) {title:<30s} {words:>6,} words")
+    print("-" * 65)
+    print(f"  {'Total':<52s} {total:>6,} words")
+
+
+def chapters_on_disk() -> list[tuple[int, str, str]] | None:
+    """Load existing chapters from disk if they exist."""
+    if not OUTPUT_DIR.exists():
+        return None
+    files = sorted(OUTPUT_DIR.glob("ch*.txt"))
+    if not files:
+        return None
+    chapters = []
+    for i, path in enumerate(files, 1):
+        text = path.read_text(encoding="utf-8")
+        if not text:
+            return None
+        chapters.append((i, f"Chapter {i}", text))
+    return chapters
 
 
 def main() -> None:
-    config = load_config()
-    book = config["book"]
-    num_chapters = book["num_chapters"]
+    parser = argparse.ArgumentParser(
+        description="Extract chapters from an EPUB book"
+    )
+    parser.add_argument("epub", type=Path, help="Path to EPUB file")
+    parser.add_argument(
+        "--list", action="store_true",
+        help="List all chapters with indices, then exit",
+    )
+    parser.add_argument(
+        "--chapters", type=str, default=None,
+        help="Comma-separated 1-based chapter indices (overrides config.toml)",
+    )
+    args = parser.parse_args()
 
-    if chapters_exist(num_chapters):
-        print("All chapter files already exist -- skipping download.")
-        chapters = []
-        for i in range(1, num_chapters + 1):
-            text = (OUTPUT_DIR / f"ch{i:02d}.txt").read_text(encoding="utf-8")
-            chapters.append((f"Chapter {i}", text))
-        print_info(chapters)
+    if not args.epub.exists():
+        print(f"File not found: {args.epub}", file=sys.stderr)
+        sys.exit(1)
+
+    config = load_config()
+    book_config = config["book"]
+    skip_front_matter = book_config.get("skip_front_matter", True)
+
+    print(f"Reading EPUB: {args.epub}")
+    all_chapters = extract_all_chapters(args.epub, skip_front_matter)
+
+    if not all_chapters:
+        print("No content chapters found in EPUB.", file=sys.stderr)
+        sys.exit(1)
+
+    if args.list:
+        print_chapter_list(all_chapters)
         return
 
-    # Accept local EPUB path as argument, otherwise download from config URL
-    if len(sys.argv) > 1:
-        local_path = Path(sys.argv[1])
-        if not local_path.exists():
-            print(f"File not found: {local_path}", file=sys.stderr)
-            sys.exit(1)
-        print(f"Reading local EPUB: {local_path}")
-        epub_bytes = local_path.read_bytes()
+    # Determine which chapters to extract
+    if args.chapters:
+        indices = [int(x.strip()) for x in args.chapters.split(",")]
+    elif "chapters" in book_config and book_config["chapters"]:
+        indices = book_config["chapters"]
     else:
-        epub_bytes = download_epub(book["url"])
+        # All chapters
+        indices = [idx for idx, _, _ in all_chapters]
 
-    chapters = extract_chapters(
-        epub_bytes,
-        num_chapters,
-        skip_front_matter=book.get("skip_front_matter", True),
-    )
+    selected = select_chapters(all_chapters, indices)
+    if not selected:
+        print("No chapters matched the selection.", file=sys.stderr)
+        sys.exit(1)
 
-    save_chapters(chapters)
+    save_chapters(selected)
     print(f"\nSaved to {OUTPUT_DIR}/")
-    print_info(chapters)
+    print_info(selected)
 
 
 if __name__ == "__main__":

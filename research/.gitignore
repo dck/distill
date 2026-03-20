@@ -3,4 +3,5 @@ data/results/
 __pycache__/
 .venv/
 *.pyc
+*.epub
 .env

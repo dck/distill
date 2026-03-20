@@ -95,7 +95,9 @@ enabled = [
 ]
 
 [book]
-url = "https://archive.org/download/think-and-grow-rich-napolean-hill/THINK%20AND%20GROW%20RICH%2C%20NAPOLEAN%20HILL.epub"
 format = "epub"
-num_chapters = 6
 skip_front_matter = true
+
+# Chapters to extract (1-indexed). If empty, extracts all content chapters.
+# Selected for content-type diversity and cross-chapter reference density.
+chapters = [1, 4, 7, 11, 14, 20]
