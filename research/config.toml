@@ -15,10 +15,10 @@ compression_quality = 0.15
 # --- Free models ---
 
 [[models]]
-id = "qwen/qwen3-coder:free"
-name = "Qwen3 Coder"
+id = "google/gemini-3-flash-preview:free"
+name = "Gemini 3 Flash"
 tier = "strong"
-context_window = 262000
+context_window = 1048576
 free = true
 
 [[models]]
@@ -29,10 +29,10 @@ context_window = 262144
 free = true
 
 [[models]]
-id = "qwen/qwen3-next-80b-a3b-instruct:free"
-name = "Qwen3 Next 80B"
+id = "nousresearch/hermes-3-llama-3.1-405b:free"
+name = "Hermes 3 405B"
 tier = "strong"
-context_window = 262144
+context_window = 131072
 free = true
 
 [[models]]
