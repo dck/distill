@@ -28,7 +28,7 @@ pub async fn start_mock_llm() -> MockServer {
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "choices": [{
                 "message": {
-                    "content": "<compressed>\n## Compressed Section\n\nThis is compressed content.\n</compressed>\n<ledger>\n{\"new_concepts\": [], \"new_definitions\": [], \"new_principles\": [], \"new_examples\": [], \"new_anti_patterns\": [], \"new_relationships\": []}\n</ledger>"
+                    "content": "<compressed>\n## Compressed Section\n\nThis is compressed content.\n</compressed>"
                 }
             }]
         })))

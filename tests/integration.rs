@@ -25,10 +25,6 @@ async fn mock_llm_returns_compressed_response() {
         content.contains("<compressed>"),
         "response should contain <compressed> tag"
     );
-    assert!(
-        content.contains("<ledger>"),
-        "response should contain <ledger> tag"
-    );
 }
 
 #[tokio::test]
@@ -44,8 +40,8 @@ async fn tldr_strategy_produces_structured_extraction() {
     );
 
     let strategy = TldrStrategy;
-    let system = strategy.single_pass_system();
-    let user = strategy.single_pass_user("Some article about testing.");
+    let system = strategy.distill_system();
+    let user = strategy.distill_user("Some article about testing.");
 
     let result = client.complete(&system, &user).await;
     assert!(result.is_ok(), "expected Ok, got: {result:?}");

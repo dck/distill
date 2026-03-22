@@ -78,7 +78,7 @@ async fn run() -> error::Result<()> {
 
     // Compress
     let is_multi = detected_mode == Mode::Book && strategy.supports_multi_pass();
-    let pipeline = if is_multi { "multi-pass (compress → dedup → refine)" } else { "single-pass" };
+    let pipeline = if is_multi { "hierarchical (distill → refine)" } else { "single-pass" };
 
     if cli.verbose >= 1 {
         eprintln!(
@@ -90,13 +90,13 @@ async fn run() -> error::Result<()> {
         eprintln!(
             "{}\n{}",
             "[pipeline] system prompt:".dimmed(),
-            strategy.single_pass_system()
+            strategy.distill_system()
         );
     }
 
     let compressed = if is_multi {
         let strategy: Arc<dyn llm::strategy::CompressionStrategy> = strategy.into();
-        compress::multi_pass(client, chunks, strategy, cli.parallel, cli.jobs, &console).await?
+        compress::hierarchical(client, chunks, strategy, cli.parallel, cli.jobs, &console).await?
     } else {
         let sp = console.spinner(&format!("Compressing {chunk_count} chunks..."));
         let result = compress::single_pass(&client, chunks, strategy.as_ref()).await?;

@@ -1,25 +1,19 @@
-use crate::state::LedgerDelta;
+use crate::error::DistillError;
 
 #[derive(Debug)]
 pub struct ParsedResponse {
     pub compressed: String,
-    pub ledger: LedgerDelta,
 }
 
 pub fn parse_llm_response(response: &str) -> crate::error::Result<ParsedResponse> {
     let compressed = extract_tag(response, "compressed").ok_or_else(|| {
-        crate::error::DistillError::Compression {
+        DistillError::Compression {
             chunk_index: 0,
             section: String::new(),
             cause: "missing <compressed> tag in LLM response".into(),
         }
     })?;
-
-    let ledger = extract_tag(response, "ledger")
-        .and_then(|json| serde_json::from_str::<LedgerDelta>(&json).ok())
-        .unwrap_or_default();
-
-    Ok(ParsedResponse { compressed, ledger })
+    Ok(ParsedResponse { compressed })
 }
 
 fn extract_tag(text: &str, tag: &str) -> Option<String> {
@@ -44,15 +38,10 @@ mod tests {
 ## Section Title
 
 Compressed content here.
-</compressed>
-<ledger>
-{"new_concepts": [{"id": "concept-001", "name": "Test Concept", "first_seen_chunk": 0, "description": "A test"}], "new_definitions": [], "new_principles": [], "new_examples": [], "new_anti_patterns": [], "new_relationships": []}
-</ledger>"#;
+</compressed>"#;
 
         let parsed = parse_llm_response(response).unwrap();
         assert!(parsed.compressed.contains("Compressed content"));
-        assert_eq!(parsed.ledger.new_concepts.len(), 1);
-        assert_eq!(parsed.ledger.new_concepts[0].name, "Test Concept");
     }
 
     #[test]
@@ -63,26 +52,10 @@ Compressed content here.
     }
 
     #[test]
-    fn test_parse_missing_ledger_tag() {
-        let response = "<compressed>Some text</compressed>";
-        let parsed = parse_llm_response(response).unwrap();
-        assert_eq!(parsed.compressed, "Some text");
-        assert!(parsed.ledger.new_concepts.is_empty());
-    }
-
-    #[test]
     fn test_parse_empty_compressed() {
-        let response = "<compressed></compressed>\n<ledger>{\"new_concepts\": [], \"new_definitions\": [], \"new_principles\": [], \"new_examples\": [], \"new_anti_patterns\": [], \"new_relationships\": []}</ledger>";
+        let response = "<compressed></compressed>";
         let parsed = parse_llm_response(response).unwrap();
         assert_eq!(parsed.compressed, "");
-    }
-
-    #[test]
-    fn test_parse_malformed_ledger_json() {
-        let response = "<compressed>Good text</compressed>\n<ledger>not valid json</ledger>";
-        let parsed = parse_llm_response(response).unwrap();
-        assert_eq!(parsed.compressed, "Good text");
-        assert!(parsed.ledger.new_concepts.is_empty());
     }
 
     #[test]

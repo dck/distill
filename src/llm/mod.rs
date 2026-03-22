@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 use std::time::Duration;
 
 pub mod parse;
-pub mod prompt;
 pub mod strategy;
 
 const MAX_RETRIES: u32 = 3;

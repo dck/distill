@@ -1,40 +1,13 @@
 use crate::cli::CompressionLevel;
-use crate::state::StateLedger;
 
-/// Defines how a compression level generates prompts and configures the pipeline.
 pub trait CompressionStrategy: Send + Sync {
-    fn single_pass_system(&self) -> String;
-    fn single_pass_user(&self, content: &str) -> String;
-    fn pass1_system(&self) -> String;
-    fn pass1_user(&self, chunk_content: &str, chunk_index: usize, ledger: &StateLedger) -> String;
+    fn distill_system(&self) -> String;
+    fn distill_user(&self, content: &str) -> String;
+    fn refinement_system(&self) -> String;
+    fn refinement_user(&self, combined_distilled: &str) -> String;
     fn supports_multi_pass(&self) -> bool;
 }
 
-const LEDGER_SCHEMA: &str = "\
-Ledger entry formats (return only entries NEW to this chunk):
-
-- Concept: {\"id\": \"concept-NNN\", \"name\": \"...\", \"first_seen_chunk\": N, \"description\": \"...\"}
-  A major idea, topic, or theme the author introduces.
-
-- Definition: {\"id\": \"def-NNN\", \"term\": \"...\", \"meaning\": \"...\", \"first_seen_chunk\": N}
-  A specific term the author explicitly defines.
-
-- Principle: {\"id\": \"prin-NNN\", \"name\": \"...\", \"statement\": \"...\", \"related_concept\": \"concept-NNN\", \"first_seen_chunk\": N}
-  A rule, guideline, law, or framework the author advocates.
-
-- Example: {\"id\": \"ex-NNN\", \"related_concept\": \"concept-NNN\", \"first_seen_chunk\": N, \"summary\": \"...\"}
-  A concrete illustration, case study, anecdote, or story.
-
-- AntiPattern: {\"id\": \"anti-NNN\", \"name\": \"...\", \"description\": \"...\", \"related_concept\": \"concept-NNN\", \"first_seen_chunk\": N}
-  A common mistake, pitfall, or \"what NOT to do\" warning.
-
-- Relationship: {\"id\": \"rel-NNN\", \"from_concept\": \"concept-NNN\", \"to_concept\": \"concept-NNN\", \"relation_type\": \"causes|enables|contradicts|extends|requires\", \"first_seen_chunk\": N}
-  How two concepts connect to each other.
-
-If no new entries for a category, return an empty array for that field.";
-
-/// Strategy for tight, dense, and distilled levels.
-/// These share the same prompt structure, differing only in the compression policy.
 pub struct ProseStrategy {
     policy: &'static str,
 }
@@ -42,91 +15,81 @@ pub struct ProseStrategy {
 impl ProseStrategy {
     pub fn tight() -> Self {
         Self {
-            policy: "COMPRESSION LEVEL: tight (~80% of original)\n\
-                     - Remove repetition and filler only\n\
-                     - Minimal rewriting\n\
-                     - Preserve original phrasing wherever possible",
+            policy: "TARGET: Retain ~80% of original length.\n\
+                     Remove only clear filler and redundancy. Preserve original phrasing.",
         }
     }
-
     pub fn dense() -> Self {
         Self {
-            policy: "COMPRESSION LEVEL: dense (~50% of original)\n\
-                     - Compress explanations into fewer sentences\n\
-                     - Merge short paragraphs covering the same point\n\
-                     - Shorten repeated mentions of the same concept",
+            policy: "TARGET: Retain ~50% of original length.\n\
+                     Compress explanations, merge paragraphs covering the same point.",
         }
     }
-
     pub fn distilled() -> Self {
         Self {
-            policy: "COMPRESSION LEVEL: distilled (~30% of original)\n\
-                     - Aggressive compression\n\
-                     - Keep only the strongest example per concept\n\
-                     - Allow intra-section restructuring for clarity",
+            policy: "TARGET: Retain ~30% of original length.\n\
+                     Aggressive compression. Keep only the strongest example per concept.",
         }
     }
 }
 
+const PROSE_SYSTEM: &str = "\
+You are distilling a book chapter. Your goal is to remove low-value content \
+while preserving the intellectual substance.
+
+REMOVE: filler phrases, redundant restatements of the same idea, excessive \
+anecdotes that repeat a point already made, verbose introductions, motivational \
+padding, unnecessary transitions, rhetorical questions that add no information.
+
+PRESERVE: key arguments, frameworks, concrete examples (with names and data), \
+research citations, actionable advice, important quotes, definitions, \
+cause-effect relationships.
+
+This should read like the same book chapter, just shorter — NOT a summary.
+Maintain the author's voice and writing style.
+Output as markdown with appropriate headings and sub-sections.
+
+RESPONSE FORMAT:
+Return your response in exactly this format:
+<compressed>
+[distilled markdown here]
+</compressed>";
+
+const REFINEMENT_SYSTEM: &str = "\
+You are performing a coherence refinement pass across all distilled chapters of a book.
+
+You will receive the full set of distilled chapters. Your job:
+
+1. Fix dangling references — if a chapter references something that was cut \
+from an earlier chapter, either restore the minimal context or remove the reference.
+2. Remove cross-chapter redundancy — if the same point is made in multiple \
+chapters, keep the strongest version and compress or remove the others.
+3. Smooth transitions between chapters where needed.
+4. Ensure consistent terminology throughout.
+
+Do NOT change the overall length significantly. Do NOT add new content. \
+Do NOT re-expand distilled sections. This is a refinement pass, not a rewrite.
+
+RESPONSE FORMAT:
+<compressed>
+[refined markdown here]
+</compressed>";
+
 impl CompressionStrategy for ProseStrategy {
-    fn single_pass_system(&self) -> String {
-        format!(
-            "You are a structure-preserving semantic compression engine.\n\
-             You compress text while preserving structure, core ideas, meaningful examples, and the author's voice.\n\
-             Remove: repetition, filler, long transitions, meta-text.\n\n\
-             {}\n\n\
-             RESPONSE FORMAT:\n\
-             Return your response in exactly this format:\n\
-             <compressed>\n\
-             [compressed markdown here]\n\
-             </compressed>",
-            self.policy
-        )
+    fn distill_system(&self) -> String {
+        format!("{PROSE_SYSTEM}\n\n{}", self.policy)
     }
 
-    fn single_pass_user(&self, content: &str) -> String {
-        format!("TEXT TO COMPRESS:\n\n{content}")
+    fn distill_user(&self, content: &str) -> String {
+        format!("CHAPTER TO DISTILL:\n\n{content}")
     }
 
-    fn pass1_system(&self) -> String {
-        format!(
-            "You are a structure-preserving semantic compression engine.\n\
-             You compress text while preserving structure, core ideas, meaningful examples, and the author's voice.\n\
-             Remove: repetition, filler, long transitions, meta-text (\"we will cover later\", \"as mentioned previously\").\n\n\
-             {}\n\n\
-             RESPONSE FORMAT:\n\
-             Return your response in exactly this format:\n\
-             <compressed>\n\
-             [compressed markdown here]\n\
-             </compressed>\n\
-             <ledger>\n\
-             {{\n\
-               \"new_concepts\": [...],\n\
-               \"new_definitions\": [...],\n\
-               \"new_principles\": [...],\n\
-               \"new_examples\": [...],\n\
-               \"new_anti_patterns\": [...],\n\
-               \"new_relationships\": [...]\n\
-             }}\n\
-             </ledger>\n\n\
-             {LEDGER_SCHEMA}\n\n\
-             IMPORTANT:\n\
-             - Only extract entries genuinely present in the text. Do not invent.\n\
-             - Check the current ledger below — do NOT re-extract entries already listed.\n\
-             - Use concept IDs from the existing ledger when referencing known concepts.",
-            self.policy
-        )
+    fn refinement_system(&self) -> String {
+        REFINEMENT_SYSTEM.into()
     }
 
-    fn pass1_user(&self, chunk_content: &str, chunk_index: usize, ledger: &StateLedger) -> String {
-        let ledger_json = serde_json::to_string(ledger).unwrap_or_else(|_| "{}".into());
-        format!(
-            "CHUNK INDEX: {chunk_index}\n\n\
-             CURRENT LEDGER (all entries extracted so far — do NOT duplicate these):\n\
-             {ledger_json}\n\n\
-             TEXT TO COMPRESS:\n\
-             {chunk_content}"
-        )
+    fn refinement_user(&self, combined_distilled: &str) -> String {
+        format!("DISTILLED CHAPTERS TO REFINE:\n\n{combined_distilled}")
     }
 
     fn supports_multi_pass(&self) -> bool {
@@ -138,7 +101,7 @@ impl CompressionStrategy for ProseStrategy {
 pub struct TldrStrategy;
 
 impl CompressionStrategy for TldrStrategy {
-    fn single_pass_system(&self) -> String {
+    fn distill_system(&self) -> String {
         "You are a knowledge extraction engine.\n\
          Extract the key ideas, insights, and takeaways from the text.\n\n\
          Output structured markdown in exactly this format inside <compressed> tags:\n\
@@ -163,21 +126,16 @@ impl CompressionStrategy for TldrStrategy {
             .into()
     }
 
-    fn single_pass_user(&self, content: &str) -> String {
+    fn distill_user(&self, content: &str) -> String {
         format!("TEXT TO EXTRACT FROM:\n\n{content}")
     }
 
-    fn pass1_system(&self) -> String {
-        self.single_pass_system()
+    fn refinement_system(&self) -> String {
+        self.distill_system()
     }
 
-    fn pass1_user(
-        &self,
-        chunk_content: &str,
-        _chunk_index: usize,
-        _ledger: &StateLedger,
-    ) -> String {
-        self.single_pass_user(chunk_content)
+    fn refinement_user(&self, combined_distilled: &str) -> String {
+        self.distill_user(combined_distilled)
     }
 
     fn supports_multi_pass(&self) -> bool {
@@ -198,44 +156,36 @@ pub fn strategy_for(level: &CompressionLevel) -> Box<dyn CompressionStrategy> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::state::StateLedger;
 
     #[test]
-    fn prose_tight_single_pass_contains_policy() {
+    fn prose_tight_contains_research_prompt() {
         let strategy = ProseStrategy::tight();
-        let prompt = strategy.single_pass_system();
-        assert!(prompt.contains("~80% of original"));
-        assert!(prompt.contains("compression engine"));
+        let prompt = strategy.distill_system();
+        assert!(prompt.contains("distilling a book chapter"));
+        assert!(prompt.contains("REMOVE:"));
+        assert!(prompt.contains("PRESERVE:"));
+        assert!(prompt.contains("~80%"));
     }
 
     #[test]
-    fn prose_dense_pass1_contains_policy_and_ledger() {
+    fn prose_dense_contains_policy() {
         let strategy = ProseStrategy::dense();
-        let prompt = strategy.pass1_system();
-        assert!(prompt.contains("~50% of original"));
-        assert!(prompt.contains("Ledger entry formats"));
+        let prompt = strategy.distill_system();
+        assert!(prompt.contains("~50%"));
     }
 
     #[test]
-    fn prose_distilled_supports_multi_pass() {
-        let strategy = ProseStrategy::distilled();
+    fn prose_refinement_prompt_exists() {
+        let strategy = ProseStrategy::tight();
+        let prompt = strategy.refinement_system();
+        assert!(prompt.contains("coherence refinement"));
+        assert!(prompt.contains("dangling references"));
+    }
+
+    #[test]
+    fn prose_supports_multi_pass() {
+        let strategy = ProseStrategy::tight();
         assert!(strategy.supports_multi_pass());
-    }
-
-    #[test]
-    fn prose_pass1_user_includes_chunk_and_ledger() {
-        let strategy = ProseStrategy::tight();
-        let ledger = StateLedger::default();
-        let prompt = strategy.pass1_user("chunk content", 3, &ledger);
-        assert!(prompt.contains("CHUNK INDEX: 3"));
-        assert!(prompt.contains("chunk content"));
-    }
-
-    #[test]
-    fn prose_single_pass_user_wraps_content() {
-        let strategy = ProseStrategy::tight();
-        let prompt = strategy.single_pass_user("article text");
-        assert!(prompt.contains("article text"));
     }
 
     #[test]
@@ -245,28 +195,26 @@ mod tests {
     }
 
     #[test]
-    fn tldr_single_pass_system_is_extraction_prompt() {
+    fn tldr_is_extraction_prompt() {
         let strategy = TldrStrategy;
-        let prompt = strategy.single_pass_system();
+        let prompt = strategy.distill_system();
         assert!(prompt.contains("knowledge extraction"));
         assert!(prompt.contains("Key Ideas"));
-        assert!(prompt.contains("Insights"));
-        assert!(!prompt.contains("compression engine"));
-    }
-
-    #[test]
-    fn tldr_single_pass_user_wraps_content() {
-        let strategy = TldrStrategy;
-        let prompt = strategy.single_pass_user("some article text");
-        assert!(prompt.contains("some article text"));
     }
 
     #[test]
     fn strategy_for_returns_correct_types() {
-        let tight = strategy_for(&CompressionLevel::Tight);
-        assert!(tight.supports_multi_pass());
+        let dense = strategy_for(&CompressionLevel::Dense);
+        assert!(dense.supports_multi_pass());
 
         let tldr = strategy_for(&CompressionLevel::Tldr);
         assert!(!tldr.supports_multi_pass());
+    }
+
+    #[test]
+    fn distill_user_wraps_content() {
+        let strategy = ProseStrategy::tight();
+        let prompt = strategy.distill_user("some chapter text");
+        assert!(prompt.contains("some chapter text"));
     }
 }

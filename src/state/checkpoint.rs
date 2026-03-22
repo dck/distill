@@ -1,6 +1,5 @@
 use crate::cli::CompressionLevel;
 use crate::error::Result;
-use crate::state::StateLedger;
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
@@ -8,7 +7,6 @@ use std::path::{Path, PathBuf};
 pub enum ChunkStatus {
     Pending,
     Compressed,
-    Deduplicated,
     Refined,
 }
 
@@ -27,7 +25,6 @@ pub struct Checkpoint {
     pub model: String,
     pub completed_pass: u8,
     pub chunks: Vec<ChunkState>,
-    pub ledger: StateLedger,
 }
 
 impl Checkpoint {
@@ -102,7 +99,6 @@ mod tests {
                     compressed: None,
                 },
             ],
-            ledger: StateLedger::default(),
         }
     }
 

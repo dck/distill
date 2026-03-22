@@ -1,12 +1,10 @@
 pub mod pass1;
 pub mod pass2;
-pub mod pass3;
 
 use crate::error::Result;
 use crate::llm::LlmClient;
 use crate::llm::strategy::CompressionStrategy;
 use crate::segment::Chunk;
-use crate::state::{CompressedChunk, StateLedger};
 use crate::ui::Console;
 use std::sync::Arc;
 
@@ -16,22 +14,19 @@ pub async fn single_pass(
     strategy: &dyn CompressionStrategy,
 ) -> Result<String> {
     let mut compressed = Vec::new();
-
     for chunk in &chunks {
-        let result = pass1::compress_chunk_single_pass(client, chunk, strategy).await?;
+        let result = pass1::distill_chunk(client, chunk, strategy).await?;
         compressed.push(result);
     }
-
     let output = compressed
         .iter()
         .map(|c| c.content.as_str())
         .collect::<Vec<_>>()
         .join("\n\n");
-
     Ok(output)
 }
 
-pub async fn multi_pass(
+pub async fn hierarchical(
     client: Arc<LlmClient>,
     chunks: Vec<Chunk>,
     strategy: Arc<dyn CompressionStrategy>,
@@ -40,13 +35,11 @@ pub async fn multi_pass(
     console: &Console,
 ) -> Result<String> {
     let chunk_count = chunks.len();
-    let mut ledger = StateLedger::default();
-    let compressed: Vec<CompressedChunk>;
 
-    // Pass 1: Local compression
-    let pb = console.progress(chunk_count as u64, "Pass 1: Compressing");
+    // Pass 1: Independent distillation
+    let pb = console.progress(chunk_count as u64, "Pass 1: Distilling");
 
-    if parallel {
+    let compressed = if parallel {
         let semaphore = Arc::new(tokio::sync::Semaphore::new(jobs));
         let mut handles = Vec::new();
 
@@ -55,11 +48,10 @@ pub async fn multi_pass(
             let client = client.clone();
             let chunk = chunk.clone();
             let strategy = strategy.clone();
-            let ledger_snapshot = ledger.clone();
 
             handles.push(tokio::spawn(async move {
                 let _permit = sem.acquire().await.unwrap();
-                pass1::compress_chunk(&client, &chunk, strategy.as_ref(), &ledger_snapshot).await
+                pass1::distill_chunk(&client, &chunk, strategy.as_ref()).await
             }));
         }
 
@@ -72,37 +64,34 @@ pub async fn multi_pass(
                     section: String::new(),
                     cause: e.to_string(),
                 })??;
-            ledger.apply_delta(&result.ledger_updates);
             results.push(result);
             pb.inc();
         }
-        compressed = results;
+        results
     } else {
         let mut results = Vec::new();
         for chunk in &chunks {
-            let result =
-                pass1::compress_chunk(&client, chunk, strategy.as_ref(), &ledger).await?;
-            ledger.apply_delta(&result.ledger_updates);
+            let result = pass1::distill_chunk(&client, chunk, strategy.as_ref()).await?;
             results.push(result);
             pb.inc();
         }
-        compressed = results;
-    }
+        results
+    };
 
     pb.finish();
-    console.pass_done("Pass 1", &format!("Compressed {chunk_count} chunks"));
+    console.pass_done("Pass 1", &format!("Distilled {chunk_count} chapters"));
 
-    // Pass 2: Global deduplication
-    let sp = console.spinner("Pass 2: Deduplicating...");
-    let deduped = pass2::deduplicate(&client, &compressed, &ledger).await?;
-    sp.finish();
-    console.pass_done("Pass 2", "Deduplicated");
+    let combined = compressed
+        .iter()
+        .map(|c| c.content.as_str())
+        .collect::<Vec<_>>()
+        .join("\n\n");
 
-    // Pass 3: Refinement
-    let sp = console.spinner("Pass 3: Refining...");
-    let refined = pass3::refine(&client, &deduped).await?;
+    // Pass 2: Coherence refinement
+    let sp = console.spinner("Pass 2: Refining coherence...");
+    let refined = pass2::refine(&client, &combined, strategy.as_ref()).await?;
     sp.finish();
-    console.pass_done("Pass 3", "Refined");
+    console.pass_done("Pass 2", "Coherence refined");
 
     Ok(refined)
 }
