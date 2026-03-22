@@ -184,26 +184,39 @@ Metric weights: Completeness (0.35), Structure Preservation (0.25), Coherence (0
 
 ## Recommendations
 
-### Recommended Algorithm
+### Implementation Recommendation
 
-**hierarchical** -- highest average composite score (0.88) across all models.
+**Algorithm: hierarchical** (two-pass: independent distill, then coherence refinement).
+Composite 0.88 -- clear winner across all models, +0.08 over second place. The two-pass approach consistently preserves facts (0.90 Completeness) while maintaining structure (0.94) and producing coherent output (0.83).
 
-### Recommended Models
+**Fallback: independent** for models with limited context windows. Simpler, single-pass, and still scores 0.78 composite.
 
-- **Best Free**: GPT-5 Mini (composite: 0.94)
-- **Best Budget**: Grok 4.1 Fast (composite: 0.86, cost: $0.0013/chapter)
-- **Best Quality**: Gemini 2.5 Pro (composite: 0.94)
+### Model Rankings (by average across all algorithms)
+
+| Tier | Model | Avg Composite | Cost | Notes |
+|------|-------|--------------|------|-------|
+| Top | StepFun Flash | 0.88 | Free | Most consistent across all algorithms |
+| Top | GPT-4.1 | 0.87 | Free | Fastest (174 tok/s), strong across the board |
+| Top | GPT-5 Mini | 0.86 | Free | Reasoning model, best peak score (0.94) |
+| Strong | Grok 4.1 Fast | 0.85 | $0.08 | Fast (122 tok/s), strong compression quality |
+| Strong | Nemotron 120B | 0.84 | Free | Solid all-rounder |
+| Mid | MiniMax M2.5 | 0.79 | $0.19 | Good coherence, weaker compression quality |
+| Mid | Llama 4 Maverick | 0.74 | $0.05 | Cheap but underwhelming for distillation |
+| Mid | DeepSeek V3.2 | 0.72 | $0.11 | Penalized by Completeness metric (see caveat) |
+| Mid | Gemini 2.5 Pro | 0.72 | $2.71 | Most expensive, does not justify cost |
+| Weak | DeepSeek R1 | 0.66 | $0.24 | Reasoning overhead hurts distillation |
+| Weak | Trinity Large | 0.66 | Free | Preview model, inconsistent |
 
 ### Key Insights
 
-- **hierarchical** is the top algorithm with a composite score of 0.88, outperforming **extract_compress** by 0.18 points.
-- **StepFun: Step 3.5 Flash** leads model rankings (0.88), while **Trinity Large** trails (0.66).
-- Average compression ratio across all experiments: 0.45 (retaining 45% of original text).
-- Free models average 0.82 composite vs paid models at 0.75 -- free models are competitive.
+- **hierarchical dominates** -- wins for 8 of 11 models. The refinement pass catches cross-chapter inconsistencies that single-pass algorithms miss.
+- **Price does not predict quality** -- the top 5 models include 4 free ones. Gemini 2.5 Pro ($2.71 total) scores the same as DeepSeek V3.2 ($0.11).
+- **Free models are competitive** -- average 0.82 composite vs 0.75 for paid models. No reason to default to paid APIs for distillation.
+- **Compression ratio varies 5-88%** -- models that aggressively compress (Grok, DeepSeek R1 at ~25% retention) score differently than those that lightly trim (DeepSeek V3.2 at ~74% retention). The optimal ratio appears to be 40-55% retention.
 
-### Limitations
+### Caveats
 
-- Single book (Atomic Habits) -- results may not generalize
-- 6 chapters -- small sample size
-- English only
-- Token estimation is approximate (len/4)
+- **Completeness metric may penalize paraphrasing.** Models like DeepSeek V3.2 and Gemini 2.5 Pro score low on Completeness (0.43-0.44) despite retaining 70%+ of the original text. The SummarizationMetric extracts literal factual claims and checks for their presence -- heavy paraphrasing breaks this even when the information is preserved. Model rankings for Structure, Coherence, and Compression Quality are more reliable.
+- **Single book (Atomic Habits)** -- story-heavy non-fiction. Technical books, dense academic text, and reference-heavy material would stress algorithms differently. The algorithm ranking (hierarchical > independent) likely holds, but optimal compression ratios would shift.
+- **6 chapters, English only** -- small sample size, single language.
+- **Token estimation is approximate** (len/4) -- cost figures are estimates.
