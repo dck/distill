@@ -56,11 +56,11 @@ pub async fn hierarchical(
         }
 
         let mut results = Vec::new();
-        for handle in handles {
+        for (i, handle) in handles.into_iter().enumerate() {
             let result = handle
                 .await
                 .map_err(|e| crate::error::DistillError::Compression {
-                    chunk_index: 0,
+                    chunk_index: i,
                     section: String::new(),
                     cause: e.to_string(),
                 })??;
