@@ -181,21 +181,9 @@ def generate_compression_scatter(data: list[dict], output_path: Path) -> None:
                 "xAxes": [{"scaleLabel": {"display": True, "labelString": "Compression Ratio"}}],
                 "yAxes": [{"scaleLabel": {"display": True, "labelString": "Completeness Score"}}],
             },
-            "plugins": {
-                "datalabels": {
-                    "display": True,
-                    "align": "top",
-                    "formatter": "(val, ctx) => ctx.dataset.data[ctx.dataIndex].label || ''",
-                },
-            },
+            "plugins": {"datalabels": {"display": False}},
         },
     }
-
-    # Inject labels into point data for datalabels plugin
-    for i, (algo, points) in enumerate(sorted(algo_groups.items())):
-        for j, p in enumerate(points):
-            config["data"]["datasets"][i]["data"][j]["label"] = p.get("label", "")
-
     _post_chart(config, output_path)
 
 
@@ -224,19 +212,7 @@ def generate_cost_quality_scatter(data: list[dict], output_path: Path) -> None:
                 "xAxes": [{"scaleLabel": {"display": True, "labelString": "Estimated Cost ($)"}}],
                 "yAxes": [{"scaleLabel": {"display": True, "labelString": "Composite Score"}}],
             },
-            "plugins": {
-                "datalabels": {
-                    "display": True,
-                    "align": "top",
-                    "formatter": "(val, ctx) => ctx.dataset.data[ctx.dataIndex].label || ''",
-                },
-            },
+            "plugins": {"datalabels": {"display": False}},
         },
     }
-
-    # Inject labels into point data for datalabels plugin
-    for i, (model, points) in enumerate(sorted(model_groups.items())):
-        for j, p in enumerate(points):
-            config["data"]["datasets"][i]["data"][j]["label"] = p.get("label", "")
-
     _post_chart(config, output_path)
