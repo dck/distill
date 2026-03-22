@@ -102,27 +102,24 @@ pub struct TldrStrategy;
 
 impl CompressionStrategy for TldrStrategy {
     fn distill_system(&self) -> String {
-        "You are a knowledge extraction engine.\n\
-         Extract the key ideas, insights, and takeaways from the text.\n\n\
-         Output structured markdown in exactly this format inside <compressed> tags:\n\
+        "You are a knowledge extraction engine. Be extremely concise.\n\n\
+         Output structured markdown inside <compressed> tags:\n\
          <compressed>\n\
          ## TL;DR\n\
-         [1-2 sentence summary]\n\n\
+         [ONE sentence — the core point of the entire text]\n\n\
          ## Key Ideas\n\
-         - [idea]\n\
-         - [idea]\n\n\
-         ## Insights & Takeaways\n\
-         - [insight]\n\n\
-         ## Notable Examples\n\
-         - [example] (only if genuinely memorable or illustrative)\n\
+         - [idea — one sentence]\n\n\
+         ## Insights\n\
+         - [only what is surprising or non-obvious — one sentence each]\n\
          </compressed>\n\n\
          Rules:\n\
-         - Be concise. Each bullet: 1-2 sentences max.\n\
-         - Key Ideas = what the text IS ABOUT (main themes, arguments, frameworks).\n\
-         - Insights & Takeaways = what is SURPRISING or NON-OBVIOUS.\n\
-         - If there are no notable examples worth keeping, omit that section entirely.\n\
-         - Do not editorialize. Use the author's framing.\n\
-         - You MUST wrap your output in <compressed></compressed> tags."
+         - ONE sentence per bullet. No exceptions.\n\
+         - Key Ideas: 3-5 bullets max. Only the main themes, arguments, or frameworks.\n\
+         - Insights: 1-3 bullets max. Only what is genuinely surprising or non-obvious. Omit if nothing qualifies.\n\
+         - No examples section unless an example IS the key idea.\n\
+         - No editorializing. Use the author's framing.\n\
+         - The entire output should fit on half a screen.\n\
+         - You MUST wrap output in <compressed></compressed> tags."
             .into()
     }
 

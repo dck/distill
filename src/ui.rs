@@ -110,10 +110,10 @@ impl Console {
         if self.quiet {
             return;
         }
-        let ratio = if input_tokens > 0 {
-            (output_tokens as f64 / input_tokens as f64 * 100.0) as usize
+        let reduced = if input_tokens > 0 {
+            100 - (output_tokens as f64 / input_tokens as f64 * 100.0) as usize
         } else {
-            100
+            0
         };
         if self.color {
             self.check(format!(
@@ -123,13 +123,13 @@ impl Console {
                 input_tokens.to_string().dimmed(),
                 "→".dimmed(),
                 output_tokens.to_string().white().bold(),
-                format!("(~{ratio}%)").dimmed(),
+                format!("({reduced}% reduced)").dimmed(),
                 "→".dimmed(),
                 output.cyan().bold(),
             ));
         } else {
             self.check(format!(
-                "{chunks} chunks | {input_tokens} → {output_tokens} tokens (~{ratio}%) → {output}"
+                "{chunks} chunks | {input_tokens} → {output_tokens} tokens ({reduced}% reduced) → {output}"
             ));
         }
     }
