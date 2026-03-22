@@ -503,7 +503,7 @@ def generate_report(eval_report_path: Path, reports_dir: Path) -> None:
 
     lines.append("### Limitations")
     lines.append("")
-    lines.append("- Single book (Think and Grow Rich) -- results may not generalize")
+    lines.append("- Single book (Atomic Habits) -- results may not generalize")
     lines.append("- 6 chapters -- small sample size")
     lines.append("- English only")
     lines.append("- Token estimation is approximate (len/4)")

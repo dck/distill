@@ -34,7 +34,7 @@ Six chapters chosen for content-type diversity and cross-chapter reference densi
 Three sequential phases, each checkpointed and independently re-runnable:
 
 1. **Distill** -- Each (model x algorithm) combination processes the selected chapters, producing distilled text. Outputs are saved per-chapter so partial runs resume where they left off.
-2. **Eval** -- A judge model (GPT-5 Mini via GitHub Copilot) scores each distilled chapter on 4 metrics. Eval JSONs are saved per-chapter; failed evals (all-None scores) are automatically re-evaluated on the next run.
+2. **Eval** -- A judge model (GPT-5 Mini) scores each distilled chapter on 4 metrics. Eval JSONs are saved per-chapter; failed evals (all-None scores) are automatically re-evaluated on the next run.
 3. **Report** -- Aggregates eval results into a leaderboard, per-model analysis, charts, and cost breakdown.
 
 ### Judge Model

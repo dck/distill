@@ -103,7 +103,11 @@ def find_model_config(config: dict, model_id: str) -> dict | None:
 # ---------------------------------------------------------------------------
 
 
-def make_llm_caller(client, config: dict):
+def make_llm_caller(clients: dict, config: dict):
+    """Create an LLM caller that routes to the correct backend per model.
+
+    clients: {"openrouter": OpenAI(...), "copilot": OpenAI(...)}
+    """
     settings = config["settings"]
     retry_attempts = settings["retry_attempts"]
     backoff_base = settings["retry_backoff_base"]
@@ -114,13 +118,17 @@ def make_llm_caller(client, config: dict):
 
     # Track which models are free for delay logic
     free_models = {m["id"] for m in config["models"] if m.get("free", False)}
+    # Track which models use copilot backend
+    copilot_models = {m["id"] for m in config["models"] if m.get("backend") == "copilot"}
 
     def call_llm(
         model_id: str, system: str, user_message: str, temperature: float
     ) -> tuple[str, dict]:
-        # Free model rate-limit delay
-        if model_id in free_models:
+        # Free model rate-limit delay (OpenRouter free models only)
+        if model_id in free_models and model_id not in copilot_models:
             time.sleep(free_delay)
+
+        client = clients["copilot"] if model_id in copilot_models else clients["openrouter"]
 
         last_err = None
         for attempt in range(retry_attempts):
@@ -169,16 +177,24 @@ def make_llm_caller(client, config: dict):
 
 
 def cmd_distill(args: argparse.Namespace, config: dict) -> None:
+    import httpx
     from openai import OpenAI
 
     chapters = load_chapters()
     chapter_names = list(chapters.keys())
 
-    client = OpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=os.environ["OPENROUTER_API_KEY"],
-    )
-    call_llm = make_llm_caller(client, config)
+    clients = {
+        "openrouter": OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=os.environ["OPENROUTER_API_KEY"],
+        ),
+        "copilot": OpenAI(
+            base_url="http://localhost:4141/v1",
+            api_key="copilot",
+            http_client=httpx.Client(trust_env=False),
+        ),
+    }
+    call_llm = make_llm_caller(clients, config)
     temperature = config["settings"]["temperature"]
     algos = config["algorithms"]["enabled"]
 
