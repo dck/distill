@@ -49,13 +49,11 @@ fn show() {
     }
 
     // Bool/numeric settings from config file only
-    let parallel_str = file.parallel.map(|v| v.to_string());
     let jobs_str = file.jobs.map(|v| v.to_string());
     let level_str = file.level.clone();
 
     let file_settings: &[(&str, &Option<String>)] = &[
         ("level", &level_str),
-        ("parallel", &parallel_str),
         ("jobs", &jobs_str),
     ];
 
@@ -127,12 +125,6 @@ fn set(args: &[String]) {
         "api_base" => file.api_base = Some(value.clone()),
         "model" => file.model = Some(value.clone()),
         "level" => file.level = Some(value.clone()),
-        "parallel" => {
-            file.parallel = Some(value.parse::<bool>().unwrap_or_else(|_| {
-                eprintln!("invalid value for parallel: expected true or false");
-                std::process::exit(1);
-            }));
-        }
         "jobs" => {
             file.jobs = Some(value.parse::<usize>().unwrap_or_else(|_| {
                 eprintln!("invalid value for jobs: expected a positive integer");
@@ -141,7 +133,7 @@ fn set(args: &[String]) {
         }
         other => {
             eprintln!("unknown config key: {other}");
-            eprintln!("valid keys: api_key, api_base, model, level, parallel, jobs");
+            eprintln!("valid keys: api_key, api_base, model, level, jobs");
             std::process::exit(1);
         }
     }

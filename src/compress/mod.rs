@@ -33,7 +33,6 @@ pub async fn hierarchical(
     client: Arc<LlmClient>,
     chunks: Vec<Chunk>,
     strategy: Arc<dyn CompressionStrategy>,
-    parallel: bool,
     jobs: usize,
     console: &Console,
     checkpoint: Option<(PathBuf, Checkpoint)>,
@@ -46,7 +45,6 @@ pub async fn hierarchical(
         client.clone(),
         &chunks,
         strategy.clone(),
-        parallel,
         jobs,
         &pb,
         checkpoint,
@@ -75,7 +73,6 @@ async fn run_pass1(
     client: Arc<LlmClient>,
     chunks: &[Chunk],
     strategy: Arc<dyn CompressionStrategy>,
-    parallel: bool,
     jobs: usize,
     progress: &crate::ui::Progress,
     checkpoint: Option<(PathBuf, Checkpoint)>,
@@ -87,7 +84,7 @@ async fn run_pass1(
         progress,
     );
 
-    if parallel {
+    if jobs > 1 {
         let semaphore = Arc::new(tokio::sync::Semaphore::new(jobs));
         let mut handles = Vec::new();
 

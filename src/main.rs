@@ -122,7 +122,6 @@ async fn run() -> error::Result<()> {
             client,
             chunks,
             strategy,
-            cli.parallel,
             cli.jobs,
             &console,
             checkpoint,

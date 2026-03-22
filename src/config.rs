@@ -15,7 +15,6 @@ pub struct ConfigFile {
     pub api_base: Option<String>,
     pub model: Option<String>,
     pub level: Option<String>,
-    pub parallel: Option<bool>,
     pub jobs: Option<usize>,
 }
 
@@ -113,8 +112,13 @@ mod tests {
             std::env::remove_var("DISTILL_API_KEY");
             std::env::remove_var("DISTILL_API_BASE");
             std::env::remove_var("DISTILL_MODEL");
+            // Point config to nonexistent dir so real config file doesn't interfere
+            std::env::set_var("XDG_CONFIG_HOME", "/tmp/distill-test-nonexistent");
         }
         let result = Config::resolve(None, None, None);
+        unsafe {
+            std::env::remove_var("XDG_CONFIG_HOME");
+        }
         assert!(result.is_err());
     }
 
@@ -143,7 +147,6 @@ mod tests {
         assert!(file.api_base.is_none());
         assert!(file.model.is_none());
         assert!(file.level.is_none());
-        assert!(file.parallel.is_none());
         assert!(file.jobs.is_none());
     }
 
@@ -156,7 +159,6 @@ mod tests {
             api_base: Some("https://api.example.com/v1".into()),
             model: Some("test-model".into()),
             level: Some("dense".into()),
-            parallel: Some(true),
             jobs: Some(8),
         };
         save_config_file_to(&path, &config).unwrap();
@@ -165,7 +167,6 @@ mod tests {
         assert_eq!(loaded.api_base.as_deref(), Some("https://api.example.com/v1"));
         assert_eq!(loaded.model.as_deref(), Some("test-model"));
         assert_eq!(loaded.level.as_deref(), Some("dense"));
-        assert_eq!(loaded.parallel, Some(true));
         assert_eq!(loaded.jobs, Some(8));
     }
 

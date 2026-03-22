@@ -70,11 +70,7 @@ pub struct Cli {
     #[arg(long)]
     pub api_key: Option<String>,
 
-    /// Enable concurrent chunk processing
-    #[arg(long)]
-    pub parallel: bool,
-
-    /// Concurrency limit (default: 1)
+    /// Concurrency limit [default: 1, sequential]
     #[arg(short, long, default_value_t = 1, value_parser = parse_jobs)]
     pub jobs: usize,
 
@@ -114,7 +110,6 @@ mod tests {
             "dense",
             "-m",
             "book",
-            "--parallel",
             "-j",
             "8",
             "-v",
@@ -124,7 +119,6 @@ mod tests {
         assert_eq!(args.format, Some(OutputFormat::Epub));
         assert_eq!(args.level, Some(CompressionLevel::Dense));
         assert_eq!(args.mode, Some(Mode::Book));
-        assert!(args.parallel);
         assert_eq!(args.jobs, 8);
         assert_eq!(args.verbose, 1);
     }
