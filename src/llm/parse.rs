@@ -6,12 +6,13 @@ pub struct ParsedResponse {
 }
 
 pub fn parse_llm_response(response: &str) -> crate::error::Result<ParsedResponse> {
-    let compressed =
-        extract_tag(response, "compressed").ok_or_else(|| DistillError::Compression {
+    let compressed = extract_tag(response, "compressed").ok_or_else(|| {
+        DistillError::Compression {
             chunk_index: 0,
             section: String::new(),
             cause: "missing <compressed> tag in LLM response".into(),
-        })?;
+        }
+    })?;
     Ok(ParsedResponse { compressed })
 }
 

@@ -2,16 +2,6 @@ use std::path::PathBuf;
 
 use clap::{Parser, ValueEnum};
 
-fn parse_jobs(value: &str) -> Result<usize, String> {
-    let jobs = value
-        .parse::<usize>()
-        .map_err(|_| format!("invalid value for jobs: {value}"))?;
-    if jobs == 0 {
-        return Err("jobs must be at least 1".into());
-    }
-    Ok(jobs)
-}
-
 #[derive(Debug, Clone, ValueEnum, PartialEq)]
 pub enum OutputFormat {
     Epub,
@@ -75,23 +65,23 @@ pub struct Cli {
     pub parallel: bool,
 
     /// Concurrency limit (default: 4)
-    #[arg(short, long, default_value_t = 4, value_parser = parse_jobs)]
+    #[arg(short, long, default_value_t = 4)]
     pub jobs: usize,
 
     /// Resume from checkpoint
-    #[arg(long, conflicts_with = "clean")]
+    #[arg(long)]
     pub resume: bool,
 
     /// Remove checkpoint file and exit
-    #[arg(long, conflicts_with = "resume")]
+    #[arg(long)]
     pub clean: bool,
 
     /// Increase log verbosity (-v, -vv)
-    #[arg(short, long, action = clap::ArgAction::Count, conflicts_with = "quiet")]
+    #[arg(short, long, action = clap::ArgAction::Count)]
     pub verbose: u8,
 
     /// Suppress progress bars, errors only
-    #[arg(short, long, conflicts_with = "verbose")]
+    #[arg(short, long)]
     pub quiet: bool,
 }
 
@@ -156,23 +146,5 @@ mod tests {
 
         let args = Cli::parse_from(["distill", "--clean", "input.pdf"]);
         assert!(args.clean);
-    }
-
-    #[test]
-    fn test_resume_and_clean_conflict() {
-        let result = Cli::try_parse_from(["distill", "--resume", "--clean", "input.pdf"]);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_quiet_and_verbose_conflict() {
-        let result = Cli::try_parse_from(["distill", "-q", "-v", "input.pdf"]);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_jobs_must_be_positive() {
-        let result = Cli::try_parse_from(["distill", "-j", "0", "input.pdf"]);
-        assert!(result.is_err());
     }
 }

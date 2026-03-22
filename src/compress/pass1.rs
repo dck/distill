@@ -1,6 +1,6 @@
 use crate::error::Result;
 use crate::llm::LlmClient;
-use crate::llm::parse::{ParsedResponse, parse_llm_response};
+use crate::llm::parse::{parse_llm_response, ParsedResponse};
 use crate::llm::strategy::CompressionStrategy;
 use crate::segment::Chunk;
 use crate::state::CompressedChunk;

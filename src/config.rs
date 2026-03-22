@@ -14,29 +14,23 @@ impl Config {
         cli_base: Option<String>,
         cli_model: Option<String>,
     ) -> crate::error::Result<Self> {
-        let api_key = cli_key.or_else(|| env::var("DISTILL_API_KEY").ok()).ok_or(
-            DistillError::MissingConfig {
-                field: "API key",
-                env_var: "DISTILL_API_KEY",
-                flag: "--api-key",
-            },
-        )?;
+        let api_key = cli_key
+            .or_else(|| env::var("DISTILL_API_KEY").ok())
+            .ok_or_else(|| DistillError::Config {
+                cause: "API key required. Set DISTILL_API_KEY or pass --api-key".into(),
+            })?;
 
         let api_base = cli_base
             .or_else(|| env::var("DISTILL_API_BASE").ok())
-            .ok_or(DistillError::MissingConfig {
-                field: "API base URL",
-                env_var: "DISTILL_API_BASE",
-                flag: "--api-base",
+            .ok_or_else(|| DistillError::Config {
+                cause: "API base URL required. Set DISTILL_API_BASE or pass --api-base".into(),
             })?;
 
-        let model = cli_model.or_else(|| env::var("DISTILL_MODEL").ok()).ok_or(
-            DistillError::MissingConfig {
-                field: "model name",
-                env_var: "DISTILL_MODEL",
-                flag: "--model",
-            },
-        )?;
+        let model = cli_model
+            .or_else(|| env::var("DISTILL_MODEL").ok())
+            .ok_or_else(|| DistillError::Config {
+                cause: "Model name required. Set DISTILL_MODEL or pass --model".into(),
+            })?;
 
         Ok(Self {
             api_key,

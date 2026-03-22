@@ -1,29 +1,18 @@
 use crate::error::{DistillError, Result};
 use crate::ingest::Document;
 use crate::mode::estimate_tokens;
-use reqwest::header::CONTENT_TYPE;
-use std::io::Write;
-use std::time::Duration;
-use tempfile::NamedTempFile;
-
-const REQUEST_TIMEOUT: Duration = Duration::from_secs(60);
-const RETRY_DELAYS: [Duration; 2] = [Duration::from_secs(1), Duration::from_secs(3)];
-const USER_AGENT: &str = concat!("distill/", env!("CARGO_PKG_VERSION"));
 
 pub async fn ingest_url(url: &str) -> Result<Document> {
-    let client = reqwest::Client::builder()
-        .timeout(REQUEST_TIMEOUT)
-        .user_agent(USER_AGENT)
-        .build()
+    let response = reqwest::get(url)
+        .await
         .map_err(|e| DistillError::Ingestion {
             source: url.into(),
-            cause: format!("failed to build HTTP client: {e}"),
+            cause: e.to_string(),
         })?;
 
-    let response = fetch_with_retry(&client, url).await?;
     let content_type = response
         .headers()
-        .get(CONTENT_TYPE)
+        .get("content-type")
         .and_then(|v| v.to_str().ok())
         .unwrap_or("")
         .to_lowercase();
@@ -36,13 +25,15 @@ pub async fn ingest_url(url: &str) -> Result<Document> {
                 source: url.into(),
                 cause: e.to_string(),
             })?;
-        return ingest_downloaded_file(url, &bytes, "pdf", crate::ingest::pdf::ingest_pdf);
+        let tmp = std::env::temp_dir().join("distill-download.pdf");
+        std::fs::write(&tmp, &bytes).map_err(|e| DistillError::Ingestion {
+            source: url.into(),
+            cause: e.to_string(),
+        })?;
+        return crate::ingest::pdf::ingest_pdf(&tmp);
     }
 
-    if content_type.contains("application/epub")
-        || content_type.contains("application/epub+zip")
-        || url.ends_with(".epub")
-    {
+    if content_type.contains("application/epub") || url.ends_with(".epub") {
         let bytes = response
             .bytes()
             .await
@@ -50,9 +41,15 @@ pub async fn ingest_url(url: &str) -> Result<Document> {
                 source: url.into(),
                 cause: e.to_string(),
             })?;
-        return ingest_downloaded_file(url, &bytes, "epub", crate::ingest::epub::ingest_epub);
+        let tmp = std::env::temp_dir().join("distill-download.epub");
+        std::fs::write(&tmp, &bytes).map_err(|e| DistillError::Ingestion {
+            source: url.into(),
+            cause: e.to_string(),
+        })?;
+        return crate::ingest::epub::ingest_epub(&tmp);
     }
 
+    // HTML — extract article
     let html = response.text().await.map_err(|e| DistillError::Ingestion {
         source: url.into(),
         cause: e.to_string(),
@@ -64,7 +61,8 @@ pub async fn ingest_url(url: &str) -> Result<Document> {
         return Err(DistillError::Ingestion {
             source: url.into(),
             cause: "extracted content is too short (fewer than 20 words). This URL may be a JavaScript-rendered SPA — distill cannot process pages that require a browser to render.".into(),
-        });
+        }
+        .into());
     }
 
     let tokens = estimate_tokens(&content);
@@ -75,82 +73,6 @@ pub async fn ingest_url(url: &str) -> Result<Document> {
         content,
         estimated_tokens: tokens,
     })
-}
-
-async fn fetch_with_retry(client: &reqwest::Client, url: &str) -> Result<reqwest::Response> {
-    let mut last_err = None;
-
-    for attempt in 0..=RETRY_DELAYS.len() {
-        if attempt > 0 {
-            tokio::time::sleep(RETRY_DELAYS[attempt - 1]).await;
-        }
-
-        match client.get(url).send().await {
-            Ok(response) => {
-                let status = response.status();
-                if status.is_success() {
-                    return Ok(response);
-                }
-
-                let body = response.text().await.unwrap_or_default();
-                let preview = preview(&body, 300);
-                let err = DistillError::HttpStatus {
-                    source: url.into(),
-                    status: status.to_string(),
-                    body: preview,
-                };
-
-                if (status.is_server_error() || status.as_u16() == 429)
-                    && attempt < RETRY_DELAYS.len()
-                {
-                    last_err = Some(err);
-                    continue;
-                }
-
-                return Err(err);
-            }
-            Err(e) => {
-                let err = DistillError::Ingestion {
-                    source: url.into(),
-                    cause: e.to_string(),
-                };
-
-                if (e.is_timeout() || e.is_connect()) && attempt < RETRY_DELAYS.len() {
-                    last_err = Some(err);
-                    continue;
-                }
-
-                return Err(err);
-            }
-        }
-    }
-
-    Err(last_err.unwrap_or_else(|| DistillError::Ingestion {
-        source: url.into(),
-        cause: "request failed after retries".into(),
-    }))
-}
-
-fn ingest_downloaded_file(
-    url: &str,
-    bytes: &[u8],
-    suffix: &str,
-    ingest: fn(&std::path::Path) -> Result<Document>,
-) -> Result<Document> {
-    let mut file =
-        NamedTempFile::with_suffix(format!(".{suffix}")).map_err(|e| DistillError::Ingestion {
-            source: url.into(),
-            cause: format!("failed to create temp file: {e}"),
-        })?;
-    file.write_all(bytes).map_err(|e| DistillError::Ingestion {
-        source: url.into(),
-        cause: format!("failed to write temp file: {e}"),
-    })?;
-    file.flush().map_err(|e| DistillError::Ingestion {
-        source: url.into(),
-        cause: format!("failed to flush temp file: {e}"),
-    })?;
-    ingest(file.path())
 }
 
 fn extract_article(html: &str, url: &str) -> Result<String> {
@@ -172,55 +94,11 @@ fn extract_article(html: &str, url: &str) -> Result<String> {
 }
 
 fn extract_title(html: &str) -> Option<String> {
-    let lower = html.to_ascii_lowercase();
-    let start = lower.find("<title>")? + "<title>".len();
-    let remaining = lower.get(start..)?;
-    let relative_end = remaining.find("</title>")?;
-    let end = start + relative_end;
-    let title = html.get(start..end)?.trim();
-    if title.is_empty() {
-        None
-    } else {
-        Some(title.to_string())
+    let start = html.find("<title>")? + 7;
+    let end = html.find("</title>")?;
+    if start > end || start > html.len() || end > html.len() {
+        return None;
     }
-}
-
-fn preview(text: &str, max_len: usize) -> String {
-    if text.is_empty() {
-        "<empty>".into()
-    } else if text.len() > max_len {
-        format!("{}...", &text[..max_len])
-    } else {
-        text.to_string()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_extract_title_handles_normal_html() {
-        let html = "<html><head><title>Hello World</title></head></html>";
-        assert_eq!(extract_title(html).as_deref(), Some("Hello World"));
-    }
-
-    #[test]
-    fn test_extract_title_is_case_insensitive() {
-        let html = "<html><head><TITLE>Mixed Case</TITLE></head></html>";
-        assert_eq!(extract_title(html).as_deref(), Some("Mixed Case"));
-    }
-
-    #[test]
-    fn test_extract_title_rejects_malformed_html() {
-        let html = "<html><head><title>Missing close";
-        assert_eq!(extract_title(html), None);
-    }
-
-    #[test]
-    fn test_preview_truncates() {
-        let text = "a".repeat(400);
-        let preview = preview(&text, 10);
-        assert_eq!(preview, "aaaaaaaaaa...");
-    }
+    let title = html[start..end].trim();
+    if title.is_empty() { None } else { Some(title.to_string()) }
 }

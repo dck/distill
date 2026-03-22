@@ -1,10 +1,5 @@
 pub mod cli;
-pub mod compress;
 pub mod error;
-pub mod export;
-pub mod ingest;
 pub mod llm;
-pub mod mode;
-pub mod segment;
 pub mod state;
 pub mod ui;
