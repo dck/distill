@@ -286,17 +286,67 @@ def cmd_distill(args: argparse.Namespace, config: dict) -> None:
 # ---------------------------------------------------------------------------
 
 
-def cmd_eval(args: argparse.Namespace, config: dict) -> None:
+def _eval_worker(
+    task: tuple,
+    judge_factory,
+    weights: dict[str, float],
+) -> tuple[str, str, dict | None]:
+    """Evaluate a single chapter in a worker thread.
+
+    Returns (exp_name, ch_name, result_dict) or (exp_name, ch_name, None) on skip.
+    """
     from eval_metrics import (
-        compute_composite_score,
         compute_compression_ratio,
         evaluate_chapter,
         create_metrics,
+    )
+
+    exp_name, ch_file, exp_dir, original_text, distilled_text = task
+    ch_name = ch_file.replace(".txt", "")
+    eval_path = exp_dir / f"eval_{ch_file}".replace(".txt", ".json")
+
+    # Each worker creates its own metrics (they hold state during evaluation)
+    judge = judge_factory()
+    metrics = create_metrics(judge)
+
+    print(f"  {_CYAN}Evaluating{_RESET} {exp_name}/{ch_file}...")
+    result = evaluate_chapter(original_text, distilled_text, metrics)
+    result["compression_ratio"] = compute_compression_ratio(
+        original_text, distilled_text
+    )
+
+    # Save eval JSON immediately
+    with open(eval_path, "w") as f:
+        json.dump(result, f, indent=2)
+
+    # Check if all scores are None (total failure)
+    all_failed = all(
+        result.get(k, {}).get("score") is None
+        for k in weights
+    )
+    if all_failed:
+        print(f"  {_RED}FAILED{_RESET} {exp_name}/{ch_file} — all metrics returned None")
+    else:
+        scores_str = ", ".join(
+            f"{k[:4]}={result[k]['score']:.2f}"
+            for k in weights
+            if result.get(k, {}).get("score") is not None
+        )
+        print(f"  {_GREEN}Done{_RESET} {exp_name}/{ch_file} — {scores_str}")
+
+    return exp_name, ch_name, result
+
+
+def cmd_eval(args: argparse.Namespace, config: dict) -> None:
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from eval_metrics import (
+        compute_composite_score,
+        compute_compression_ratio,
+        create_metrics,
         get_metric_weights,
     )
-    from judge import SonnetJudge
+    from judge import GPT5Judge
 
-    originals_dir = ROOT / "data" / "originals"
     results_dir = ROOT / "data" / "results"
     reports_dir = ROOT / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
@@ -322,61 +372,61 @@ def cmd_eval(args: argparse.Namespace, config: dict) -> None:
         print("No experiments found in data/results/", file=sys.stderr)
         sys.exit(1)
 
-    # Create judge and metrics
-    judge = SonnetJudge()
-    metrics = create_metrics(judge)
     weights = get_metric_weights(config)
-
-    # Load originals
     originals = load_chapters()
+    concurrency = getattr(args, "concurrency", 4) or 4
 
-    eval_report: dict = {"experiments": {}}
+    # --- Pass 1: collect tasks and load cached results ---
+    tasks: list[tuple] = []  # (exp_name, ch_file, exp_dir, original, distilled)
+    cached: dict[str, dict[str, dict]] = {}  # exp_name -> {ch_name -> result}
+    # Track experiment metadata for aggregation
+    exp_meta: dict[str, tuple] = {}  # exp_name -> (slug, algo, model_config)
 
     for exp_name in experiments:
         exp_dir = results_dir / exp_name
-
-        # Parse model and algo from experiment name
-        # Format: {model_slug}__{algo}
         parts = exp_name.split("__", 1)
         if len(parts) != 2:
             log.warning("Skipping unrecognized experiment dir: %s", exp_name)
             continue
         slug, algo = parts
 
-        # Find model config by slug
         model_config = None
         for m in config["models"]:
             if model_slug(m["id"]) == slug:
                 model_config = m
                 break
+        exp_meta[exp_name] = (slug, algo, model_config)
 
-        # Discover chapter files in experiment (exclude eval_ files)
         chapter_files = sorted(
             f.name
             for f in exp_dir.iterdir()
             if f.is_file() and f.suffix == ".txt" and not f.name.startswith("eval_")
         )
-
         if not chapter_files:
             continue
 
-        chapter_scores: dict = {}
-
+        cached[exp_name] = {}
         for ch_file in chapter_files:
             ch_name = ch_file.replace(".txt", "")
             eval_path = exp_dir / f"eval_{ch_file}".replace(".txt", ".json")
 
-            # Checkpoint: skip if eval already exists
+            # Checkpoint: load cached or mark for re-eval
             if eval_path.exists():
-                print(f"  {exp_name}/{ch_file} — eval exists, loading")
                 with open(eval_path) as f:
                     result = json.load(f)
-                chapter_scores[ch_name] = result
-                continue
+                all_failed = all(
+                    result.get(k, {}).get("score") is None
+                    for k in weights
+                )
+                if not all_failed:
+                    print(f"  {_DIM}{exp_name}/{ch_file} — cached{_RESET}")
+                    cached[exp_name][ch_name] = result
+                    continue
+                eval_path.unlink()
+                print(f"  {exp_name}/{ch_file} — previous eval had no scores, re-evaluating")
 
-            # Special keys don't map to individual original chapters
+            # Resolve original text
             if ch_file.startswith("__"):
-                # For whole_book / hierarchical, concat all originals
                 original_text = "\n\n".join(originals.values())
             elif ch_file in originals:
                 original_text = originals[ch_file]
@@ -385,29 +435,47 @@ def cmd_eval(args: argparse.Namespace, config: dict) -> None:
                 continue
 
             distilled_text = (exp_dir / ch_file).read_text(encoding="utf-8")
+            tasks.append((exp_name, ch_file, exp_dir, original_text, distilled_text))
 
-            print(f"  Evaluating {exp_name}/{ch_file}...")
-            result = evaluate_chapter(original_text, distilled_text, metrics)
-            result["compression_ratio"] = compute_compression_ratio(
-                original_text, distilled_text
-            )
+    if not tasks:
+        print("\nAll chapters already evaluated.")
+    else:
+        print(f"\n{_BOLD}{len(tasks)} chapters to evaluate ({concurrency} concurrent workers){_RESET}\n")
 
-            # Save eval JSON immediately
-            with open(eval_path, "w") as f:
-                json.dump(result, f, indent=2)
+        # --- Pass 2: run evals concurrently ---
+        judge_factory = GPT5Judge  # each worker creates its own instance
+        with ThreadPoolExecutor(max_workers=concurrency) as pool:
+            futures = {
+                pool.submit(_eval_worker, task, judge_factory, weights): task
+                for task in tasks
+            }
+            for future in as_completed(futures):
+                try:
+                    exp_name, ch_name, result = future.result()
+                    if result is not None:
+                        cached.setdefault(exp_name, {})[ch_name] = result
+                except Exception:
+                    task = futures[future]
+                    log.exception("Eval worker failed for %s/%s", task[0], task[1])
 
-            chapter_scores[ch_name] = result
+    # --- Pass 3: aggregate results ---
+    eval_report: dict = {"experiments": {}}
 
+    for exp_name in experiments:
+        if exp_name not in exp_meta or exp_name not in cached:
+            continue
+        slug, algo, model_config = exp_meta[exp_name]
+        chapter_scores = cached.get(exp_name, {})
         if not chapter_scores:
             continue
 
+        exp_dir = results_dir / exp_name
         metadata_path = exp_dir / "metadata.json"
         metadata = {}
         if metadata_path.exists():
             with open(metadata_path, encoding="utf-8") as f:
                 metadata = json.load(f)
 
-        # Aggregate scores for this experiment
         score_sums: dict[str, float] = {}
         score_counts: dict[str, int] = {}
         compression_ratios: list[float] = []
@@ -431,7 +499,6 @@ def cmd_eval(args: argparse.Namespace, config: dict) -> None:
         composite = compute_composite_score(averages, weights)
         avg_cr = sum(compression_ratios) / len(compression_ratios) if compression_ratios else 0.0
 
-        # Build chapter data for report (scores only, not reasons)
         chapters_report = {}
         for ch_name, ch_result in chapter_scores.items():
             scores = {}
@@ -602,6 +669,10 @@ def main() -> None:
     p_eval = subparsers.add_parser("eval", help="Run evaluation")
     p_eval.add_argument(
         "--experiment", type=str, help="Evaluate only this experiment"
+    )
+    p_eval.add_argument(
+        "--concurrency", type=int, default=4,
+        help="Number of concurrent eval workers (default: 4)",
     )
 
     # report
