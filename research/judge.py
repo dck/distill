@@ -1,33 +1,43 @@
-"""Sonnet 4.6 judge model for DeepEval metrics."""
+"""GPT-4.1 judge model for DeepEval metrics (via Copilot proxy)."""
 
+import asyncio
 import json
-import os
 import re
 
-import anthropic
 from deepeval.models import DeepEvalBaseLLM
+from openai import AsyncOpenAI, OpenAI
 from pydantic import BaseModel
 
-JUDGE_MODEL = "claude-sonnet-4-6-20250514"
+JUDGE_MODEL = "gpt-5-mini"
+_COPILOT_PROXY = "http://localhost:4141/v1"
+_RETRY_ATTEMPTS = 5
+_RETRY_BACKOFF = 3
+_MAX_TOKENS = 4096
 
 
-def _make_client() -> anthropic.Anthropic:
-    """Create Anthropic client using OAuth token or API key."""
-    token = os.environ.get("ANTHROPIC_AUTH_TOKEN")
-    if token:
-        return anthropic.Anthropic(auth_token=token)
-    return anthropic.Anthropic()
-
-
-class SonnetJudge(DeepEvalBaseLLM):
+class GPT5Judge(DeepEvalBaseLLM):
     def __init__(self):
         super().__init__(model=JUDGE_MODEL)
+        self._async_client: AsyncOpenAI | None = None
 
     def get_model_name(self) -> str:
         return JUDGE_MODEL
 
     def load_model(self):
-        return _make_client()
+        import httpx
+        return OpenAI(
+            base_url=_COPILOT_PROXY, api_key="copilot",
+            http_client=httpx.Client(trust_env=False),
+        )
+
+    def _get_async_client(self) -> AsyncOpenAI:
+        if self._async_client is None:
+            import httpx
+            self._async_client = AsyncOpenAI(
+                base_url=_COPILOT_PROXY, api_key="copilot",
+                http_client=httpx.AsyncClient(trust_env=False),
+            )
+        return self._async_client
 
     def generate(
         self, prompt: str, schema: type[BaseModel] | None = None
@@ -38,14 +48,13 @@ class SonnetJudge(DeepEvalBaseLLM):
                 f"{json.dumps(schema.model_json_schema())}"
             )
 
-        response = self.model.messages.create(
+        response = self.model.chat.completions.create(
             model=JUDGE_MODEL,
-            max_tokens=4096,
-            temperature=0.0,
+            max_tokens=_MAX_TOKENS,
             messages=[{"role": "user", "content": prompt}],
         )
 
-        text = response.content[0].text
+        text = response.choices[0].message.content
 
         if schema is not None:
             return schema.model_validate(json.loads(_extract_json(text)))
@@ -61,21 +70,29 @@ class SonnetJudge(DeepEvalBaseLLM):
                 f"{json.dumps(schema.model_json_schema())}"
             )
 
-        token = os.environ.get("ANTHROPIC_AUTH_TOKEN")
-        client = anthropic.AsyncAnthropic(auth_token=token) if token else anthropic.AsyncAnthropic()
-        response = await client.messages.create(
-            model=JUDGE_MODEL,
-            max_tokens=4096,
-            temperature=0.0,
-            messages=[{"role": "user", "content": prompt}],
-        )
+        client = self._get_async_client()
+        last_err: Exception | None = None
+        for attempt in range(_RETRY_ATTEMPTS):
+            try:
+                response = await client.chat.completions.create(
+                    model=JUDGE_MODEL,
+                    max_tokens=_MAX_TOKENS,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+                text = response.choices[0].message.content
+                if schema is not None:
+                    return schema.model_validate(json.loads(_extract_json(text)))
+                return text
+            except Exception as e:
+                status = getattr(e, "status_code", None)
+                if status in (401, 403):
+                    raise
+                last_err = e
+                if attempt < _RETRY_ATTEMPTS - 1:
+                    wait = _RETRY_BACKOFF ** (attempt + 1)
+                    await asyncio.sleep(wait)
 
-        text = response.content[0].text
-
-        if schema is not None:
-            return schema.model_validate(json.loads(_extract_json(text)))
-
-        return text
+        raise last_err  # type: ignore[misc]
 
 
 def _extract_json(text: str) -> str:
