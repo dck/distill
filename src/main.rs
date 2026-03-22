@@ -49,10 +49,16 @@ async fn run() -> error::Result<()> {
 
     // Detect mode and settings
     let detected_mode = mode::detect_mode(cli.mode.clone(), doc.estimated_tokens);
-    let level = cli.level.clone().unwrap_or(match detected_mode {
+    let file = config::load_config_file();
+    let file_level = file
+        .level
+        .as_deref()
+        .and_then(|s| s.parse::<CompressionLevel>().ok());
+    let level = cli.level.clone().or(file_level).unwrap_or(match detected_mode {
         Mode::Book => CompressionLevel::Dense,
         Mode::Article => CompressionLevel::Tight,
     });
+    let jobs = if cli.jobs != 1 { cli.jobs } else { file.jobs.unwrap_or(1) };
     let format = cli.format.clone().unwrap_or(match detected_mode {
         Mode::Book => OutputFormat::Epub,
         Mode::Article => OutputFormat::Md,
@@ -122,7 +128,7 @@ async fn run() -> error::Result<()> {
             client,
             chunks,
             strategy,
-            cli.jobs,
+            jobs,
             &console,
             checkpoint,
         )

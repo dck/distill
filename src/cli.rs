@@ -27,6 +27,19 @@ pub enum CompressionLevel {
     Tldr,
 }
 
+impl std::str::FromStr for CompressionLevel {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "tight" => Ok(Self::Tight),
+            "dense" => Ok(Self::Dense),
+            "distilled" => Ok(Self::Distilled),
+            "tldr" => Ok(Self::Tldr),
+            _ => Err(format!("unknown compression level: {s}")),
+        }
+    }
+}
+
 #[derive(Debug, Clone, ValueEnum, PartialEq)]
 pub enum Mode {
     Book,
