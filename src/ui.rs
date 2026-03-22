@@ -19,7 +19,11 @@ impl Console {
         let color = std::io::stderr().is_terminal();
         let multi = MultiProgress::with_draw_target(ProgressDrawTarget::stderr());
         MULTI_STATE.set((multi.clone(), color, quiet)).ok();
-        Self { multi, color, quiet }
+        Self {
+            multi,
+            color,
+            quiet,
+        }
     }
 
     pub fn spinner(&self, msg: &str) -> Spinner {
@@ -132,11 +136,7 @@ impl Console {
 
     pub fn cleaned(&self, input: &str) {
         if self.color {
-            self.check(format!(
-                "{} cache for {}",
-                "Cleaned".bold(),
-                input.dimmed()
-            ));
+            self.check(format!("{} cache for {}", "Cleaned".bold(), input.dimmed()));
         } else {
             self.check(format!("Cleaned cache for {input}"));
         }
@@ -144,7 +144,9 @@ impl Console {
 
     fn check(&self, msg: String) {
         if self.color {
-            let _ = self.multi.println(format!("  {} {msg}", "✓".green().bold()));
+            let _ = self
+                .multi
+                .println(format!("  {} {msg}", "✓".green().bold()));
         } else {
             let _ = self.multi.println(format!("  ✓ {msg}"));
         }

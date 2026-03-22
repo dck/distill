@@ -146,10 +146,9 @@ impl LlmClient {
                     }
 
                     if status.is_success() {
-                        let body_text =
-                            resp.text().await.map_err(|e| DistillError::Llm {
-                                cause: format!("failed to read response body: {e}"),
-                            })?;
+                        let body_text = resp.text().await.map_err(|e| DistillError::Llm {
+                            cause: format!("failed to read response body: {e}"),
+                        })?;
 
                         // -vv: show full response
                         if self.verbosity >= 2 {
@@ -217,7 +216,7 @@ impl LlmClient {
                         last_err = Some(err_msg);
                         continue;
                     }
-                    return Err(DistillError::Llm { cause: err_msg }.into());
+                    return Err(DistillError::Llm { cause: err_msg });
                 }
                 Err(e) => {
                     let is_timeout = e.is_timeout() || e.is_connect();
@@ -231,7 +230,7 @@ impl LlmClient {
                         last_err = Some(err_msg);
                         continue;
                     }
-                    return Err(DistillError::Llm { cause: err_msg }.into());
+                    return Err(DistillError::Llm { cause: err_msg });
                 }
             }
         }
@@ -241,8 +240,7 @@ impl LlmClient {
                 "exhausted {MAX_RETRIES} retries. last error: {}",
                 last_err.unwrap_or_default()
             ),
-        }
-        .into())
+        })
     }
 }
 

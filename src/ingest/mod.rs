@@ -26,11 +26,10 @@ pub async fn ingest(input: &str) -> Result<Document> {
         match ext.as_str() {
             "pdf" => pdf::ingest_pdf(&path),
             "epub" => epub::ingest_epub(&path),
-            _ => Err(crate::error::DistillError::Ingestion {
+            _ => Err(crate::error::DistillError::UnsupportedInput {
                 source: input.into(),
-                cause: format!("unsupported file extension: .{ext}"),
-            }
-            .into()),
+                extension: ext,
+            }),
         }
     }
 }

@@ -13,7 +13,6 @@ mod ui;
 use clap::Parser;
 use cli::{Cli, CompressionLevel, Mode, OutputFormat};
 use owo_colors::OwoColorize;
-use std::path::PathBuf;
 use std::process::ExitCode;
 use std::sync::Arc;
 
@@ -22,7 +21,7 @@ async fn main() -> ExitCode {
     match run().await {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
-            ui::print_error(e.as_ref());
+            ui::print_error(&e);
             ExitCode::FAILURE
         }
     }
@@ -34,8 +33,7 @@ async fn run() -> error::Result<()> {
 
     // Handle --clean
     if cli.clean {
-        let path = PathBuf::from(&cli.input);
-        let cache_path = state::checkpoint::Checkpoint::cache_path(&path);
+        let cache_path = state::checkpoint::Checkpoint::cache_path_for_input(&cli.input);
         state::checkpoint::Checkpoint::delete(&cache_path)?;
         console.cleaned(&cli.input);
         return Ok(());
@@ -61,24 +59,74 @@ async fn run() -> error::Result<()> {
     });
 
     sp.finish();
-    console.ingested(doc.estimated_tokens, &format!("{detected_mode:?}"), &format!("{level:?}"));
+    console.ingested(
+        doc.estimated_tokens,
+        &format!("{detected_mode:?}"),
+        &format!("{level:?}"),
+    );
 
     // Segment
     let chunks = segment::segment(&doc.content);
     let chunk_count = chunks.len();
 
+    let input_hash = state::checkpoint::Checkpoint::input_hash(&doc.content);
+
     // Create LLM client and compression strategy
+    let model_name = config.model.clone();
     let client = Arc::new(llm::LlmClient::new(
         config.api_key,
         config.api_base,
-        config.model,
+        model_name.clone(),
         cli.verbose,
     ));
-    let strategy = llm::strategy::strategy_for(&level);
+    let strategy: Arc<dyn llm::strategy::CompressionStrategy> =
+        llm::strategy::strategy_for(&level).into();
+
+    let checkpoint = if cli.resume {
+        let cache_path = state::checkpoint::Checkpoint::cache_path_for_input(&cli.input);
+        match state::checkpoint::Checkpoint::load(&cache_path) {
+            Ok(existing) => {
+                existing.validate_resume(&input_hash, &level, &model_name, &chunks)?;
+                if cli.verbose >= 1 {
+                    eprintln!(
+                        "{} resuming from {} (completed_pass={})",
+                        "[checkpoint]".dimmed(),
+                        cache_path.display(),
+                        existing.completed_pass
+                    );
+                }
+                Some((cache_path, existing))
+            }
+            Err(error::DistillError::MissingCheckpoint { .. }) => {
+                let fresh = state::checkpoint::Checkpoint::new(
+                    input_hash,
+                    level.clone(),
+                    model_name.clone(),
+                    &chunks,
+                );
+                fresh.save(&cache_path)?;
+                if cli.verbose >= 1 {
+                    eprintln!(
+                        "{} no checkpoint found, starting fresh at {}",
+                        "[checkpoint]".dimmed(),
+                        cache_path.display()
+                    );
+                }
+                Some((cache_path, fresh))
+            }
+            Err(e) => return Err(e),
+        }
+    } else {
+        None
+    };
 
     // Compress
     let is_multi = detected_mode == Mode::Book && strategy.supports_multi_pass();
-    let pipeline = if is_multi { "hierarchical (distill → refine)" } else { "single-pass" };
+    let pipeline = if is_multi {
+        "hierarchical (distill → dedup → refine)"
+    } else {
+        "single-pass"
+    };
 
     if cli.verbose >= 1 {
         eprintln!(
@@ -95,11 +143,19 @@ async fn run() -> error::Result<()> {
     }
 
     let compressed = if is_multi {
-        let strategy: Arc<dyn llm::strategy::CompressionStrategy> = strategy.into();
-        compress::hierarchical(client, chunks, strategy, cli.parallel, cli.jobs, &console).await?
+        compress::hierarchical(
+            client,
+            chunks,
+            strategy,
+            cli.parallel,
+            cli.jobs,
+            &console,
+            checkpoint,
+        )
+        .await?
     } else {
         let sp = console.spinner(&format!("Compressing {chunk_count} chunks..."));
-        let result = compress::single_pass(&client, chunks, strategy.as_ref()).await?;
+        let result = compress::single_pass(client, chunks, strategy, checkpoint).await?;
         sp.finish();
         console.compressed(chunk_count);
         result
@@ -108,14 +164,14 @@ async fn run() -> error::Result<()> {
     // Determine output path
     let output_path = cli.output.clone().or_else(|| {
         if detected_mode == Mode::Book {
-            let stem = PathBuf::from(&cli.input);
+            let stem = std::path::PathBuf::from(&cli.input);
             let stem = stem.file_stem().unwrap_or_default().to_string_lossy();
             let ext = match format {
                 OutputFormat::Epub => "epub",
                 OutputFormat::Html => "html",
                 OutputFormat::Md => "md",
             };
-            Some(PathBuf::from(format!("{stem}-distilled.{ext}")))
+            Some(std::path::PathBuf::from(format!("{stem}-distilled.{ext}")))
         } else {
             None
         }
@@ -128,7 +184,12 @@ async fn run() -> error::Result<()> {
 
     // Summary (stderr, before export so markdown appears last in terminal)
     let output_tokens = mode::estimate_tokens(&compressed);
-    console.done(chunk_count, doc.estimated_tokens, output_tokens, &output_display);
+    console.done(
+        chunk_count,
+        doc.estimated_tokens,
+        output_tokens,
+        &output_display,
+    );
 
     // Export (stdout for articles without -o, file otherwise)
     export::export(

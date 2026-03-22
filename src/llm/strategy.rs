@@ -3,6 +3,8 @@ use crate::cli::CompressionLevel;
 pub trait CompressionStrategy: Send + Sync {
     fn distill_system(&self) -> String;
     fn distill_user(&self, content: &str) -> String;
+    fn dedup_system(&self) -> String;
+    fn dedup_user(&self, combined_distilled: &str) -> String;
     fn refinement_system(&self) -> String;
     fn refinement_user(&self, combined_distilled: &str) -> String;
     fn supports_multi_pass(&self) -> bool;
@@ -56,16 +58,15 @@ Return your response in exactly this format:
 </compressed>";
 
 const REFINEMENT_SYSTEM: &str = "\
-You are performing a coherence refinement pass across all distilled chapters of a book.
+You are performing a final coherence refinement pass across all distilled chapters of a book.
 
-You will receive the full set of distilled chapters. Your job:
+You will receive text that has already been globally deduplicated. Your job:
 
 1. Fix dangling references — if a chapter references something that was cut \
 from an earlier chapter, either restore the minimal context or remove the reference.
-2. Remove cross-chapter redundancy — if the same point is made in multiple \
-chapters, keep the strongest version and compress or remove the others.
-3. Smooth transitions between chapters where needed.
-4. Ensure consistent terminology throughout.
+2. Smooth transitions between chapters where needed.
+3. Ensure consistent terminology throughout.
+4. Preserve the author's voice and markdown structure.
 
 Do NOT change the overall length significantly. Do NOT add new content. \
 Do NOT re-expand distilled sections. This is a refinement pass, not a rewrite.
@@ -75,6 +76,25 @@ RESPONSE FORMAT:
 [refined markdown here]
 </compressed>";
 
+const DEDUP_SYSTEM: &str = "\
+You are performing a global deduplication pass across distilled chapters of a book.
+
+You will receive the full set of distilled chapters. Your job:
+
+1. Remove cross-chapter redundancy — if the same point is made in multiple \
+chapters, keep the strongest version and compress or remove the others.
+2. Preserve chapter ordering and markdown headings.
+3. Keep only one strong explanation per repeated concept unless repetition is \
+needed for local clarity.
+4. Do not add new content or editorial commentary.
+
+This is a deduplication pass, not a rewrite.
+
+RESPONSE FORMAT:
+<compressed>
+[deduplicated markdown here]
+</compressed>";
+
 impl CompressionStrategy for ProseStrategy {
     fn distill_system(&self) -> String {
         format!("{PROSE_SYSTEM}\n\n{}", self.policy)
@@ -82,6 +102,14 @@ impl CompressionStrategy for ProseStrategy {
 
     fn distill_user(&self, content: &str) -> String {
         format!("CHAPTER TO DISTILL:\n\n{content}")
+    }
+
+    fn dedup_system(&self) -> String {
+        DEDUP_SYSTEM.into()
+    }
+
+    fn dedup_user(&self, combined_distilled: &str) -> String {
+        format!("DISTILLED CHAPTERS TO DEDUPLICATE:\n\n{combined_distilled}")
     }
 
     fn refinement_system(&self) -> String {
@@ -128,6 +156,14 @@ impl CompressionStrategy for TldrStrategy {
 
     fn distill_user(&self, content: &str) -> String {
         format!("TEXT TO EXTRACT FROM:\n\n{content}")
+    }
+
+    fn dedup_system(&self) -> String {
+        self.distill_system()
+    }
+
+    fn dedup_user(&self, combined_distilled: &str) -> String {
+        self.distill_user(combined_distilled)
     }
 
     fn refinement_system(&self) -> String {
@@ -178,8 +214,16 @@ mod tests {
     fn prose_refinement_prompt_exists() {
         let strategy = ProseStrategy::tight();
         let prompt = strategy.refinement_system();
-        assert!(prompt.contains("coherence refinement"));
+        assert!(prompt.contains("final coherence refinement"));
         assert!(prompt.contains("dangling references"));
+    }
+
+    #[test]
+    fn prose_dedup_prompt_exists() {
+        let strategy = ProseStrategy::tight();
+        let prompt = strategy.dedup_system();
+        assert!(prompt.contains("global deduplication"));
+        assert!(prompt.contains("cross-chapter redundancy"));
     }
 
     #[test]
