@@ -204,6 +204,8 @@ Free models (StepFun Flash, GPT-4.1) perform on par with paid alternatives. See 
 
 ## Configuration
 
+CLI flags take precedence over environment variables, which take precedence over config file values.
+
 ### Environment Variables
 
 | Variable | Description |
@@ -212,7 +214,33 @@ Free models (StepFun Flash, GPT-4.1) perform on par with paid alternatives. See 
 | `DISTILL_API_BASE` | API base URL (e.g., `https://openrouter.ai/api/v1`) |
 | `DISTILL_MODEL` | Model name (e.g., `stepfun/step-3.5-flash`) |
 
-CLI flags (`--api-key`, `--api-base`, `--model`) take precedence over environment variables.
+### Config File
+
+Settings are stored in `~/.config/distill/config.toml`:
+
+```toml
+api_key = "sk-..."
+api_base = "https://openrouter.ai/api/v1"
+model = "stepfun/step-3.5-flash"
+level = "dense"
+parallel = true
+jobs = 4
+```
+
+### Managing Config
+
+```bash
+# Show current config with sources
+distill config
+
+# Set a value
+distill config set api_key sk-your-key
+distill config set api_base https://openrouter.ai/api/v1
+distill config set model stepfun/step-3.5-flash
+
+# Show config file path
+distill config path
+```
 
 ---
 
@@ -253,7 +281,7 @@ Options:
       --api-base <URL>  API base URL (overrides DISTILL_API_BASE)
       --api-key <KEY>   API key (overrides DISTILL_API_KEY)
       --parallel        Concurrent chunk processing
-  -j, --jobs <N>        Concurrency limit [default: 4]
+  -j, --jobs <N>        Concurrency limit [default: 1]
    -v, --verbose         Increase verbosity (-v, -vv)
    -q, --quiet           Errors only
    -h, --help            Print help

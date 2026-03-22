@@ -74,8 +74,8 @@ pub struct Cli {
     #[arg(long)]
     pub parallel: bool,
 
-    /// Concurrency limit (default: 4)
-    #[arg(short, long, default_value_t = 4, value_parser = parse_jobs)]
+    /// Concurrency limit (default: 1)
+    #[arg(short, long, default_value_t = 1, value_parser = parse_jobs)]
     pub jobs: usize,
 
     /// Increase log verbosity (-v, -vv)

@@ -1,6 +1,7 @@
 mod cli;
 mod compress;
 mod config;
+mod config_cmd;
 mod error;
 mod export;
 mod ingest;
@@ -19,6 +20,12 @@ use std::sync::Arc;
 
 #[tokio::main]
 async fn main() -> ExitCode {
+    let args: Vec<String> = std::env::args().collect();
+    if args.get(1).map(|s| s.as_str()) == Some("config") {
+        config_cmd::handle(&args[2..]);
+        return ExitCode::SUCCESS;
+    }
+
     match run().await {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
