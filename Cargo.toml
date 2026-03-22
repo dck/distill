@@ -20,7 +20,7 @@ sha2 = "0.10"
 html2md = "0.2"
 url = "2"
 owo-colors = { version = "4", features = ["supports-colors"] }
+tempfile = "3"
 
 [dev-dependencies]
 wiremock = "0.6"
-tempfile = "3"

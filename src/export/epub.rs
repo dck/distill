@@ -4,7 +4,7 @@ use std::path::Path;
 use epub_builder::{EpubBuilder, EpubContent, ZipLibrary};
 
 use crate::error::{DistillError, Result};
-use crate::export::html::md_to_html_fragment;
+use crate::export::html::{escape_html, md_to_html_fragment};
 
 const EPUB_CSS: &str = r#"
 body {
@@ -77,6 +77,7 @@ fn split_chapters(content: &str) -> Vec<Chapter> {
 
 /// Wrap an HTML fragment in a minimal XHTML document.
 fn wrap_xhtml(body_html: &str, title: &str) -> String {
+    let escaped_title = escape_html(title);
     format!(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
          <!DOCTYPE html>\n\
@@ -90,7 +91,7 @@ fn wrap_xhtml(body_html: &str, title: &str) -> String {
          {body}\
          </body>\n\
          </html>",
-        title = title,
+        title = escaped_title,
         body = body_html,
     )
 }
@@ -138,5 +139,17 @@ pub fn export_epub(
 fn epub_err(e: impl std::fmt::Display) -> DistillError {
     DistillError::Export {
         cause: e.to_string(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_wrap_xhtml_escapes_title() {
+        let xhtml = wrap_xhtml("<p>body</p>", "Fish & <Chips>");
+        assert!(xhtml.contains("<title>Fish &amp; &lt;Chips&gt;</title>"));
+        assert!(xhtml.contains("<h1>Fish &amp; &lt;Chips&gt;</h1>"));
     }
 }

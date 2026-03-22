@@ -2,6 +2,16 @@ use std::path::PathBuf;
 
 use clap::{Parser, ValueEnum};
 
+fn parse_jobs(value: &str) -> Result<usize, String> {
+    let jobs = value
+        .parse::<usize>()
+        .map_err(|_| format!("invalid concurrency limit: {value}"))?;
+    if jobs == 0 {
+        return Err("concurrency limit must be at least 1".into());
+    }
+    Ok(jobs)
+}
+
 #[derive(Debug, Clone, ValueEnum, PartialEq)]
 pub enum OutputFormat {
     Epub,
@@ -65,16 +75,8 @@ pub struct Cli {
     pub parallel: bool,
 
     /// Concurrency limit (default: 4)
-    #[arg(short, long, default_value_t = 4)]
+    #[arg(short, long, default_value_t = 4, value_parser = parse_jobs)]
     pub jobs: usize,
-
-    /// Resume from checkpoint
-    #[arg(long)]
-    pub resume: bool,
-
-    /// Remove checkpoint file and exit
-    #[arg(long)]
-    pub clean: bool,
 
     /// Increase log verbosity (-v, -vv)
     #[arg(short, long, action = clap::ArgAction::Count)]
@@ -140,11 +142,8 @@ mod tests {
     }
 
     #[test]
-    fn test_resume_and_clean_flags() {
-        let args = Cli::parse_from(["distill", "--resume", "input.pdf"]);
-        assert!(args.resume);
-
-        let args = Cli::parse_from(["distill", "--clean", "input.pdf"]);
-        assert!(args.clean);
+    fn test_jobs_must_be_positive() {
+        let result = Cli::try_parse_from(["distill", "-j", "0", "input.pdf"]);
+        assert!(result.is_err());
     }
 }

@@ -146,10 +146,9 @@ impl LlmClient {
                     }
 
                     if status.is_success() {
-                        let body_text =
-                            resp.text().await.map_err(|e| DistillError::Llm {
-                                cause: format!("failed to read response body: {e}"),
-                            })?;
+                        let body_text = resp.text().await.map_err(|e| DistillError::Llm {
+                            cause: format!("failed to read response body: {e}"),
+                        })?;
 
                         // -vv: show full response
                         if self.verbosity >= 2 {

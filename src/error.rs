@@ -32,14 +32,20 @@ impl std::fmt::Display for DistillError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Ingestion { source, cause } => {
-                write!(f, "failed to ingest content\n  -> source: {source}\n  -> caused by: {cause}")
+                write!(
+                    f,
+                    "failed to ingest content\n  -> source: {source}\n  -> caused by: {cause}"
+                )
             }
             Self::Compression {
                 chunk_index,
                 section,
                 cause,
             } => {
-                write!(f, "failed to compress chunk {chunk_index}\n  -> section: \"{section}\"\n  -> caused by: {cause}")
+                write!(
+                    f,
+                    "failed to compress chunk {chunk_index}\n  -> section: \"{section}\"\n  -> caused by: {cause}"
+                )
             }
             Self::Llm { cause } => {
                 write!(f, "LLM request failed\n  -> caused by: {cause}")

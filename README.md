@@ -150,11 +150,9 @@ distill thinking-fast.pdf -l distilled
 distill large-book.pdf --parallel -j 8
 ```
 
-**Resume after interruption:**
+**Interrupted book runs resume automatically:**
 
-```bash
-distill large-book.pdf --resume
-```
+If a book run is interrupted, re-running the same command will continue from the saved checkpoint automatically. Successful runs clean up the temporary checkpoint file.
 
 **Different LLM providers:**
 
@@ -256,11 +254,9 @@ Options:
       --api-key <KEY>   API key (overrides DISTILL_API_KEY)
       --parallel        Concurrent chunk processing
   -j, --jobs <N>        Concurrency limit [default: 4]
-      --resume          Resume from checkpoint
-      --clean           Remove checkpoint and exit
-  -v, --verbose         Increase verbosity (-v, -vv)
-  -q, --quiet           Errors only
-  -h, --help            Print help
+   -v, --verbose         Increase verbosity (-v, -vv)
+   -q, --quiet           Errors only
+   -h, --help            Print help
 ```
 
 ---

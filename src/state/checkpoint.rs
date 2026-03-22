@@ -1,6 +1,7 @@
 use crate::cli::CompressionLevel;
 use crate::error::Result;
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -33,7 +34,76 @@ impl Checkpoint {
         input_path.with_file_name(format!("{}.distill-cache", stem.to_string_lossy()))
     }
 
-    #[allow(dead_code)]
+    pub fn cache_path_for_input(input: &str) -> PathBuf {
+        if crate::mode::is_url(input) {
+            let digest = Self::stable_hash(input);
+            std::env::temp_dir().join(format!("distill-{}.distill-cache", &digest[..16]))
+        } else {
+            Self::cache_path(Path::new(input))
+        }
+    }
+
+    pub fn input_hash(content: &str) -> String {
+        Self::stable_hash(content)
+    }
+
+    pub fn new(
+        input_hash: String,
+        level: CompressionLevel,
+        model: String,
+        originals: &[String],
+    ) -> Self {
+        Self {
+            input_hash,
+            level,
+            model,
+            completed_pass: 0,
+            chunks: originals
+                .iter()
+                .enumerate()
+                .map(|(index, original)| ChunkState {
+                    index,
+                    status: ChunkStatus::Pending,
+                    original: original.clone(),
+                    compressed: None,
+                })
+                .collect(),
+        }
+    }
+
+    pub fn matches_run(
+        &self,
+        input_hash: &str,
+        level: &CompressionLevel,
+        model: &str,
+        originals: &[String],
+    ) -> bool {
+        self.input_hash == input_hash
+            && &self.level == level
+            && self.model == model
+            && self.chunks.len() == originals.len()
+            && self
+                .chunks
+                .iter()
+                .zip(originals)
+                .all(|(saved, original)| saved.original == *original)
+    }
+
+    pub fn update_chunk(&mut self, index: usize, compressed: String) {
+        if let Some(chunk) = self.chunks.get_mut(index) {
+            chunk.compressed = Some(compressed);
+            chunk.status = ChunkStatus::Compressed;
+        }
+    }
+
+    pub fn compressed_for(&self, index: usize) -> Option<&str> {
+        self.chunks.get(index)?.compressed.as_deref()
+    }
+
+    pub fn all_chunks_compressed(&self) -> bool {
+        self.chunks.iter().all(|chunk| chunk.compressed.is_some())
+    }
+
     pub fn save(&self, path: &Path) -> Result<()> {
         let json = serde_json::to_string_pretty(self).map_err(|e| {
             crate::error::DistillError::Checkpoint {
@@ -48,7 +118,6 @@ impl Checkpoint {
         Ok(())
     }
 
-    #[allow(dead_code)]
     pub fn load(path: &Path) -> Result<Self> {
         let json =
             std::fs::read_to_string(path).map_err(|e| crate::error::DistillError::Checkpoint {
@@ -72,6 +141,11 @@ impl Checkpoint {
         }
         Ok(())
     }
+
+    fn stable_hash(value: &str) -> String {
+        let digest = Sha256::digest(value.as_bytes());
+        format!("{digest:x}")
+    }
 }
 
 #[cfg(test)]
@@ -80,26 +154,15 @@ mod tests {
     use tempfile::TempDir;
 
     fn sample_checkpoint() -> Checkpoint {
-        Checkpoint {
-            input_hash: "abc123".into(),
-            level: CompressionLevel::Dense,
-            model: "test-model".into(),
-            completed_pass: 1,
-            chunks: vec![
-                ChunkState {
-                    index: 0,
-                    status: ChunkStatus::Compressed,
-                    original: "original text".into(),
-                    compressed: Some("compressed text".into()),
-                },
-                ChunkState {
-                    index: 1,
-                    status: ChunkStatus::Pending,
-                    original: "more text".into(),
-                    compressed: None,
-                },
-            ],
-        }
+        let mut checkpoint = Checkpoint::new(
+            "abc123".into(),
+            CompressionLevel::Dense,
+            "test-model".into(),
+            &["original text".into(), "more text".into()],
+        );
+        checkpoint.update_chunk(0, "compressed text".into());
+        checkpoint.completed_pass = 1;
+        checkpoint
     }
 
     #[test]
@@ -126,6 +189,33 @@ mod tests {
             cache,
             Path::new("/home/user/books/thinking-fast.distill-cache")
         );
+    }
+
+    #[test]
+    fn test_cache_path_for_url_uses_temp_hash() {
+        let cache = Checkpoint::cache_path_for_input("https://example.com/book");
+        let file_name = cache.file_name().unwrap().to_string_lossy();
+        assert!(cache.starts_with(std::env::temp_dir()));
+        assert!(file_name.starts_with("distill-"));
+        assert!(file_name.ends_with(".distill-cache"));
+    }
+
+    #[test]
+    fn test_matches_run_rejects_changed_input() {
+        let checkpoint = sample_checkpoint();
+        let originals = vec!["changed".to_string(), "more text".to_string()];
+        assert!(!checkpoint.matches_run(
+            "abc123",
+            &CompressionLevel::Dense,
+            "test-model",
+            &originals
+        ));
+    }
+
+    #[test]
+    fn test_all_chunks_compressed() {
+        let checkpoint = sample_checkpoint();
+        assert!(!checkpoint.all_chunks_compressed());
     }
 
     #[test]

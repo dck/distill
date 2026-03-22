@@ -20,30 +20,31 @@ nav#toc ul { list-style: none; padding-left: 0; }
 nav#toc li { margin: 0.3em 0; }
 "#;
 
+#[derive(Clone, Copy, Eq, PartialEq)]
+enum BlockState {
+    Paragraph,
+    UnorderedList,
+    OrderedList,
+}
+
 /// Convert markdown text to an HTML fragment (no document wrapper).
 ///
-/// Handles: `#`/`##`/`###` headers, paragraphs, blank-line separation.
-/// Headers get id attributes derived from their text for internal linking.
+/// Handles: `#`/`##`/`###` headers, paragraphs, blank-line separation, and
+/// simple ordered/unordered lists.
 pub fn md_to_html_fragment(md: &str) -> String {
     let mut out = String::new();
-    let mut in_paragraph = false;
+    let mut block_state = None;
 
     for line in md.lines() {
         let trimmed = line.trim();
 
         if trimmed.is_empty() {
-            if in_paragraph {
-                out.push_str("</p>\n");
-                in_paragraph = false;
-            }
+            close_block(&mut out, &mut block_state);
             continue;
         }
 
         if let Some(header) = parse_header(trimmed) {
-            if in_paragraph {
-                out.push_str("</p>\n");
-                in_paragraph = false;
-            }
+            close_block(&mut out, &mut block_state);
             let id = slugify(&header.text);
             out.push_str(&format!(
                 "<h{level} id=\"{id}\">{text}</h{level}>\n",
@@ -51,21 +52,40 @@ pub fn md_to_html_fragment(md: &str) -> String {
                 id = id,
                 text = escape_html(&header.text),
             ));
-        } else {
-            if !in_paragraph {
-                out.push_str("<p>");
-                in_paragraph = true;
-            } else {
-                out.push('\n');
-            }
-            out.push_str(&escape_html(trimmed));
+            continue;
         }
+
+        if let Some(item) = parse_unordered_item(trimmed) {
+            if block_state != Some(BlockState::UnorderedList) {
+                close_block(&mut out, &mut block_state);
+                out.push_str("<ul>\n");
+                block_state = Some(BlockState::UnorderedList);
+            }
+            out.push_str(&format!("  <li>{}</li>\n", escape_html(item)));
+            continue;
+        }
+
+        if let Some(item) = parse_ordered_item(trimmed) {
+            if block_state != Some(BlockState::OrderedList) {
+                close_block(&mut out, &mut block_state);
+                out.push_str("<ol>\n");
+                block_state = Some(BlockState::OrderedList);
+            }
+            out.push_str(&format!("  <li>{}</li>\n", escape_html(item)));
+            continue;
+        }
+
+        if block_state != Some(BlockState::Paragraph) {
+            close_block(&mut out, &mut block_state);
+            out.push_str("<p>");
+            block_state = Some(BlockState::Paragraph);
+        } else {
+            out.push('\n');
+        }
+        out.push_str(&escape_html(trimmed));
     }
 
-    if in_paragraph {
-        out.push_str("</p>\n");
-    }
-
+    close_block(&mut out, &mut block_state);
     out
 }
 
@@ -90,6 +110,30 @@ fn parse_header(line: &str) -> Option<Header> {
     })
 }
 
+fn parse_unordered_item(line: &str) -> Option<&str> {
+    line.strip_prefix("- ")
+        .or_else(|| line.strip_prefix("* "))
+        .map(str::trim)
+}
+
+fn parse_ordered_item(line: &str) -> Option<&str> {
+    let dot = line.find(". ")?;
+    if line[..dot].chars().all(|c| c.is_ascii_digit()) {
+        Some(line[dot + 2..].trim())
+    } else {
+        None
+    }
+}
+
+fn close_block(out: &mut String, block_state: &mut Option<BlockState>) {
+    match block_state.take() {
+        Some(BlockState::Paragraph) => out.push_str("</p>\n"),
+        Some(BlockState::UnorderedList) => out.push_str("</ul>\n"),
+        Some(BlockState::OrderedList) => out.push_str("</ol>\n"),
+        None => {}
+    }
+}
+
 fn slugify(text: &str) -> String {
     text.chars()
         .map(|c| {
@@ -106,7 +150,7 @@ fn slugify(text: &str) -> String {
         .join("-")
 }
 
-fn escape_html(text: &str) -> String {
+pub(crate) fn escape_html(text: &str) -> String {
     text.replace('&', "&amp;")
         .replace('<', "&lt;")
         .replace('>', "&gt;")
@@ -185,4 +229,25 @@ pub fn export_html(content: &str, title: Option<&str>, output_path: Option<&Path
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_unordered_list_rendering() {
+        let html = md_to_html_fragment("- one\n- two");
+        assert!(html.contains("<ul>"));
+        assert!(html.contains("<li>one</li>"));
+        assert!(html.contains("<li>two</li>"));
+    }
+
+    #[test]
+    fn test_ordered_list_rendering() {
+        let html = md_to_html_fragment("1. one\n2. two");
+        assert!(html.contains("<ol>"));
+        assert!(html.contains("<li>one</li>"));
+        assert!(html.contains("<li>two</li>"));
+    }
 }

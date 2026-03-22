@@ -32,15 +32,6 @@ async fn run() -> error::Result<()> {
     let cli = Cli::parse();
     let console = ui::Console::new(cli.quiet);
 
-    // Handle --clean
-    if cli.clean {
-        let path = PathBuf::from(&cli.input);
-        let cache_path = state::checkpoint::Checkpoint::cache_path(&path);
-        state::checkpoint::Checkpoint::delete(&cache_path)?;
-        console.cleaned(&cli.input);
-        return Ok(());
-    }
-
     // Resolve config
     let config =
         config::Config::resolve(cli.api_key.clone(), cli.api_base.clone(), cli.model.clone())?;
@@ -61,13 +52,18 @@ async fn run() -> error::Result<()> {
     });
 
     sp.finish();
-    console.ingested(doc.estimated_tokens, &format!("{detected_mode:?}"), &format!("{level:?}"));
+    console.ingested(
+        doc.estimated_tokens,
+        &format!("{detected_mode:?}"),
+        &format!("{level:?}"),
+    );
 
     // Segment
     let chunks = segment::segment(&doc.content);
     let chunk_count = chunks.len();
 
     // Create LLM client and compression strategy
+    let model_name = config.model.clone();
     let client = Arc::new(llm::LlmClient::new(
         config.api_key,
         config.api_base,
@@ -78,7 +74,13 @@ async fn run() -> error::Result<()> {
 
     // Compress
     let is_multi = detected_mode == Mode::Book && strategy.supports_multi_pass();
-    let pipeline = if is_multi { "hierarchical (distill → refine)" } else { "single-pass" };
+    let pipeline = if is_multi {
+        "hierarchical (distill → refine)"
+    } else {
+        "single-pass"
+    };
+    let checkpoint_path =
+        is_multi.then(|| state::checkpoint::Checkpoint::cache_path_for_input(&cli.input));
 
     if cli.verbose >= 1 {
         eprintln!(
@@ -96,7 +98,29 @@ async fn run() -> error::Result<()> {
 
     let compressed = if is_multi {
         let strategy: Arc<dyn llm::strategy::CompressionStrategy> = strategy.into();
-        compress::hierarchical(client, chunks, strategy, cli.parallel, cli.jobs, &console).await?
+        let originals = chunks
+            .iter()
+            .map(|chunk| chunk.content.clone())
+            .collect::<Vec<_>>();
+        let input_hash = state::checkpoint::Checkpoint::input_hash(&doc.content);
+        let checkpoint = checkpoint_path
+            .as_ref()
+            .map(|path| prepare_checkpoint(path, &input_hash, &level, &model_name, &originals));
+        let checkpoint = match checkpoint {
+            Some(Ok(state)) => Some(state),
+            Some(Err(e)) => return Err(e),
+            None => None,
+        };
+        compress::hierarchical(
+            client,
+            chunks,
+            strategy,
+            cli.parallel,
+            cli.jobs,
+            &console,
+            checkpoint,
+        )
+        .await?
     } else {
         let sp = console.spinner(&format!("Compressing {chunk_count} chunks..."));
         let result = compress::single_pass(&client, chunks, strategy.as_ref()).await?;
@@ -128,7 +152,12 @@ async fn run() -> error::Result<()> {
 
     // Summary (stderr, before export so markdown appears last in terminal)
     let output_tokens = mode::estimate_tokens(&compressed);
-    console.done(chunk_count, doc.estimated_tokens, output_tokens, &output_display);
+    console.done(
+        chunk_count,
+        doc.estimated_tokens,
+        output_tokens,
+        &output_display,
+    );
 
     // Export (stdout for articles without -o, file otherwise)
     export::export(
@@ -139,5 +168,39 @@ async fn run() -> error::Result<()> {
         output_path.as_deref(),
     )?;
 
+    if let Some(path) = checkpoint_path {
+        state::checkpoint::Checkpoint::delete(&path)?;
+    }
+
     Ok(())
+}
+
+fn prepare_checkpoint(
+    path: &std::path::Path,
+    input_hash: &str,
+    level: &CompressionLevel,
+    model_name: &str,
+    originals: &[String],
+) -> error::Result<(PathBuf, state::checkpoint::Checkpoint)> {
+    let checkpoint = match state::checkpoint::Checkpoint::load(path) {
+        Ok(existing) if existing.matches_run(input_hash, level, model_name, originals) => existing,
+        Ok(_) => {
+            ui::warning("existing checkpoint did not match current input, starting over");
+            state::checkpoint::Checkpoint::new(
+                input_hash.to_string(),
+                level.clone(),
+                model_name.to_string(),
+                originals,
+            )
+        }
+        Err(_) => state::checkpoint::Checkpoint::new(
+            input_hash.to_string(),
+            level.clone(),
+            model_name.to_string(),
+            originals,
+        ),
+    };
+
+    checkpoint.save(path)?;
+    Ok((path.to_path_buf(), checkpoint))
 }
