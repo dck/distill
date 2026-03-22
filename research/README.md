@@ -121,3 +121,9 @@ uv run python run.py status
 ```
 
 Results land in `data/results/` (gitignored) and `reports/` (committed). All steps are checkpointed -- safe to rerun.
+
+## Results
+
+See **[reports/report.md](reports/report.md)** for the full analysis with leaderboard, per-model breakdowns, and cost comparison.
+
+Charts: [reports/charts/](reports/charts/)

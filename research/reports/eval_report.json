@@ -1,0 +1,4692 @@
+{
+  "experiments": {
+    "arcee-ai_trinity-large-preview_free__extract_compress": {
+      "model": "Trinity Large",
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "model_slug": "arcee-ai_trinity-large-preview_free",
+      "algorithm": "extract_compress",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9902912621359223,
+            "Structure Preservation": 0.6,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 1.1694665605095542,
+          "input_chars": 25120,
+          "output_chars": 29377
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.5
+          },
+          "compression_ratio": 0.5134719578269147,
+          "input_chars": 13658,
+          "output_chars": 7013
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.7605633802816901,
+            "Structure Preservation": 0.5,
+            "Coherence": 0.8,
+            "Compression Quality": 0.3
+          },
+          "compression_ratio": 0.6204592001724696,
+          "input_chars": 9277,
+          "output_chars": 5756
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.4,
+            "Coherence": 0.7,
+            "Compression Quality": 0.3
+          },
+          "compression_ratio": 0.7556682886427166,
+          "input_chars": 9659,
+          "output_chars": 7299
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.6,
+            "Coherence": 0.9,
+            "Compression Quality": 0.3
+          },
+          "compression_ratio": 0.34293193717277487,
+          "input_chars": 13752,
+          "output_chars": 4716
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.651685393258427,
+            "Structure Preservation": 0.3,
+            "Coherence": 0.3,
+            "Compression Quality": 0.4
+          },
+          "compression_ratio": 0.4693479801559178,
+          "input_chars": 16932,
+          "output_chars": 7947
+        }
+      },
+      "averages": {
+        "Completeness": 0.4004233392793399,
+        "Structure Preservation": 0.5333333333333333,
+        "Coherence": 0.75,
+        "Compression Quality": 0.43333333333333335
+      },
+      "composite_score": 0.5259815020811023,
+      "avg_compression_ratio": 0.6452243207467246,
+      "metadata": {
+        "total_input_tokens": 24885,
+        "total_output_tokens": 17068,
+        "elapsed_seconds": 843.9547340869904
+      }
+    },
+    "arcee-ai_trinity-large-preview_free__hierarchical": {
+      "model": "Trinity Large",
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "model_slug": "arcee-ai_trinity-large-preview_free",
+      "algorithm": "hierarchical",
+      "chapters": {
+        "__hierarchical__": {
+          "scores": {
+            "Completeness": 0.9583333333333334,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7783684734413175,
+          "input_chars": 88408,
+          "output_chars": 68814
+        }
+      },
+      "averages": {
+        "Completeness": 0.9583333333333334,
+        "Structure Preservation": 1.0,
+        "Coherence": 0.8,
+        "Compression Quality": 0.9
+      },
+      "composite_score": 0.9204166666666667,
+      "avg_compression_ratio": 0.7783684734413175,
+      "metadata": {
+        "total_input_tokens": 33509,
+        "total_output_tokens": 27772,
+        "elapsed_seconds": 966.0161371231079
+      }
+    },
+    "arcee-ai_trinity-large-preview_free__incremental": {
+      "model": "Trinity Large",
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "model_slug": "arcee-ai_trinity-large-preview_free",
+      "algorithm": "incremental",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9605263157894737,
+            "Structure Preservation": 0.9,
+            "Coherence": 1.0,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.48722133757961783,
+          "input_chars": 25120,
+          "output_chars": 12239
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 1.0062966759408405,
+          "input_chars": 13658,
+          "output_chars": 13744
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.7,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.9082677589738062,
+          "input_chars": 9277,
+          "output_chars": 8426
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.9946164199192463,
+          "input_chars": 9659,
+          "output_chars": 9607
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.7,
+            "Coherence": 0.9,
+            "Compression Quality": 0.4
+          },
+          "compression_ratio": 0.8748545666084933,
+          "input_chars": 13752,
+          "output_chars": 12031
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9705882352941176,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.9847625797306875,
+          "input_chars": 16932,
+          "output_chars": 16674
+        }
+      },
+      "averages": {
+        "Completeness": 0.32185242518059853,
+        "Structure Preservation": 0.8666666666666666,
+        "Coherence": 0.8999999999999999,
+        "Compression Quality": 0.7833333333333332
+      },
+      "composite_score": 0.6718150154798761,
+      "avg_compression_ratio": 0.8760032231254486,
+      "metadata": {
+        "total_input_tokens": 54500,
+        "total_output_tokens": 14705,
+        "elapsed_seconds": 596.7015318870544
+      }
+    },
+    "arcee-ai_trinity-large-preview_free__independent": {
+      "model": "Trinity Large",
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "model_slug": "arcee-ai_trinity-large-preview_free",
+      "algorithm": "independent",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9642857142857143,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.2665605095541401,
+          "input_chars": 25120,
+          "output_chars": 6696
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.9994874798652804,
+          "input_chars": 13658,
+          "output_chars": 13651
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.42352053465559986,
+          "input_chars": 9277,
+          "output_chars": 3929
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.9269075473651517,
+          "input_chars": 9659,
+          "output_chars": 8953
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.8,
+            "Compression Quality": 0.4
+          },
+          "compression_ratio": 0.798502036067481,
+          "input_chars": 13752,
+          "output_chars": 10981
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.6666666666666666,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.8192180486652493,
+          "input_chars": 16932,
+          "output_chars": 13871
+        }
+      },
+      "averages": {
+        "Completeness": 0.2718253968253968,
+        "Structure Preservation": 0.8999999999999999,
+        "Coherence": 0.8666666666666667,
+        "Compression Quality": 0.7333333333333333
+      },
+      "composite_score": 0.6468055555555555,
+      "avg_compression_ratio": 0.7056993593621503,
+      "metadata": {
+        "total_input_tokens": 19404,
+        "total_output_tokens": 11740,
+        "elapsed_seconds": 985.3703622817993
+      }
+    },
+    "arcee-ai_trinity-large-preview_free__overlap_10": {
+      "model": "Trinity Large",
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "model_slug": "arcee-ai_trinity-large-preview_free",
+      "algorithm": "overlap_10",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.922077922077922,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.3735270700636943,
+          "input_chars": 25120,
+          "output_chars": 9383
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.4,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.4860155220383658,
+          "input_chars": 13658,
+          "output_chars": 6638
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.3
+          },
+          "compression_ratio": 0.8565268944701951,
+          "input_chars": 9277,
+          "output_chars": 7946
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.8,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.9067191220623253,
+          "input_chars": 9659,
+          "output_chars": 8758
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.7,
+            "Coherence": 0.8,
+            "Compression Quality": 0.5
+          },
+          "compression_ratio": 0.7688336242001164,
+          "input_chars": 13752,
+          "output_chars": 10573
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.5,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.9855894164894874,
+          "input_chars": 16932,
+          "output_chars": 16688
+        }
+      },
+      "averages": {
+        "Completeness": 0.237012987012987,
+        "Structure Preservation": 0.7666666666666667,
+        "Coherence": 0.8666666666666667,
+        "Compression Quality": 0.65
+      },
+      "composite_score": 0.5887878787878789,
+      "avg_compression_ratio": 0.7295352748873641,
+      "metadata": {
+        "total_input_tokens": 21038,
+        "total_output_tokens": 12228,
+        "elapsed_seconds": 1019.6824600696564
+      }
+    },
+    "arcee-ai_trinity-large-preview_free__overlap_20": {
+      "model": "Trinity Large",
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "model_slug": "arcee-ai_trinity-large-preview_free",
+      "algorithm": "overlap_20",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9814814814814815,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.4896496815286624,
+          "input_chars": 25120,
+          "output_chars": 12300
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.957094743007761,
+          "input_chars": 13658,
+          "output_chars": 13072
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.8567424814056268,
+          "input_chars": 9277,
+          "output_chars": 7948
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.902370845843255,
+          "input_chars": 9659,
+          "output_chars": 8716
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.8,
+            "Compression Quality": 0.3
+          },
+          "compression_ratio": 0.7694880744618965,
+          "input_chars": 13752,
+          "output_chars": 10582
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.908256880733945,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.9544058587290338,
+          "input_chars": 16932,
+          "output_chars": 16160
+        }
+      },
+      "averages": {
+        "Completeness": 0.31495639370257106,
+        "Structure Preservation": 0.8833333333333334,
+        "Coherence": 0.8833333333333334,
+        "Compression Quality": 0.7166666666666667
+      },
+      "composite_score": 0.6594014044625666,
+      "avg_compression_ratio": 0.8216252808293726,
+      "metadata": {
+        "total_input_tokens": 22551,
+        "total_output_tokens": 13905,
+        "elapsed_seconds": 513.8185169696808
+      }
+    },
+    "arcee-ai_trinity-large-preview_free__running_summary": {
+      "model": "Trinity Large",
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "model_slug": "arcee-ai_trinity-large-preview_free",
+      "algorithm": "running_summary",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9666666666666667,
+            "Structure Preservation": 0.9,
+            "Coherence": 1.0,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.25680732484076435,
+          "input_chars": 25120,
+          "output_chars": 6451
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 1.001464343242056,
+          "input_chars": 13658,
+          "output_chars": 13678
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.5
+          },
+          "compression_ratio": 0.3708095289425461,
+          "input_chars": 9277,
+          "output_chars": 3440
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.2,
+            "Coherence": 0.8,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 1.5135107153949685,
+          "input_chars": 9659,
+          "output_chars": 14619
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.8,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.335587550901687,
+          "input_chars": 13752,
+          "output_chars": 4615
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.5,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.9766713914481455,
+          "input_chars": 16932,
+          "output_chars": 16537
+        }
+      },
+      "averages": {
+        "Completeness": 0.24444444444444446,
+        "Structure Preservation": 0.7999999999999999,
+        "Coherence": 0.8666666666666666,
+        "Compression Quality": 0.75
+      },
+      "composite_score": 0.6147222222222222,
+      "avg_compression_ratio": 0.7424751424616947,
+      "metadata": {
+        "total_input_tokens": 36321,
+        "total_output_tokens": 13724,
+        "elapsed_seconds": 560.2236230373383
+      }
+    },
+    "arcee-ai_trinity-large-preview_free__whole_book": {
+      "model": "Trinity Large",
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "model_slug": "arcee-ai_trinity-large-preview_free",
+      "algorithm": "whole_book",
+      "chapters": {
+        "__whole_book__": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 0.5,
+            "Coherence": 0.8,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.08793321871323861,
+          "input_chars": 88408,
+          "output_chars": 7774
+        }
+      },
+      "averages": {
+        "Completeness": 0.6,
+        "Structure Preservation": 0.5,
+        "Coherence": 0.8,
+        "Compression Quality": 0.7
+      },
+      "composite_score": 0.64,
+      "avg_compression_ratio": 0.08793321871323861,
+      "metadata": {
+        "elapsed_seconds": 31.933841943740845,
+        "total_input_tokens": 18664,
+        "total_output_tokens": 1447
+      }
+    },
+    "deepseek_deepseek-r1-0528__extract_compress": {
+      "model": "DeepSeek R1",
+      "model_id": "deepseek/deepseek-r1-0528",
+      "model_slug": "deepseek_deepseek-r1-0528",
+      "algorithm": "extract_compress",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.6388888888888888,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.8,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.1427547770700637,
+          "input_chars": 25120,
+          "output_chars": 3586
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.7,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.24264167520866892,
+          "input_chars": 13658,
+          "output_chars": 3314
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.33804031475692575,
+          "input_chars": 9277,
+          "output_chars": 3136
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.3043793353349208,
+          "input_chars": 9659,
+          "output_chars": 2940
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.2812681791739383,
+          "input_chars": 13752,
+          "output_chars": 3868
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.7,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.22395464209780297,
+          "input_chars": 16932,
+          "output_chars": 3792
+        }
+      },
+      "averages": {
+        "Completeness": 0.10648148148148147,
+        "Structure Preservation": 0.8666666666666667,
+        "Coherence": 0.8500000000000001,
+        "Compression Quality": 0.7833333333333333
+      },
+      "composite_score": 0.5839351851851852,
+      "avg_compression_ratio": 0.2555064872737201,
+      "metadata": {
+        "total_input_tokens": 25167,
+        "total_output_tokens": 13047,
+        "elapsed_seconds": 502.06374621391296
+      }
+    },
+    "deepseek_deepseek-r1-0528__hierarchical": {
+      "model": "DeepSeek R1",
+      "model_id": "deepseek/deepseek-r1-0528",
+      "model_slug": "deepseek_deepseek-r1-0528",
+      "algorithm": "hierarchical",
+      "chapters": {
+        "__hierarchical__": {
+          "scores": {
+            "Completeness": 0.9864864864864865,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.7,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.2669894127228305,
+          "input_chars": 88408,
+          "output_chars": 23604
+        }
+      },
+      "averages": {
+        "Completeness": 0.9864864864864865,
+        "Structure Preservation": 1.0,
+        "Coherence": 0.7,
+        "Compression Quality": 0.9
+      },
+      "composite_score": 0.9052702702702702,
+      "avg_compression_ratio": 0.2669894127228305,
+      "metadata": {
+        "total_input_tokens": 25418,
+        "total_output_tokens": 13135,
+        "elapsed_seconds": 238.9649760723114
+      }
+    },
+    "deepseek_deepseek-r1-0528__incremental": {
+      "model": "DeepSeek R1",
+      "model_id": "deepseek/deepseek-r1-0528",
+      "model_slug": "deepseek_deepseek-r1-0528",
+      "algorithm": "incremental",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.6333333333333333,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.20871815286624204,
+          "input_chars": 25120,
+          "output_chars": 5243
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.7,
+            "Coherence": 1.0,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.21474593644750328,
+          "input_chars": 13658,
+          "output_chars": 2933
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.26603427832273363,
+          "input_chars": 9277,
+          "output_chars": 2468
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.2254891810746454,
+          "input_chars": 9659,
+          "output_chars": 2178
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.6,
+            "Coherence": 0.8,
+            "Compression Quality": 0.4
+          },
+          "compression_ratio": 0.23196625945317045,
+          "input_chars": 13752,
+          "output_chars": 3190
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8846153846153846,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.236061894637373,
+          "input_chars": 16932,
+          "output_chars": 3997
+        }
+      },
+      "averages": {
+        "Completeness": 0.252991452991453,
+        "Structure Preservation": 0.85,
+        "Coherence": 0.9,
+        "Compression Quality": 0.75
+      },
+      "composite_score": 0.6385470085470085,
+      "avg_compression_ratio": 0.2305026171336113,
+      "metadata": {
+        "total_input_tokens": 31071,
+        "total_output_tokens": 6990,
+        "elapsed_seconds": 123.18096613883972
+      }
+    },
+    "deepseek_deepseek-r1-0528__independent": {
+      "model": "DeepSeek R1",
+      "model_id": "deepseek/deepseek-r1-0528",
+      "model_slug": "deepseek_deepseek-r1-0528",
+      "algorithm": "independent",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.6595744680851063,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.17953821656050956,
+          "input_chars": 25120,
+          "output_chars": 4510
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 1.0,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.3415580612095475,
+          "input_chars": 13658,
+          "output_chars": 4665
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.29934245984693325,
+          "input_chars": 9277,
+          "output_chars": 2777
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.3185629982399834,
+          "input_chars": 9659,
+          "output_chars": 3077
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.6,
+            "Coherence": 0.7,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.33144269924374636,
+          "input_chars": 13752,
+          "output_chars": 4558
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.20824474368060478,
+          "input_chars": 16932,
+          "output_chars": 3526
+        }
+      },
+      "averages": {
+        "Completeness": 0.10992907801418439,
+        "Structure Preservation": 0.9166666666666666,
+        "Coherence": 0.8666666666666666,
+        "Compression Quality": 0.7999999999999999
+      },
+      "composite_score": 0.6043085106382978,
+      "avg_compression_ratio": 0.2797815297968875,
+      "metadata": {
+        "total_input_tokens": 20262,
+        "total_output_tokens": 8282,
+        "elapsed_seconds": 328.41842675209045
+      }
+    },
+    "deepseek_deepseek-r1-0528__overlap_10": {
+      "model": "DeepSeek R1",
+      "model_id": "deepseek/deepseek-r1-0528",
+      "model_slug": "deepseek_deepseek-r1-0528",
+      "algorithm": "overlap_10",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.6590909090909091,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.18769904458598727,
+          "input_chars": 25120,
+          "output_chars": 4715
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.2356860448089032,
+          "input_chars": 13658,
+          "output_chars": 3219
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.5
+          },
+          "compression_ratio": 0.35205346555998707,
+          "input_chars": 9277,
+          "output_chars": 3266
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.24101873899989648,
+          "input_chars": 9659,
+          "output_chars": 2328
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.7,
+            "Coherence": 0.9,
+            "Compression Quality": 0.5
+          },
+          "compression_ratio": 0.24280104712041886,
+          "input_chars": 13752,
+          "output_chars": 3339
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.6666666666666666,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.22295062603354596,
+          "input_chars": 16932,
+          "output_chars": 3775
+        }
+      },
+      "averages": {
+        "Completeness": 0.22095959595959594,
+        "Structure Preservation": 0.9166666666666666,
+        "Coherence": 0.8666666666666668,
+        "Compression Quality": 0.75
+      },
+      "composite_score": 0.6356691919191919,
+      "avg_compression_ratio": 0.24703482785145647,
+      "metadata": {
+        "total_input_tokens": 21938,
+        "total_output_tokens": 6966,
+        "elapsed_seconds": 297.73430013656616
+      }
+    },
+    "deepseek_deepseek-r1-0528__overlap_20": {
+      "model": "DeepSeek R1",
+      "model_id": "deepseek/deepseek-r1-0528",
+      "model_slug": "deepseek_deepseek-r1-0528",
+      "algorithm": "overlap_20",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.6415094339622641,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.21082802547770702,
+          "input_chars": 25120,
+          "output_chars": 5296
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.23553961048469763,
+          "input_chars": 13658,
+          "output_chars": 3217
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.3906435270022637,
+          "input_chars": 9277,
+          "output_chars": 3624
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.33398902577906614,
+          "input_chars": 9659,
+          "output_chars": 3226
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.8,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.24992728330424666,
+          "input_chars": 13752,
+          "output_chars": 3437
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 0.8,
+            "Coherence": 1.0,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.14829907866761163,
+          "input_chars": 16932,
+          "output_chars": 2511
+        }
+      },
+      "averages": {
+        "Completeness": 0.10691823899371068,
+        "Structure Preservation": 0.8999999999999999,
+        "Coherence": 0.9,
+        "Compression Quality": 0.7666666666666666
+      },
+      "composite_score": 0.6024213836477987,
+      "avg_compression_ratio": 0.2615377584525988,
+      "metadata": {
+        "total_input_tokens": 23479,
+        "total_output_tokens": 6804,
+        "elapsed_seconds": 144.5175759792328
+      }
+    },
+    "deepseek_deepseek-r1-0528__running_summary": {
+      "model": "DeepSeek R1",
+      "model_id": "deepseek/deepseek-r1-0528",
+      "model_slug": "deepseek_deepseek-r1-0528",
+      "algorithm": "running_summary",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.7368421052631579,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.22082006369426752,
+          "input_chars": 25120,
+          "output_chars": 5547
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.2215551325230634,
+          "input_chars": 13658,
+          "output_chars": 3026
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.25665624663145414,
+          "input_chars": 9277,
+          "output_chars": 2381
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.22724919763950718,
+          "input_chars": 9659,
+          "output_chars": 2195
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.6,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.21138743455497383,
+          "input_chars": 13752,
+          "output_chars": 2907
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.5,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.19932671863926293,
+          "input_chars": 16932,
+          "output_chars": 3375
+        }
+      },
+      "averages": {
+        "Completeness": 0.20614035087719298,
+        "Structure Preservation": 0.9500000000000001,
+        "Coherence": 0.8333333333333334,
+        "Compression Quality": 0.75
+      },
+      "composite_score": 0.6304824561403509,
+      "avg_compression_ratio": 0.22283246561375483,
+      "metadata": {
+        "total_input_tokens": 29021,
+        "total_output_tokens": 10571,
+        "elapsed_seconds": 255.70779824256897
+      }
+    },
+    "deepseek_deepseek-r1-0528__whole_book": {
+      "model": "DeepSeek R1",
+      "model_id": "deepseek/deepseek-r1-0528",
+      "model_slug": "deepseek_deepseek-r1-0528",
+      "algorithm": "whole_book",
+      "chapters": {
+        "__whole_book__": {
+          "scores": {
+            "Completeness": 0.47619047619047616,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.07059315899013664,
+          "input_chars": 88408,
+          "output_chars": 6241
+        }
+      },
+      "averages": {
+        "Completeness": 0.47619047619047616,
+        "Structure Preservation": 0.9,
+        "Coherence": 0.8,
+        "Compression Quality": 0.8
+      },
+      "composite_score": 0.7116666666666667,
+      "avg_compression_ratio": 0.07059315899013664,
+      "metadata": {
+        "elapsed_seconds": 171.2524471282959,
+        "total_input_tokens": 19165,
+        "total_output_tokens": 2674
+      }
+    },
+    "deepseek_deepseek-v3.2__extract_compress": {
+      "model": "DeepSeek V3.2",
+      "model_id": "deepseek/deepseek-v3.2",
+      "model_slug": "deepseek_deepseek-v3.2",
+      "algorithm": "extract_compress",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9464285714285714,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.25254777070063694,
+          "input_chars": 25120,
+          "output_chars": 6344
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.3627178210572558,
+          "input_chars": 13658,
+          "output_chars": 4954
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.6050447342891021,
+          "input_chars": 9277,
+          "output_chars": 5613
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.5956103116264624,
+          "input_chars": 9659,
+          "output_chars": 5753
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.4373182082606166,
+          "input_chars": 13752,
+          "output_chars": 6014
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.4217458067564375,
+          "input_chars": 16932,
+          "output_chars": 7141
+        }
+      },
+      "averages": {
+        "Completeness": 0.15773809523809523,
+        "Structure Preservation": 0.9166666666666666,
+        "Coherence": 0.8833333333333333,
+        "Compression Quality": 0.8166666666666668
+      },
+      "composite_score": 0.6277083333333333,
+      "avg_compression_ratio": 0.44583077544841854,
+      "metadata": {
+        "total_input_tokens": 26273,
+        "total_output_tokens": 12557,
+        "elapsed_seconds": 936.5171020030975
+      }
+    },
+    "deepseek_deepseek-v3.2__hierarchical": {
+      "model": "DeepSeek V3.2",
+      "model_id": "deepseek/deepseek-v3.2",
+      "model_slug": "deepseek_deepseek-v3.2",
+      "algorithm": "hierarchical",
+      "chapters": {
+        "__hierarchical__": {
+          "scores": {
+            "Completeness": 0.872093023255814,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7832435978644466,
+          "input_chars": 88408,
+          "output_chars": 69245
+        }
+      },
+      "averages": {
+        "Completeness": 0.872093023255814,
+        "Structure Preservation": 1.0,
+        "Coherence": 0.9,
+        "Compression Quality": 0.9
+      },
+      "composite_score": 0.9152325581395349,
+      "avg_compression_ratio": 0.7832435978644466,
+      "metadata": {
+        "total_input_tokens": 34688,
+        "total_output_tokens": 29269,
+        "elapsed_seconds": 950.8712451457977
+      }
+    },
+    "deepseek_deepseek-v3.2__incremental": {
+      "model": "DeepSeek V3.2",
+      "model_id": "deepseek/deepseek-v3.2",
+      "model_slug": "deepseek_deepseek-v3.2",
+      "algorithm": "incremental",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9761904761904762,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.8038216560509555,
+          "input_chars": 25120,
+          "output_chars": 20192
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.9117733196661297,
+          "input_chars": 13658,
+          "output_chars": 12453
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.5
+          },
+          "compression_ratio": 0.8135173008515684,
+          "input_chars": 9277,
+          "output_chars": 7547
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.9323946578320738,
+          "input_chars": 9659,
+          "output_chars": 9006
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.8597294938917975,
+          "input_chars": 13752,
+          "output_chars": 11823
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9354838709677419,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.848747932908103,
+          "input_chars": 16932,
+          "output_chars": 14371
+        }
+      },
+      "averages": {
+        "Completeness": 0.31861239119303636,
+        "Structure Preservation": 0.9166666666666666,
+        "Coherence": 0.9,
+        "Compression Quality": 0.7833333333333333
+      },
+      "composite_score": 0.6831810035842294,
+      "avg_compression_ratio": 0.8616640602001047,
+      "metadata": {
+        "total_input_tokens": 62708,
+        "total_output_tokens": 15922,
+        "elapsed_seconds": 394.16259694099426
+      }
+    },
+    "deepseek_deepseek-v3.2__independent": {
+      "model": "DeepSeek V3.2",
+      "model_id": "deepseek/deepseek-v3.2",
+      "model_slug": "deepseek_deepseek-v3.2",
+      "algorithm": "independent",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.5338375796178344,
+          "input_chars": 25120,
+          "output_chars": 13410
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.9097964562893542,
+          "input_chars": 13658,
+          "output_chars": 12426
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.4
+          },
+          "compression_ratio": 0.7508892961086558,
+          "input_chars": 9277,
+          "output_chars": 6966
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.6169375711771405,
+          "input_chars": 9659,
+          "output_chars": 5959
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.7,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.6990255962769052,
+          "input_chars": 13752,
+          "output_chars": 9613
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9642857142857143,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.8279588944011339,
+          "input_chars": 16932,
+          "output_chars": 14019
+        }
+      },
+      "averages": {
+        "Completeness": 0.3273809523809524,
+        "Structure Preservation": 0.8833333333333334,
+        "Coherence": 0.9,
+        "Compression Quality": 0.6833333333333332
+      },
+      "composite_score": 0.6629166666666667,
+      "avg_compression_ratio": 0.7230742323118373,
+      "metadata": {
+        "total_input_tokens": 19828,
+        "total_output_tokens": 13176,
+        "elapsed_seconds": 565.4462580680847
+      }
+    },
+    "deepseek_deepseek-v3.2__overlap_10": {
+      "model": "DeepSeek V3.2",
+      "model_id": "deepseek/deepseek-v3.2",
+      "model_slug": "deepseek_deepseek-v3.2",
+      "algorithm": "overlap_10",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9752066115702479,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.6809713375796178,
+          "input_chars": 25120,
+          "output_chars": 17106
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.9618538585444428,
+          "input_chars": 13658,
+          "output_chars": 13137
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7929287485178398,
+          "input_chars": 9277,
+          "output_chars": 7356
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7030748524691998,
+          "input_chars": 9659,
+          "output_chars": 6791
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.6,
+            "Coherence": 0.9,
+            "Compression Quality": 0.3
+          },
+          "compression_ratio": 0.5522833042466551,
+          "input_chars": 13752,
+          "output_chars": 7595
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9553571428571429,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.6615875265768958,
+          "input_chars": 16932,
+          "output_chars": 11202
+        }
+      },
+      "averages": {
+        "Completeness": 0.3217606257378985,
+        "Structure Preservation": 0.8666666666666667,
+        "Coherence": 0.8833333333333333,
+        "Compression Quality": 0.75
+      },
+      "composite_score": 0.6626162190082645,
+      "avg_compression_ratio": 0.7254499379891085,
+      "metadata": {
+        "total_input_tokens": 21508,
+        "total_output_tokens": 13325,
+        "elapsed_seconds": 750.3026738166809
+      }
+    },
+    "deepseek_deepseek-v3.2__overlap_20": {
+      "model": "DeepSeek V3.2",
+      "model_id": "deepseek/deepseek-v3.2",
+      "model_slug": "deepseek_deepseek-v3.2",
+      "algorithm": "overlap_20",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9924812030075187,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.6590764331210192,
+          "input_chars": 25120,
+          "output_chars": 16556
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.8884902621174403,
+          "input_chars": 13658,
+          "output_chars": 12135
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.7272825266788833,
+          "input_chars": 9277,
+          "output_chars": 6747
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 1.0,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.8652034372088208,
+          "input_chars": 9659,
+          "output_chars": 8357
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.4
+          },
+          "compression_ratio": 0.60434845840605,
+          "input_chars": 13752,
+          "output_chars": 8311
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.5,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7233640444129459,
+          "input_chars": 16932,
+          "output_chars": 12248
+        }
+      },
+      "averages": {
+        "Completeness": 0.2487468671679198,
+        "Structure Preservation": 0.8500000000000001,
+        "Coherence": 0.9166666666666669,
+        "Compression Quality": 0.7333333333333334
+      },
+      "composite_score": 0.6387280701754386,
+      "avg_compression_ratio": 0.7446275269908599,
+      "metadata": {
+        "total_input_tokens": 23047,
+        "total_output_tokens": 13549,
+        "elapsed_seconds": 852.765321969986
+      }
+    },
+    "deepseek_deepseek-v3.2__running_summary": {
+      "model": "DeepSeek V3.2",
+      "model_id": "deepseek/deepseek-v3.2",
+      "model_slug": "deepseek_deepseek-v3.2",
+      "algorithm": "running_summary",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9848484848484849,
+            "Structure Preservation": 0.9,
+            "Coherence": 1.0,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.5277070063694268,
+          "input_chars": 25120,
+          "output_chars": 13256
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.8171035290672134,
+          "input_chars": 13658,
+          "output_chars": 11160
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.7564945564298804,
+          "input_chars": 9277,
+          "output_chars": 7018
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.6397142561341754,
+          "input_chars": 9659,
+          "output_chars": 6179
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.5207242582897034,
+          "input_chars": 13752,
+          "output_chars": 7161
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9313725490196079,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.940822111977321,
+          "input_chars": 16932,
+          "output_chars": 15930
+        }
+      },
+      "averages": {
+        "Completeness": 0.3193701723113488,
+        "Structure Preservation": 0.9166666666666666,
+        "Coherence": 0.9,
+        "Compression Quality": 0.7999999999999999
+      },
+      "composite_score": 0.6859462269756387,
+      "avg_compression_ratio": 0.7004276197112868,
+      "metadata": {
+        "total_input_tokens": 36770,
+        "total_output_tokens": 14221,
+        "elapsed_seconds": 973.2891862392426
+      }
+    },
+    "deepseek_deepseek-v3.2__whole_book": {
+      "model": "DeepSeek V3.2",
+      "model_id": "deepseek/deepseek-v3.2",
+      "model_slug": "deepseek_deepseek-v3.2",
+      "algorithm": "whole_book",
+      "chapters": {
+        "__whole_book__": {
+          "scores": {
+            "Completeness": 0.9459459459459459,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7432472174463849,
+          "input_chars": 88408,
+          "output_chars": 65709
+        }
+      },
+      "averages": {
+        "Completeness": 0.9459459459459459,
+        "Structure Preservation": 0.9,
+        "Coherence": 0.9,
+        "Compression Quality": 0.9
+      },
+      "composite_score": 0.9160810810810811,
+      "avg_compression_ratio": 0.7432472174463849,
+      "metadata": {
+        "elapsed_seconds": 285.9484691619873,
+        "total_input_tokens": 19093,
+        "total_output_tokens": 13783
+      }
+    },
+    "google_gemini-2.5-pro__extract_compress": {
+      "model": "Gemini 2.5 Pro",
+      "model_id": "google/gemini-2.5-pro",
+      "model_slug": "google_gemini-2.5-pro",
+      "algorithm": "extract_compress",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9626168224299065,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.38037420382165604,
+          "input_chars": 25120,
+          "output_chars": 9555
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.45350710206472394,
+          "input_chars": 13658,
+          "output_chars": 6194
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.4
+          },
+          "compression_ratio": 0.8099601164169451,
+          "input_chars": 9277,
+          "output_chars": 7514
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 1.0,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.574800704006626,
+          "input_chars": 9659,
+          "output_chars": 5552
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.7,
+            "Compression Quality": 0.5
+          },
+          "compression_ratio": 0.4224840023269343,
+          "input_chars": 13752,
+          "output_chars": 5810
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.32878573115993387,
+          "input_chars": 16932,
+          "output_chars": 5567
+        }
+      },
+      "averages": {
+        "Completeness": 0.16043613707165108,
+        "Structure Preservation": 0.8666666666666667,
+        "Coherence": 0.8833333333333334,
+        "Compression Quality": 0.6666666666666666
+      },
+      "composite_score": 0.5936526479750779,
+      "avg_compression_ratio": 0.49498530996613654,
+      "metadata": {
+        "total_input_tokens": 28726,
+        "total_output_tokens": 32848,
+        "elapsed_seconds": 305.5910367965698
+      }
+    },
+    "google_gemini-2.5-pro__hierarchical": {
+      "model": "Gemini 2.5 Pro",
+      "model_id": "google/gemini-2.5-pro",
+      "model_slug": "google_gemini-2.5-pro",
+      "algorithm": "hierarchical",
+      "chapters": {
+        "__hierarchical__": {
+          "scores": {
+            "Completeness": 0.978494623655914,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7042688444484662,
+          "input_chars": 88408,
+          "output_chars": 62263
+        }
+      },
+      "averages": {
+        "Completeness": 0.978494623655914,
+        "Structure Preservation": 0.9,
+        "Coherence": 0.8,
+        "Compression Quality": 0.9
+      },
+      "composite_score": 0.9024731182795699,
+      "avg_compression_ratio": 0.7042688444484662,
+      "metadata": {
+        "total_input_tokens": 34480,
+        "total_output_tokens": 45332,
+        "elapsed_seconds": 372.63865399360657
+      }
+    },
+    "google_gemini-2.5-pro__incremental": {
+      "model": "Gemini 2.5 Pro",
+      "model_id": "google/gemini-2.5-pro",
+      "model_slug": "google_gemini-2.5-pro",
+      "algorithm": "incremental",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.98,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.6894904458598726,
+          "input_chars": 25120,
+          "output_chars": 17320
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7441792356128276,
+          "input_chars": 13658,
+          "output_chars": 10164
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.6876145305594481,
+          "input_chars": 9277,
+          "output_chars": 6379
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7949063050005176,
+          "input_chars": 9659,
+          "output_chars": 7678
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.4
+          },
+          "compression_ratio": 0.654086678301338,
+          "input_chars": 13752,
+          "output_chars": 8995
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.6666666666666666,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.6840302386014647,
+          "input_chars": 16932,
+          "output_chars": 11582
+        }
+      },
+      "averages": {
+        "Completeness": 0.27444444444444444,
+        "Structure Preservation": 0.8666666666666667,
+        "Coherence": 0.9,
+        "Compression Quality": 0.75
+      },
+      "composite_score": 0.6502222222222223,
+      "avg_compression_ratio": 0.7090512389892448,
+      "metadata": {
+        "total_input_tokens": 57209,
+        "total_output_tokens": 25174,
+        "elapsed_seconds": 214.37166285514832
+      }
+    },
+    "google_gemini-2.5-pro__independent": {
+      "model": "Gemini 2.5 Pro",
+      "model_id": "google/gemini-2.5-pro",
+      "model_slug": "google_gemini-2.5-pro",
+      "algorithm": "independent",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9772727272727273,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7527468152866242,
+          "input_chars": 25120,
+          "output_chars": 18909
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.6478986674476497,
+          "input_chars": 13658,
+          "output_chars": 8849
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.9682539682539683,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.8213862239948259,
+          "input_chars": 9277,
+          "output_chars": 7620
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7133243606998654,
+          "input_chars": 9659,
+          "output_chars": 6890
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.8051192553810355,
+          "input_chars": 13752,
+          "output_chars": 11072
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.5,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.6893456177651783,
+          "input_chars": 16932,
+          "output_chars": 11672
+        }
+      },
+      "averages": {
+        "Completeness": 0.40758778258778255,
+        "Structure Preservation": 0.9499999999999998,
+        "Coherence": 0.9,
+        "Compression Quality": 0.8500000000000001
+      },
+      "composite_score": 0.7326557239057239,
+      "avg_compression_ratio": 0.7383034900958632,
+      "metadata": {
+        "total_input_tokens": 20212,
+        "total_output_tokens": 24967,
+        "elapsed_seconds": 205.0563690662384
+      }
+    },
+    "google_gemini-2.5-pro__overlap_10": {
+      "model": "Gemini 2.5 Pro",
+      "model_id": "google/gemini-2.5-pro",
+      "model_slug": "google_gemini-2.5-pro",
+      "algorithm": "overlap_10",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9611650485436893,
+            "Structure Preservation": 0.8,
+            "Coherence": 1.0,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.700437898089172,
+          "input_chars": 25120,
+          "output_chars": 17595
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.6454825010982574,
+          "input_chars": 13658,
+          "output_chars": 8816
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.7,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.7180122884553196,
+          "input_chars": 9277,
+          "output_chars": 6661
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7580494875245885,
+          "input_chars": 9659,
+          "output_chars": 7322
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.9140488656195462,
+          "input_chars": 13752,
+          "output_chars": 12570
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7341719820458303,
+          "input_chars": 16932,
+          "output_chars": 12431
+        }
+      },
+      "averages": {
+        "Completeness": 0.16019417475728157,
+        "Structure Preservation": 0.8500000000000001,
+        "Coherence": 0.9,
+        "Compression Quality": 0.7999999999999999
+      },
+      "composite_score": 0.6135679611650485,
+      "avg_compression_ratio": 0.7450338371387857,
+      "metadata": {
+        "total_input_tokens": 21963,
+        "total_output_tokens": 27274,
+        "elapsed_seconds": 224.5613877773285
+      }
+    },
+    "google_gemini-2.5-pro__overlap_20": {
+      "model": "Gemini 2.5 Pro",
+      "model_id": "google/gemini-2.5-pro",
+      "model_slug": "google_gemini-2.5-pro",
+      "algorithm": "overlap_20",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9776119402985075,
+            "Structure Preservation": 0.9,
+            "Coherence": 1.0,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7232085987261146,
+          "input_chars": 25120,
+          "output_chars": 18167
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7136476790159614,
+          "input_chars": 13658,
+          "output_chars": 9747
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 0.9,
+            "Coherence": 1.0,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.6927886170098092,
+          "input_chars": 9277,
+          "output_chars": 6427
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.873485868102288,
+          "input_chars": 9659,
+          "output_chars": 8437
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7922484002326934,
+          "input_chars": 13752,
+          "output_chars": 10895
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.6292227734467281,
+          "input_chars": 16932,
+          "output_chars": 10654
+        }
+      },
+      "averages": {
+        "Completeness": 0.16293532338308458,
+        "Structure Preservation": 0.9499999999999998,
+        "Coherence": 0.9333333333333335,
+        "Compression Quality": 0.7833333333333333
+      },
+      "composite_score": 0.6453606965174129,
+      "avg_compression_ratio": 0.7374336560889324,
+      "metadata": {
+        "total_input_tokens": 23536,
+        "total_output_tokens": 31465,
+        "elapsed_seconds": 269.84142899513245
+      }
+    },
+    "google_gemini-2.5-pro__running_summary": {
+      "model": "Gemini 2.5 Pro",
+      "model_id": "google/gemini-2.5-pro",
+      "model_slug": "google_gemini-2.5-pro",
+      "algorithm": "running_summary",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9553571428571429,
+            "Structure Preservation": 0.9,
+            "Coherence": 1.0,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7320063694267516,
+          "input_chars": 25120,
+          "output_chars": 18388
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.6936593937618978,
+          "input_chars": 13658,
+          "output_chars": 9474
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.8454241672954619,
+          "input_chars": 9277,
+          "output_chars": 7843
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7429340511440108,
+          "input_chars": 9659,
+          "output_chars": 7176
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7827952297847586,
+          "input_chars": 13752,
+          "output_chars": 10765
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9603174603174603,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7729151901724545,
+          "input_chars": 16932,
+          "output_chars": 13087
+        }
+      },
+      "averages": {
+        "Completeness": 0.3192791005291005,
+        "Structure Preservation": 0.9666666666666667,
+        "Coherence": 0.8999999999999999,
+        "Compression Quality": 0.8666666666666668
+      },
+      "composite_score": 0.7084143518518519,
+      "avg_compression_ratio": 0.7616224002642226,
+      "metadata": {
+        "total_input_tokens": 38891,
+        "total_output_tokens": 36917,
+        "elapsed_seconds": 310.00910997390747
+      }
+    },
+    "google_gemini-2.5-pro__whole_book": {
+      "model": "Gemini 2.5 Pro",
+      "model_id": "google/gemini-2.5-pro",
+      "model_slug": "google_gemini-2.5-pro",
+      "algorithm": "whole_book",
+      "chapters": {
+        "__whole_book__": {
+          "scores": {
+            "Completeness": 0.9936305732484076,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.6627680752873043,
+          "input_chars": 88408,
+          "output_chars": 58594
+        }
+      },
+      "averages": {
+        "Completeness": 0.9936305732484076,
+        "Structure Preservation": 1.0,
+        "Coherence": 0.9,
+        "Compression Quality": 0.8
+      },
+      "composite_score": 0.9427707006369427,
+      "avg_compression_ratio": 0.6627680752873043,
+      "metadata": {
+        "elapsed_seconds": 115.43026781082153,
+        "total_input_tokens": 19484,
+        "total_output_tokens": 16848
+      }
+    },
+    "minimax_minimax-m2.5__extract_compress": {
+      "model": "MiniMax M2.5",
+      "model_id": "minimax/minimax-m2.5",
+      "model_slug": "minimax_minimax-m2.5",
+      "algorithm": "extract_compress",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.59375,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.31389331210191085,
+          "input_chars": 25120,
+          "output_chars": 7885
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.40408551764533607,
+          "input_chars": 13658,
+          "output_chars": 5519
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.8894039021235313,
+          "input_chars": 9277,
+          "output_chars": 8251
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.7,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.7290609793974532,
+          "input_chars": 9659,
+          "output_chars": 7042
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.5551919720767888,
+          "input_chars": 13752,
+          "output_chars": 7635
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8928571428571429,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.7,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.4085754783841247,
+          "input_chars": 16932,
+          "output_chars": 6918
+        }
+      },
+      "averages": {
+        "Completeness": 0.24776785714285712,
+        "Structure Preservation": 0.8666666666666668,
+        "Coherence": 0.8666666666666667,
+        "Compression Quality": 0.75
+      },
+      "composite_score": 0.6325520833333333,
+      "avg_compression_ratio": 0.5500351936215241,
+      "metadata": {
+        "total_input_tokens": 26545,
+        "total_output_tokens": 19240,
+        "elapsed_seconds": 575.7011389732361
+      }
+    },
+    "minimax_minimax-m2.5__hierarchical": {
+      "model": "MiniMax M2.5",
+      "model_id": "minimax/minimax-m2.5",
+      "model_slug": "minimax_minimax-m2.5",
+      "algorithm": "hierarchical",
+      "chapters": {
+        "__hierarchical__": {
+          "scores": {
+            "Completeness": 0.9823008849557522,
+            "Structure Preservation": 0.6,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.5512962627816487,
+          "input_chars": 88408,
+          "output_chars": 48739
+        }
+      },
+      "averages": {
+        "Completeness": 0.9823008849557522,
+        "Structure Preservation": 0.6,
+        "Coherence": 0.9,
+        "Compression Quality": 0.6
+      },
+      "composite_score": 0.8088053097345133,
+      "avg_compression_ratio": 0.5512962627816487,
+      "metadata": {
+        "total_input_tokens": 31166,
+        "total_output_tokens": 24463,
+        "elapsed_seconds": 381.1521511077881
+      }
+    },
+    "minimax_minimax-m2.5__incremental": {
+      "model": "MiniMax M2.5",
+      "model_id": "minimax/minimax-m2.5",
+      "model_slug": "minimax_minimax-m2.5",
+      "algorithm": "incremental",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.8865979381443299,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.5195063694267515,
+          "input_chars": 25120,
+          "output_chars": 13050
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.6615170595987699,
+          "input_chars": 13658,
+          "output_chars": 9035
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.6952678667672739,
+          "input_chars": 9277,
+          "output_chars": 6450
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.6364012837767885,
+          "input_chars": 9659,
+          "output_chars": 6147
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.4051774287376382,
+          "input_chars": 13752,
+          "output_chars": 5572
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9537037037037037,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.6919442475785494,
+          "input_chars": 16932,
+          "output_chars": 11716
+        }
+      },
+      "averages": {
+        "Completeness": 0.3067169403080056,
+        "Structure Preservation": 0.9,
+        "Coherence": 0.9,
+        "Compression Quality": 0.75
+      },
+      "composite_score": 0.669850929107802,
+      "avg_compression_ratio": 0.6016357093142952,
+      "metadata": {
+        "total_input_tokens": 47394,
+        "total_output_tokens": 13196,
+        "elapsed_seconds": 266.3358039855957
+      }
+    },
+    "minimax_minimax-m2.5__independent": {
+      "model": "MiniMax M2.5",
+      "model_id": "minimax/minimax-m2.5",
+      "model_slug": "minimax_minimax-m2.5",
+      "algorithm": "independent",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9702970297029703,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.42806528662420384,
+          "input_chars": 25120,
+          "output_chars": 10753
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.8516620295797335,
+          "input_chars": 13658,
+          "output_chars": 11632
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.0,
+            "Structure Preservation": 0.8,
+            "Coherence": 1.0,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.5718443462326183,
+          "input_chars": 9277,
+          "output_chars": 5305
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.9682539682539683,
+            "Structure Preservation": 1.0,
+            "Coherence": 1.0,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.8286572108913967,
+          "input_chars": 9659,
+          "output_chars": 8004
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.6,
+            "Coherence": 0.8,
+            "Compression Quality": 0.4
+          },
+          "compression_ratio": 0.5573007562536358,
+          "input_chars": 13752,
+          "output_chars": 7664
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.7872340425531915,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7840774864162533,
+          "input_chars": 16932,
+          "output_chars": 13276
+        }
+      },
+      "averages": {
+        "Completeness": 0.5876308400850216,
+        "Structure Preservation": 0.8500000000000001,
+        "Coherence": 0.8999999999999999,
+        "Compression Quality": 0.6666666666666666
+      },
+      "composite_score": 0.7431707940297576,
+      "avg_compression_ratio": 0.6702678526663068,
+      "metadata": {
+        "total_input_tokens": 19403,
+        "total_output_tokens": 13764,
+        "elapsed_seconds": 249.61330819129944
+      }
+    },
+    "minimax_minimax-m2.5__overlap_10": {
+      "model": "MiniMax M2.5",
+      "model_id": "minimax/minimax-m2.5",
+      "model_slug": "minimax_minimax-m2.5",
+      "algorithm": "overlap_10",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.49530254777070065,
+          "input_chars": 25120,
+          "output_chars": 12442
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.7848101265822784,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7714892370771709,
+          "input_chars": 13658,
+          "output_chars": 10537
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.9444444444444444,
+            "Structure Preservation": 0.6,
+            "Coherence": 0.9,
+            "Compression Quality": 0.6
+          },
+          "compression_ratio": 0.6617440983076426,
+          "input_chars": 9277,
+          "output_chars": 6139
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.921875,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7034889740138731,
+          "input_chars": 9659,
+          "output_chars": 6795
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 0.7,
+            "Coherence": 1.0,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.4752763234438627,
+          "input_chars": 13752,
+          "output_chars": 6536
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8555555555555555,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.7218284904323176,
+          "input_chars": 16932,
+          "output_chars": 12222
+        }
+      },
+      "averages": {
+        "Completeness": 0.851114187763713,
+        "Structure Preservation": 0.8000000000000002,
+        "Coherence": 0.9166666666666666,
+        "Compression Quality": 0.7999999999999999
+      },
+      "composite_score": 0.8470566323839662,
+      "avg_compression_ratio": 0.6381882785075946,
+      "metadata": {
+        "total_input_tokens": 21050,
+        "total_output_tokens": 12905,
+        "elapsed_seconds": 296.0283832550049
+      }
+    },
+    "minimax_minimax-m2.5__overlap_20": {
+      "model": "MiniMax M2.5",
+      "model_id": "minimax/minimax-m2.5",
+      "model_slug": "minimax_minimax-m2.5",
+      "algorithm": "overlap_20",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9868421052631579,
+            "Structure Preservation": 0.8,
+            "Coherence": 1.0,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.46667993630573246,
+          "input_chars": 25120,
+          "output_chars": 11723
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.9152542372881356,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7650461268121248,
+          "input_chars": 13658,
+          "output_chars": 10449
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.9166666666666666,
+            "Structure Preservation": 0.6,
+            "Coherence": 0.8,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.5995472674355934,
+          "input_chars": 9277,
+          "output_chars": 5562
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 0.8,
+            "Coherence": 1.0,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.44435241743451703,
+          "input_chars": 9659,
+          "output_chars": 4292
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.4,
+            "Structure Preservation": 0.7,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.42161140197789415,
+          "input_chars": 13752,
+          "output_chars": 5798
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9210526315789473,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.9785613040396882,
+          "input_chars": 16932,
+          "output_chars": 16569
+        }
+      },
+      "averages": {
+        "Completeness": 0.7899692734661512,
+        "Structure Preservation": 0.8166666666666668,
+        "Coherence": 0.9,
+        "Compression Quality": 0.8166666666666668
+      },
+      "composite_score": 0.8281559123798197,
+      "avg_compression_ratio": 0.6126330756675916,
+      "metadata": {
+        "total_input_tokens": 22554,
+        "total_output_tokens": 13490,
+        "elapsed_seconds": 568.8824908733368
+      }
+    },
+    "minimax_minimax-m2.5__running_summary": {
+      "model": "MiniMax M2.5",
+      "model_id": "minimax/minimax-m2.5",
+      "model_slug": "minimax_minimax-m2.5",
+      "algorithm": "running_summary",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9545454545454546,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.5589968152866241,
+          "input_chars": 25120,
+          "output_chars": 14042
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.9595959595959596,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.9092839361546347,
+          "input_chars": 13658,
+          "output_chars": 12419
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.9552238805970149,
+            "Structure Preservation": 0.8,
+            "Coherence": 1.0,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.754554274010995,
+          "input_chars": 9277,
+          "output_chars": 7000
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.8,
+            "Coherence": 1.0,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.4518066052386375,
+          "input_chars": 9659,
+          "output_chars": 4364
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.9690721649484536,
+            "Structure Preservation": 0.7,
+            "Coherence": 0.8,
+            "Compression Quality": 0.3
+          },
+          "compression_ratio": 0.5951134380453752,
+          "input_chars": 13752,
+          "output_chars": 8184
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9803921568627451,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.9266477675407513,
+          "input_chars": 16932,
+          "output_chars": 15690
+        }
+      },
+      "averages": {
+        "Completeness": 0.9364716027582713,
+        "Structure Preservation": 0.8500000000000001,
+        "Coherence": 0.8999999999999999,
+        "Compression Quality": 0.7666666666666666
+      },
+      "composite_score": 0.8802650609653949,
+      "avg_compression_ratio": 0.6994004727128362,
+      "metadata": {
+        "total_input_tokens": 36851,
+        "total_output_tokens": 18284,
+        "elapsed_seconds": 531.0651068687439
+      }
+    },
+    "minimax_minimax-m2.5__whole_book": {
+      "model": "MiniMax M2.5",
+      "model_id": "minimax/minimax-m2.5",
+      "model_slug": "minimax_minimax-m2.5",
+      "algorithm": "whole_book",
+      "chapters": {
+        "__whole_book__": {
+          "scores": {
+            "Completeness": 0.9515151515151515,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.23425481856845534,
+          "input_chars": 88408,
+          "output_chars": 20710
+        }
+      },
+      "averages": {
+        "Completeness": 0.9515151515151515,
+        "Structure Preservation": 0.9,
+        "Coherence": 0.9,
+        "Compression Quality": 0.8
+      },
+      "composite_score": 0.9030303030303031,
+      "avg_compression_ratio": 0.23425481856845534,
+      "metadata": {
+        "elapsed_seconds": 73.00463509559631,
+        "total_input_tokens": 18640,
+        "total_output_tokens": 4587
+      }
+    },
+    "nvidia_nemotron-3-super-120b-a12b_free__extract_compress": {
+      "model": "Nemotron 120B",
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "model_slug": "nvidia_nemotron-3-super-120b-a12b_free",
+      "algorithm": "extract_compress",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.2715764331210191,
+          "input_chars": 25120,
+          "output_chars": 6822
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.7,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.32881827500366084,
+          "input_chars": 13658,
+          "output_chars": 4491
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.9487179487179487,
+            "Structure Preservation": 0.7,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.8900506629298265,
+          "input_chars": 9277,
+          "output_chars": 8257
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.9230769230769231,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.7,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.7905580287814473,
+          "input_chars": 9659,
+          "output_chars": 7636
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.595477021524142,
+          "input_chars": 13752,
+          "output_chars": 8189
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9111111111111111,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.6,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.5342546657217103,
+          "input_chars": 16932,
+          "output_chars": 9046
+        }
+      },
+      "averages": {
+        "Completeness": 0.8304843304843305,
+        "Structure Preservation": 0.8666666666666667,
+        "Coherence": 0.7333333333333333,
+        "Compression Quality": 0.8833333333333334
+      },
+      "composite_score": 0.8231695156695157,
+      "avg_compression_ratio": 0.5684558478469677,
+      "metadata": {
+        "total_input_tokens": 32677,
+        "total_output_tokens": 79240,
+        "elapsed_seconds": 2163.52836728096
+      }
+    },
+    "nvidia_nemotron-3-super-120b-a12b_free__hierarchical": {
+      "model": "Nemotron 120B",
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "model_slug": "nvidia_nemotron-3-super-120b-a12b_free",
+      "algorithm": "hierarchical",
+      "chapters": {
+        "__hierarchical__": {
+          "scores": {
+            "Completeness": 0.7899159663865546,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.6,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.33507148674328113,
+          "input_chars": 88408,
+          "output_chars": 29623
+        }
+      },
+      "averages": {
+        "Completeness": 0.7899159663865546,
+        "Structure Preservation": 1.0,
+        "Coherence": 0.6,
+        "Compression Quality": 0.9
+      },
+      "composite_score": 0.811470588235294,
+      "avg_compression_ratio": 0.33507148674328113,
+      "metadata": {
+        "total_input_tokens": 27672,
+        "total_output_tokens": 22592,
+        "elapsed_seconds": 838.4151639938354
+      }
+    },
+    "nvidia_nemotron-3-super-120b-a12b_free__incremental": {
+      "model": "Nemotron 120B",
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "model_slug": "nvidia_nemotron-3-super-120b-a12b_free",
+      "algorithm": "incremental",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.75,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.20171178343949045,
+          "input_chars": 25120,
+          "output_chars": 5067
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.9117647058823529,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.3402401522916972,
+          "input_chars": 13658,
+          "output_chars": 4647
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.2805863964643743,
+          "input_chars": 9277,
+          "output_chars": 2603
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.3671187493529351,
+          "input_chars": 9659,
+          "output_chars": 3546
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.4813118091913903,
+          "input_chars": 13752,
+          "output_chars": 6619
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.868421052631579,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.2847862036380817,
+          "input_chars": 16932,
+          "output_chars": 4822
+        }
+      },
+      "averages": {
+        "Completeness": 0.8216976264189886,
+        "Structure Preservation": 0.9499999999999998,
+        "Coherence": 0.8666666666666667,
+        "Compression Quality": 0.8333333333333335
+      },
+      "composite_score": 0.8667608359133127,
+      "avg_compression_ratio": 0.3259591823963282,
+      "metadata": {
+        "total_input_tokens": 35730,
+        "total_output_tokens": 15194,
+        "elapsed_seconds": 801.3407907485962
+      }
+    },
+    "nvidia_nemotron-3-super-120b-a12b_free__independent": {
+      "model": "Nemotron 120B",
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "model_slug": "nvidia_nemotron-3-super-120b-a12b_free",
+      "algorithm": "independent",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.8604651162790697,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.20246815286624203,
+          "input_chars": 25120,
+          "output_chars": 5086
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.9117647058823529,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.3181285693366525,
+          "input_chars": 13658,
+          "output_chars": 4345
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.4498221407782688,
+          "input_chars": 9277,
+          "output_chars": 4173
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.8648648648648649,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.38627187079407804,
+          "input_chars": 9659,
+          "output_chars": 3731
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.518760907504363,
+          "input_chars": 13752,
+          "output_chars": 7134
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.28567210016536737,
+          "input_chars": 16932,
+          "output_chars": 4837
+        }
+      },
+      "averages": {
+        "Completeness": 0.9061824478377146,
+        "Structure Preservation": 0.9499999999999998,
+        "Coherence": 0.85,
+        "Compression Quality": 0.8166666666666665
+      },
+      "composite_score": 0.8896638567432,
+      "avg_compression_ratio": 0.3601872902408287,
+      "metadata": {
+        "total_input_tokens": 20086,
+        "total_output_tokens": 10081,
+        "elapsed_seconds": 418.32721304893494
+      }
+    },
+    "nvidia_nemotron-3-super-120b-a12b_free__overlap_10": {
+      "model": "Nemotron 120B",
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "model_slug": "nvidia_nemotron-3-super-120b-a12b_free",
+      "algorithm": "overlap_10",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.7241379310344828,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.14920382165605095,
+          "input_chars": 25120,
+          "output_chars": 3748
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.3937618977888417,
+          "input_chars": 13658,
+          "output_chars": 5378
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 0.4,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.4713808343214401,
+          "input_chars": 9277,
+          "output_chars": 4373
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.4,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.38948131276529663,
+          "input_chars": 9659,
+          "output_chars": 3762
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.41383071553228623,
+          "input_chars": 13752,
+          "output_chars": 5691
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8648648648648649,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.2870304748405386,
+          "input_chars": 16932,
+          "output_chars": 4860
+        }
+      },
+      "averages": {
+        "Completeness": 0.7315004659832246,
+        "Structure Preservation": 0.85,
+        "Coherence": 0.8833333333333334,
+        "Compression Quality": 0.8333333333333335
+      },
+      "composite_score": 0.8143584964274619,
+      "avg_compression_ratio": 0.35078150948407566,
+      "metadata": {
+        "total_input_tokens": 21789,
+        "total_output_tokens": 10837,
+        "elapsed_seconds": 377.16885709762573
+      }
+    },
+    "nvidia_nemotron-3-super-120b-a12b_free__overlap_20": {
+      "model": "Nemotron 120B",
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "model_slug": "nvidia_nemotron-3-super-120b-a12b_free",
+      "algorithm": "overlap_20",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.19279458598726115,
+          "input_chars": 25120,
+          "output_chars": 4843
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.7,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.29345438570800997,
+          "input_chars": 13658,
+          "output_chars": 4008
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.7,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.5443570119650749,
+          "input_chars": 9277,
+          "output_chars": 5050
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.46661145046071023,
+          "input_chars": 9659,
+          "output_chars": 4507
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.3852530541012216,
+          "input_chars": 13752,
+          "output_chars": 5298
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9565217391304348,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.2896881644223955,
+          "input_chars": 16932,
+          "output_chars": 4905
+        }
+      },
+      "averages": {
+        "Completeness": 0.7927536231884059,
+        "Structure Preservation": 0.9666666666666668,
+        "Coherence": 0.8166666666666665,
+        "Compression Quality": 0.8333333333333334
+      },
+      "composite_score": 0.8482971014492754,
+      "avg_compression_ratio": 0.36202644210744556,
+      "metadata": {
+        "total_input_tokens": 23330,
+        "total_output_tokens": 11922,
+        "elapsed_seconds": 459.3856620788574
+      }
+    },
+    "nvidia_nemotron-3-super-120b-a12b_free__running_summary": {
+      "model": "Nemotron 120B",
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "model_slug": "nvidia_nemotron-3-super-120b-a12b_free",
+      "algorithm": "running_summary",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.8727272727272727,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.24601910828025478,
+          "input_chars": 25120,
+          "output_chars": 6180
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.8387096774193549,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.2995314101625421,
+          "input_chars": 13658,
+          "output_chars": 4091
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.9473684210526315,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.47181200819230357,
+          "input_chars": 9277,
+          "output_chars": 4377
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.972972972972973,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.4390723677399317,
+          "input_chars": 9659,
+          "output_chars": 4241
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.6,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.3601657940663176,
+          "input_chars": 13752,
+          "output_chars": 4953
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9736842105263158,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.2761044176706827,
+          "input_chars": 16932,
+          "output_chars": 4675
+        }
+      },
+      "averages": {
+        "Completeness": 0.8675770924497579,
+        "Structure Preservation": 0.9833333333333334,
+        "Coherence": 0.8166666666666665,
+        "Compression Quality": 0.8666666666666667
+      },
+      "composite_score": 0.8836519823574153,
+      "avg_compression_ratio": 0.3487841843520054,
+      "metadata": {
+        "total_input_tokens": 31807,
+        "total_output_tokens": 13472,
+        "elapsed_seconds": 592.4076790809631
+      }
+    },
+    "nvidia_nemotron-3-super-120b-a12b_free__whole_book": {
+      "model": "Nemotron 120B",
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "model_slug": "nvidia_nemotron-3-super-120b-a12b_free",
+      "algorithm": "whole_book",
+      "chapters": {
+        "__whole_book__": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.10198172111121165,
+          "input_chars": 88408,
+          "output_chars": 9016
+        }
+      },
+      "averages": {
+        "Completeness": 0.6,
+        "Structure Preservation": 0.9,
+        "Coherence": 0.9,
+        "Compression Quality": 0.9
+      },
+      "composite_score": 0.795,
+      "avg_compression_ratio": 0.10198172111121165,
+      "metadata": {
+        "elapsed_seconds": 40.01881194114685,
+        "total_input_tokens": 19277,
+        "total_output_tokens": 2555
+      }
+    },
+    "stepfun_step-3.5-flash_free__extract_compress": {
+      "model": "StepFun: Step 3.5 Flash",
+      "model_id": "stepfun/step-3.5-flash:free",
+      "model_slug": "stepfun_step-3.5-flash_free",
+      "algorithm": "extract_compress",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.7894736842105263,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.2197452229299363,
+          "input_chars": 25120,
+          "output_chars": 5520
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.9545454545454546,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.35041733782398593,
+          "input_chars": 13658,
+          "output_chars": 4786
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.6241241780748087,
+          "input_chars": 9277,
+          "output_chars": 5790
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.4,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.42188632363598716,
+          "input_chars": 9659,
+          "output_chars": 4075
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.43651832460732987,
+          "input_chars": 13752,
+          "output_chars": 6003
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8933333333333333,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.40816206000472477,
+          "input_chars": 16932,
+          "output_chars": 6911
+        }
+      },
+      "averages": {
+        "Completeness": 0.8062254120148857,
+        "Structure Preservation": 0.8833333333333334,
+        "Coherence": 0.8833333333333334,
+        "Compression Quality": 0.8166666666666668
+      },
+      "composite_score": 0.8463455608718767,
+      "avg_compression_ratio": 0.41014224117946213,
+      "metadata": {
+        "total_input_tokens": 26508,
+        "total_output_tokens": 26947,
+        "elapsed_seconds": 453.9364683628082
+      }
+    },
+    "stepfun_step-3.5-flash_free__hierarchical": {
+      "model": "StepFun: Step 3.5 Flash",
+      "model_id": "stepfun/step-3.5-flash:free",
+      "model_slug": "stepfun_step-3.5-flash_free",
+      "algorithm": "hierarchical",
+      "chapters": {
+        "__hierarchical__": {
+          "scores": {
+            "Completeness": 0.9411764705882353,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.46050131209845263,
+          "input_chars": 88408,
+          "output_chars": 40712
+        }
+      },
+      "averages": {
+        "Completeness": 0.9411764705882353,
+        "Structure Preservation": 0.9,
+        "Coherence": 0.9,
+        "Compression Quality": 0.8
+      },
+      "composite_score": 0.8994117647058824,
+      "avg_compression_ratio": 0.46050131209845263,
+      "metadata": {
+        "total_input_tokens": 28828,
+        "total_output_tokens": 21451,
+        "elapsed_seconds": 318.3126571178436
+      }
+    },
+    "stepfun_step-3.5-flash_free__incremental": {
+      "model": "StepFun: Step 3.5 Flash",
+      "model_id": "stepfun/step-3.5-flash:free",
+      "model_slug": "stepfun_step-3.5-flash_free",
+      "algorithm": "incremental",
+      "chapters": {
+        "ch02": {
+          "scores": {
+            "Completeness": 0.9577464788732394,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.45057841558061207,
+          "input_chars": 13658,
+          "output_chars": 6154
+        },
+        "ch01": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 1.0,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.24275477707006368,
+          "input_chars": 25120,
+          "output_chars": 6098
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.4558442902992028,
+          "input_chars": 9659,
+          "output_chars": 4403
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.707232941683734,
+          "input_chars": 9277,
+          "output_chars": 6561
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.5490110529377545,
+          "input_chars": 13752,
+          "output_chars": 7550
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.2970115757146232,
+          "input_chars": 16932,
+          "output_chars": 5029
+        }
+      },
+      "averages": {
+        "Completeness": 0.8262910798122065,
+        "Structure Preservation": 0.9166666666666666,
+        "Coherence": 0.8666666666666667,
+        "Compression Quality": 0.8500000000000001
+      },
+      "composite_score": 0.8625352112676056,
+      "avg_compression_ratio": 0.4504055088809984,
+      "metadata": {
+        "total_input_tokens": 39561,
+        "total_output_tokens": 12525,
+        "elapsed_seconds": 244.1381812095642
+      }
+    },
+    "stepfun_step-3.5-flash_free__independent": {
+      "model": "StepFun: Step 3.5 Flash",
+      "model_id": "stepfun/step-3.5-flash:free",
+      "model_slug": "stepfun_step-3.5-flash_free",
+      "algorithm": "independent",
+      "chapters": {
+        "ch02": {
+          "scores": {
+            "Completeness": 0.9411764705882353,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.6560257724410602,
+          "input_chars": 13658,
+          "output_chars": 8960
+        },
+        "ch01": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.37245222929936306,
+          "input_chars": 25120,
+          "output_chars": 9356
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 1.0,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.4217827932498188,
+          "input_chars": 9659,
+          "output_chars": 4074
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.9607843137254902,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.5700118572814488,
+          "input_chars": 9277,
+          "output_chars": 5288
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.9557522123893806,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.5793339150668994,
+          "input_chars": 13752,
+          "output_chars": 7967
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.421037089534609,
+          "input_chars": 16932,
+          "output_chars": 7129
+        }
+      },
+      "averages": {
+        "Completeness": 0.8762854994505176,
+        "Structure Preservation": 0.9666666666666667,
+        "Coherence": 0.8999999999999999,
+        "Compression Quality": 0.8666666666666667
+      },
+      "composite_score": 0.9033665914743478,
+      "avg_compression_ratio": 0.5034406094788665,
+      "metadata": {
+        "total_input_tokens": 19906,
+        "total_output_tokens": 11783,
+        "elapsed_seconds": 215.8143289089203
+      }
+    },
+    "stepfun_step-3.5-flash_free__overlap_10": {
+      "model": "StepFun: Step 3.5 Flash",
+      "model_id": "stepfun/step-3.5-flash:free",
+      "model_slug": "stepfun_step-3.5-flash_free",
+      "algorithm": "overlap_10",
+      "chapters": {
+        "ch02": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.3354078195929126,
+          "input_chars": 13658,
+          "output_chars": 4581
+        },
+        "ch01": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.47093949044585987,
+          "input_chars": 25120,
+          "output_chars": 11830
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.9655172413793104,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.5508246200280263,
+          "input_chars": 9277,
+          "output_chars": 5110
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.44269593125582357,
+          "input_chars": 9659,
+          "output_chars": 4276
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.98989898989899,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.7,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.43215532286212915,
+          "input_chars": 13752,
+          "output_chars": 5943
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.3465627214741318,
+          "input_chars": 16932,
+          "output_chars": 5868
+        }
+      },
+      "averages": {
+        "Completeness": 0.82590270521305,
+        "Structure Preservation": 0.9333333333333335,
+        "Coherence": 0.8666666666666667,
+        "Compression Quality": 0.8833333333333334
+      },
+      "composite_score": 0.8715659468245676,
+      "avg_compression_ratio": 0.4297643176098139,
+      "metadata": {
+        "total_input_tokens": 21586,
+        "total_output_tokens": 15088,
+        "elapsed_seconds": 237.13036179542542
+      }
+    },
+    "stepfun_step-3.5-flash_free__overlap_20": {
+      "model": "StepFun: Step 3.5 Flash",
+      "model_id": "stepfun/step-3.5-flash:free",
+      "model_slug": "stepfun_step-3.5-flash_free",
+      "algorithm": "overlap_20",
+      "chapters": {
+        "ch02": {
+          "scores": {
+            "Completeness": 0.9357798165137615,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.9020354371064577,
+          "input_chars": 13658,
+          "output_chars": 12320
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.8,
+            "Coherence": 1.0,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.4741834644820524,
+          "input_chars": 9277,
+          "output_chars": 4399
+        },
+        "ch01": {
+          "scores": {
+            "Completeness": 0.8309859154929577,
+            "Structure Preservation": 1.0,
+            "Coherence": 1.0,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.420421974522293,
+          "input_chars": 25120,
+          "output_chars": 10561
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.8444444444444444,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.4347240915208614,
+          "input_chars": 9659,
+          "output_chars": 4199
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 1.0,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.4098747932908103,
+          "input_chars": 16932,
+          "output_chars": 6940
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.9375,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.5113438045375218,
+          "input_chars": 13752,
+          "output_chars": 7032
+        }
+      },
+      "averages": {
+        "Completeness": 0.8581183627418607,
+        "Structure Preservation": 0.9166666666666666,
+        "Coherence": 0.9333333333333332,
+        "Compression Quality": 0.8166666666666668
+      },
+      "composite_score": 0.8853414269596512,
+      "avg_compression_ratio": 0.5254305942433327,
+      "metadata": {
+        "total_input_tokens": 23125,
+        "total_output_tokens": 14876,
+        "elapsed_seconds": 252.0155599117279
+      }
+    },
+    "stepfun_step-3.5-flash_free__running_summary": {
+      "model": "StepFun: Step 3.5 Flash",
+      "model_id": "stepfun/step-3.5-flash:free",
+      "model_slug": "stepfun_step-3.5-flash_free",
+      "algorithm": "running_summary",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9545454545454546,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.20155254777070064,
+          "input_chars": 25120,
+          "output_chars": 5063
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.8831168831168831,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.9191682530385122,
+          "input_chars": 13658,
+          "output_chars": 12554
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.5686105422011426,
+          "input_chars": 9277,
+          "output_chars": 5275
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.4503571798322808,
+          "input_chars": 9659,
+          "output_chars": 4350
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.7590168702734148,
+          "input_chars": 13752,
+          "output_chars": 10438
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9814814814814815,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.31992676588707775,
+          "input_chars": 16932,
+          "output_chars": 5417
+        }
+      },
+      "averages": {
+        "Completeness": 0.8698573031906366,
+        "Structure Preservation": 0.9,
+        "Coherence": 0.8833333333333334,
+        "Compression Quality": 0.8833333333333333
+      },
+      "composite_score": 0.8827833894500561,
+      "avg_compression_ratio": 0.5364386931671882,
+      "metadata": {
+        "total_input_tokens": 33832,
+        "total_output_tokens": 15363,
+        "elapsed_seconds": 327.3466181755066
+      }
+    },
+    "stepfun_step-3.5-flash_free__whole_book": {
+      "model": "StepFun: Step 3.5 Flash",
+      "model_id": "stepfun/step-3.5-flash:free",
+      "model_slug": "stepfun_step-3.5-flash_free",
+      "algorithm": "whole_book",
+      "chapters": {
+        "__whole_book__": {
+          "scores": {
+            "Completeness": 0.8235294117647058,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.25779341236087233,
+          "input_chars": 88408,
+          "output_chars": 22791
+        }
+      },
+      "averages": {
+        "Completeness": 0.8235294117647058,
+        "Structure Preservation": 1.0,
+        "Coherence": 0.8,
+        "Compression Quality": 1.0
+      },
+      "composite_score": 0.888235294117647,
+      "avg_compression_ratio": 0.25779341236087233,
+      "metadata": {
+        "elapsed_seconds": 85.29359531402588,
+        "total_input_tokens": 19106,
+        "total_output_tokens": 5825
+      }
+    },
+    "x-ai_grok-4.1-fast__extract_compress": {
+      "model": "Grok 4.1 Fast",
+      "model_id": "x-ai/grok-4.1-fast",
+      "model_slug": "x-ai_grok-4.1-fast",
+      "algorithm": "extract_compress",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.7368421052631579,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.14187898089171974,
+          "input_chars": 25120,
+          "output_chars": 3564
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.9565217391304348,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.7,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.4340842944917538,
+          "input_chars": 9277,
+          "output_chars": 4027
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.56,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.34514570215258455,
+          "input_chars": 13658,
+          "output_chars": 4714
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.3758153017910757,
+          "input_chars": 9659,
+          "output_chars": 3630
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.6,
+            "Coherence": 0.7,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.30424665503199533,
+          "input_chars": 13752,
+          "output_chars": 4184
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.7777777777777778,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.2,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.257677769903142,
+          "input_chars": 16932,
+          "output_chars": 4363
+        }
+      },
+      "averages": {
+        "Completeness": 0.7718569370285616,
+        "Structure Preservation": 0.8666666666666667,
+        "Coherence": 0.7000000000000001,
+        "Compression Quality": 0.9
+      },
+      "composite_score": 0.7968165946266632,
+      "avg_compression_ratio": 0.3098081173770452,
+      "metadata": {
+        "total_input_tokens": 27551,
+        "total_output_tokens": 19093,
+        "elapsed_seconds": 149.84110403060913
+      }
+    },
+    "x-ai_grok-4.1-fast__hierarchical": {
+      "model": "Grok 4.1 Fast",
+      "model_id": "x-ai/grok-4.1-fast",
+      "model_slug": "x-ai_grok-4.1-fast",
+      "algorithm": "hierarchical",
+      "chapters": {
+        "__hierarchical__": {
+          "scores": {
+            "Completeness": 0.9402985074626866,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.7,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.30130757397520586,
+          "input_chars": 88408,
+          "output_chars": 26638
+        }
+      },
+      "averages": {
+        "Completeness": 0.9402985074626866,
+        "Structure Preservation": 1.0,
+        "Coherence": 0.7,
+        "Compression Quality": 1.0
+      },
+      "composite_score": 0.9041044776119402,
+      "avg_compression_ratio": 0.30130757397520586,
+      "metadata": {
+        "total_input_tokens": 26345,
+        "total_output_tokens": 16002,
+        "elapsed_seconds": 109.61235880851746
+      }
+    },
+    "x-ai_grok-4.1-fast__incremental": {
+      "model": "Grok 4.1 Fast",
+      "model_id": "x-ai/grok-4.1-fast",
+      "model_slug": "x-ai_grok-4.1-fast",
+      "algorithm": "incremental",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.78125,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.15955414012738853,
+          "input_chars": 25120,
+          "output_chars": 4008
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.9705882352941176,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.24308097818128568,
+          "input_chars": 13658,
+          "output_chars": 3320
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 0.6,
+            "Coherence": 0.7,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.2953541015414466,
+          "input_chars": 9277,
+          "output_chars": 2740
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.32653483797494565,
+          "input_chars": 9659,
+          "output_chars": 3154
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.6,
+            "Compression Quality": 0.7
+          },
+          "compression_ratio": 0.24120127981384526,
+          "input_chars": 13752,
+          "output_chars": 3317
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.95,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.20416961965509095,
+          "input_chars": 16932,
+          "output_chars": 3457
+        }
+      },
+      "averages": {
+        "Completeness": 0.8503063725490198,
+        "Structure Preservation": 0.8833333333333333,
+        "Coherence": 0.7666666666666667,
+        "Compression Quality": 0.85
+      },
+      "composite_score": 0.8376072303921569,
+      "avg_compression_ratio": 0.24498249288233379,
+      "metadata": {
+        "total_input_tokens": 31243,
+        "total_output_tokens": 7331,
+        "elapsed_seconds": 62.81957197189331
+      }
+    },
+    "x-ai_grok-4.1-fast__independent": {
+      "model": "Grok 4.1 Fast",
+      "model_id": "x-ai/grok-4.1-fast",
+      "model_slug": "x-ai_grok-4.1-fast",
+      "algorithm": "independent",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.775,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.7,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.14868630573248406,
+          "input_chars": 25120,
+          "output_chars": 3735
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.7555555555555555,
+            "Structure Preservation": 0.8,
+            "Coherence": 1.0,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.3332113047298287,
+          "input_chars": 13658,
+          "output_chars": 4551
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 0.9,
+            "Coherence": 1.0,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.3403043793353349,
+          "input_chars": 9659,
+          "output_chars": 3287
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.34763393338363696,
+          "input_chars": 9277,
+          "output_chars": 3225
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.7,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.3467132053519488,
+          "input_chars": 13752,
+          "output_chars": 4768
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.25047247814788565,
+          "input_chars": 16932,
+          "output_chars": 4241
+        }
+      },
+      "averages": {
+        "Completeness": 0.8217592592592592,
+        "Structure Preservation": 0.9333333333333335,
+        "Coherence": 0.8333333333333334,
+        "Compression Quality": 0.8833333333333334
+      },
+      "composite_score": 0.8617824074074074,
+      "avg_compression_ratio": 0.29450360111351986,
+      "metadata": {
+        "total_input_tokens": 20199,
+        "total_output_tokens": 7948,
+        "elapsed_seconds": 64.48859000205994
+      }
+    },
+    "x-ai_grok-4.1-fast__overlap_10": {
+      "model": "Grok 4.1 Fast",
+      "model_id": "x-ai/grok-4.1-fast",
+      "model_slug": "x-ai_grok-4.1-fast",
+      "algorithm": "overlap_10",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.7435897435897436,
+            "Structure Preservation": 0.8,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.15561305732484076,
+          "input_chars": 25120,
+          "output_chars": 3909
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.8666666666666667,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.22689998535656758,
+          "input_chars": 13658,
+          "output_chars": 3099
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.34148970572383314,
+          "input_chars": 9277,
+          "output_chars": 3168
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.33078824898196624,
+          "input_chars": 13752,
+          "output_chars": 4549
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.39621078786623876,
+          "input_chars": 9659,
+          "output_chars": 3827
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.2358256555634302,
+          "input_chars": 16932,
+          "output_chars": 3993
+        }
+      },
+      "averages": {
+        "Completeness": 0.7683760683760684,
+        "Structure Preservation": 0.9500000000000001,
+        "Coherence": 0.8333333333333334,
+        "Compression Quality": 0.9166666666666666
+      },
+      "composite_score": 0.8522649572649573,
+      "avg_compression_ratio": 0.28113790680281275,
+      "metadata": {
+        "total_input_tokens": 21837,
+        "total_output_tokens": 8031,
+        "elapsed_seconds": 67.50164484977722
+      }
+    },
+    "x-ai_grok-4.1-fast__overlap_20": {
+      "model": "Grok 4.1 Fast",
+      "model_id": "x-ai/grok-4.1-fast",
+      "model_slug": "x-ai_grok-4.1-fast",
+      "algorithm": "overlap_20",
+      "chapters": {
+        "ch01": {
+          "scores": {
+            "Completeness": 0.9298245614035088,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.203343949044586,
+          "input_chars": 25120,
+          "output_chars": 5108
+        },
+        "ch02": {
+          "scores": {
+            "Completeness": 0.8787878787878788,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.7,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.22689998535656758,
+          "input_chars": 13658,
+          "output_chars": 3099
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 1.0,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.35956103116264626,
+          "input_chars": 9659,
+          "output_chars": 3473
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.9137931034482759,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.7,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.3647730947504581,
+          "input_chars": 9277,
+          "output_chars": 3384
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.4,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.3139179755671902,
+          "input_chars": 13752,
+          "output_chars": 4317
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.8545454545454545,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.351169383416017,
+          "input_chars": 16932,
+          "output_chars": 5946
+        }
+      },
+      "averages": {
+        "Completeness": 0.829491833030853,
+        "Structure Preservation": 0.9500000000000001,
+        "Coherence": 0.7999999999999999,
+        "Compression Quality": 0.9500000000000001
+      },
+      "composite_score": 0.8703221415607986,
+      "avg_compression_ratio": 0.3032775698829108,
+      "metadata": {
+        "total_input_tokens": 23341,
+        "total_output_tokens": 8675,
+        "elapsed_seconds": 69.56110715866089
+      }
+    },
+    "x-ai_grok-4.1-fast__running_summary": {
+      "model": "Grok 4.1 Fast",
+      "model_id": "x-ai/grok-4.1-fast",
+      "model_slug": "x-ai_grok-4.1-fast",
+      "algorithm": "running_summary",
+      "chapters": {
+        "ch02": {
+          "scores": {
+            "Completeness": 0.8928571428571429,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.9,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.21525845658222287,
+          "input_chars": 13658,
+          "output_chars": 2940
+        },
+        "ch01": {
+          "scores": {
+            "Completeness": 0.8125,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.1365047770700637,
+          "input_chars": 25120,
+          "output_chars": 3429
+        },
+        "ch03": {
+          "scores": {
+            "Completeness": 0.7777777777777778,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.8
+          },
+          "compression_ratio": 0.321332327260968,
+          "input_chars": 9277,
+          "output_chars": 2981
+        },
+        "ch04": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.9,
+            "Compression Quality": 1.0
+          },
+          "compression_ratio": 0.38430479345687957,
+          "input_chars": 9659,
+          "output_chars": 3712
+        },
+        "ch06": {
+          "scores": {
+            "Completeness": 0.9302325581395349,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.21367824238128988,
+          "input_chars": 16932,
+          "output_chars": 3618
+        },
+        "ch05": {
+          "scores": {
+            "Completeness": 0.6,
+            "Structure Preservation": 1.0,
+            "Coherence": 0.8,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.32344386271087844,
+          "input_chars": 13752,
+          "output_chars": 4448
+        }
+      },
+      "averages": {
+        "Completeness": 0.7688945797957425,
+        "Structure Preservation": 0.9333333333333335,
+        "Coherence": 0.8333333333333334,
+        "Compression Quality": 0.9
+      },
+      "composite_score": 0.8457797695951765,
+      "avg_compression_ratio": 0.2657537432437171,
+      "metadata": {
+        "total_input_tokens": 30731,
+        "total_output_tokens": 11000,
+        "elapsed_seconds": 96.26824998855591
+      }
+    },
+    "x-ai_grok-4.1-fast__whole_book": {
+      "model": "Grok 4.1 Fast",
+      "model_id": "x-ai/grok-4.1-fast",
+      "model_slug": "x-ai_grok-4.1-fast",
+      "algorithm": "whole_book",
+      "chapters": {
+        "__whole_book__": {
+          "scores": {
+            "Completeness": 0.8,
+            "Structure Preservation": 0.9,
+            "Coherence": 0.7,
+            "Compression Quality": 0.9
+          },
+          "compression_ratio": 0.10932268572979821,
+          "input_chars": 88408,
+          "output_chars": 9665
+        }
+      },
+      "averages": {
+        "Completeness": 0.8,
+        "Structure Preservation": 0.9,
+        "Coherence": 0.7,
+        "Compression Quality": 0.9
+      },
+      "composite_score": 0.815,
+      "avg_compression_ratio": 0.10932268572979821,
+      "metadata": {
+        "elapsed_seconds": 26.067273139953613,
+        "total_input_tokens": 18744,
+        "total_output_tokens": 2781
+      }
+    }
+  }
+}
