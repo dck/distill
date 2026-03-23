@@ -142,7 +142,8 @@ mod tests {
 
     #[test]
     fn test_load_missing_file_returns_default() {
-        let file = load_config_file_from(std::path::Path::new("/tmp/nonexistent/distill/config.toml"));
+        let file =
+            load_config_file_from(std::path::Path::new("/tmp/nonexistent/distill/config.toml"));
         assert!(file.api_key.is_none());
         assert!(file.api_base.is_none());
         assert!(file.model.is_none());
@@ -164,7 +165,10 @@ mod tests {
         save_config_file_to(&path, &config).unwrap();
         let loaded = load_config_file_from(&path);
         assert_eq!(loaded.api_key.as_deref(), Some("sk-test123"));
-        assert_eq!(loaded.api_base.as_deref(), Some("https://api.example.com/v1"));
+        assert_eq!(
+            loaded.api_base.as_deref(),
+            Some("https://api.example.com/v1")
+        );
         assert_eq!(loaded.model.as_deref(), Some("test-model"));
         assert_eq!(loaded.level.as_deref(), Some("dense"));
         assert_eq!(loaded.jobs, Some(8));

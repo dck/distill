@@ -23,7 +23,10 @@ fn mask_key(key: &str) -> String {
     }
 }
 
-fn resolve_with_source(env_var: &str, file_value: &Option<String>) -> (Option<String>, Option<&'static str>) {
+fn resolve_with_source(
+    env_var: &str,
+    file_value: &Option<String>,
+) -> (Option<String>, Option<&'static str>) {
     if let Ok(val) = std::env::var(env_var) {
         return (Some(val), Some("env"));
     }
@@ -52,10 +55,7 @@ fn show() {
     let jobs_str = file.jobs.map(|v| v.to_string());
     let level_str = file.level.clone();
 
-    let file_settings: &[(&str, &Option<String>)] = &[
-        ("level", &level_str),
-        ("jobs", &jobs_str),
-    ];
+    let file_settings: &[(&str, &Option<String>)] = &[("level", &level_str), ("jobs", &jobs_str)];
 
     for &(key, value) in file_settings {
         let source = value.as_ref().map(|_| "config file");
@@ -64,17 +64,19 @@ fn show() {
 
     eprintln!();
     if color {
-        eprintln!(
-            "  {} {}",
-            "config file:".dimmed(),
-            config_path().display()
-        );
+        eprintln!("  {} {}", "config file:".dimmed(), config_path().display());
     } else {
         eprintln!("  config file: {}", config_path().display());
     }
 }
 
-fn print_setting(key: &str, value: Option<&str>, source: Option<&str>, is_secret: bool, color: bool) {
+fn print_setting(
+    key: &str,
+    value: Option<&str>,
+    source: Option<&str>,
+    is_secret: bool,
+    color: bool,
+) {
     let display_val = match value {
         Some(v) if is_secret => mask_key(v),
         Some(v) => v.to_string(),
@@ -94,11 +96,7 @@ fn print_setting(key: &str, value: Option<&str>, source: Option<&str>, is_secret
                 );
             }
             None => {
-                eprintln!(
-                    "  {:<12} {}",
-                    key.bold(),
-                    display_val.dimmed(),
-                );
+                eprintln!("  {:<12} {}", key.bold(), display_val.dimmed(),);
             }
         }
     } else {

@@ -54,11 +54,19 @@ async fn run() -> error::Result<()> {
         .level
         .as_deref()
         .and_then(|s| s.parse::<CompressionLevel>().ok());
-    let level = cli.level.clone().or(file_level).unwrap_or(match detected_mode {
-        Mode::Book => CompressionLevel::Dense,
-        Mode::Article => CompressionLevel::Tight,
-    });
-    let jobs = if cli.jobs != 1 { cli.jobs } else { file.jobs.unwrap_or(1) };
+    let level = cli
+        .level
+        .clone()
+        .or(file_level)
+        .unwrap_or(match detected_mode {
+            Mode::Book => CompressionLevel::Dense,
+            Mode::Article => CompressionLevel::Tight,
+        });
+    let jobs = if cli.jobs != 1 {
+        cli.jobs
+    } else {
+        file.jobs.unwrap_or(1)
+    };
     let format = cli.format.clone().unwrap_or(match detected_mode {
         Mode::Book => OutputFormat::Epub,
         Mode::Article => OutputFormat::Md,
@@ -124,15 +132,7 @@ async fn run() -> error::Result<()> {
             Some(Err(e)) => return Err(e),
             None => None,
         };
-        compress::hierarchical(
-            client,
-            chunks,
-            strategy,
-            jobs,
-            &console,
-            checkpoint,
-        )
-        .await?
+        compress::hierarchical(client, chunks, strategy, jobs, &console, checkpoint).await?
     } else {
         let sp = console.spinner(&format!("Compressing {chunk_count} chunks..."));
         let result = compress::single_pass(&client, chunks, strategy.as_ref()).await?;

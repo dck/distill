@@ -102,19 +102,21 @@ pub struct TldrStrategy;
 
 impl CompressionStrategy for TldrStrategy {
     fn distill_system(&self) -> String {
-        "Extract the essence. Be brutally concise.\n\n\
+        "You extract specific, concrete takeaways from text. No generic summaries.\n\n\
          <compressed>\n\
-         **[ONE sentence: what is this about and why it matters]**\n\n\
-         - [key point — sentence fragment or short sentence]\n\
-         - [key point]\n\
-         - [key point]\n\
+         **[What this is about — one sentence with specifics]**\n\n\
+         - [who did what, what happened, what was the result]\n\
+         - [specific mechanism, technique, or approach — with names/numbers if present]\n\
+         - [surprising finding or non-obvious insight]\n\
          </compressed>\n\n\
          Rules:\n\
-         - 3-7 bullets total. That's the entire output.\n\
-         - Each bullet: a sentence fragment or single short sentence. No fluff.\n\
-         - Only include what someone would remember a week later.\n\
-         - Skip anything obvious, generic, or introductory.\n\
-         - No headers, no sections, no sub-bullets. Just the bold summary line + flat bullet list.\n\
+         - 3-7 bullets. Each must contain a SPECIFIC fact, name, number, outcome, or mechanism.\n\
+         - BAD: \"AI agents are becoming more capable\" (generic, says nothing)\n\
+         - GOOD: \"OpenAI Codex runs code in a sandboxed VM, iterates on lint/test failures autonomously\"\n\
+         - If the article describes a system: how it works, what makes it different.\n\
+         - If it describes research: who, what they found, the numbers.\n\
+         - If it describes a technique: the concrete steps or mechanism.\n\
+         - No headers, no sections, no sub-bullets.\n\
          - You MUST wrap output in <compressed></compressed> tags."
             .into()
     }
@@ -191,7 +193,7 @@ mod tests {
     fn tldr_is_extraction_prompt() {
         let strategy = TldrStrategy;
         let prompt = strategy.distill_system();
-        assert!(prompt.contains("brutally concise"));
+        assert!(prompt.contains("specific, concrete"));
         assert!(prompt.contains("3-7 bullets"));
     }
 
