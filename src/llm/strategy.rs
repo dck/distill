@@ -102,22 +102,29 @@ pub struct TldrStrategy;
 
 impl CompressionStrategy for TldrStrategy {
     fn distill_system(&self) -> String {
-        "You extract specific, concrete takeaways from text. No generic summaries.\n\n\
+        "You extract knowledge from articles into dense, self-contained summaries for a personal knowledge base.\n\n\
+         The output must make sense to someone who hasn't read the article and is re-reading this note weeks later.\n\n\
          <compressed>\n\
-         **[What this is about — one sentence with specifics]**\n\n\
-         - [who did what, what happened, what was the result]\n\
-         - [specific mechanism, technique, or approach — with names/numbers if present]\n\
-         - [surprising finding or non-obvious insight]\n\
+         **[Topic]: [One-sentence summary with who/what/why — enough context that the note stands alone]**\n\n\
+         [2-4 sentence paragraph explaining the core idea, mechanism, or argument. Use concrete details: names, numbers, \
+         how things work. Connect the dots — don't just list facts, show why they matter or how they relate. \
+         This paragraph is the main knowledge extract.]\n\n\
+         Key takeaways:\n\
+         - [Specific insight or fact with enough surrounding context to be understood on its own]\n\
+         - [Another takeaway — include the \"so what\" if it's not obvious]\n\
+         - [Non-obvious finding, counterintuitive result, or practical implication]\n\
          </compressed>\n\n\
          Rules:\n\
-         - 3-7 bullets. Each must contain a SPECIFIC fact, name, number, outcome, or mechanism.\n\
-         - BAD: \"AI agents are becoming more capable\" (generic, says nothing)\n\
-         - GOOD: \"OpenAI Codex runs code in a sandboxed VM, iterates on lint/test failures autonomously\"\n\
-         - If the article describes a system: how it works, what makes it different.\n\
-         - If it describes research: who, what they found, the numbers.\n\
-         - If it describes a technique: the concrete steps or mechanism.\n\
-         - No headers, no sections, no sub-bullets.\n\
-         - You MUST wrap output in <compressed></compressed> tags."
+         - Total length: 150-300 words. Dense but readable.\n\
+         - The paragraph does the heavy lifting. Takeaways are for things worth remembering separately.\n\
+         - 2-5 takeaways. Each must be a complete thought — no dangling references like \"the system\" or \
+         \"their approach\" without saying what system or whose approach.\n\
+         - BAD takeaway: \"The new architecture improves performance\" (what architecture? what performance? compared to what?)\n\
+         - GOOD takeaway: \"Replacing the attention layer with a state-space model (Mamba) matches Transformer quality \
+         on language tasks at 5x throughput because inference scales linearly with sequence length instead of quadratically.\"\n\
+         - No sub-bullets, no headers beyond the title line.\n\
+         - Write in a neutral, technical tone. No filler phrases like \"interestingly\" or \"it's worth noting.\"\n\
+         - Wrap output in <compressed></compressed> tags."
             .into()
     }
 
@@ -193,8 +200,8 @@ mod tests {
     fn tldr_is_extraction_prompt() {
         let strategy = TldrStrategy;
         let prompt = strategy.distill_system();
-        assert!(prompt.contains("specific, concrete"));
-        assert!(prompt.contains("3-7 bullets"));
+        assert!(prompt.contains("personal knowledge base"));
+        assert!(prompt.contains("150-300 words"));
     }
 
     #[test]
