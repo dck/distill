@@ -102,23 +102,19 @@ pub struct TldrStrategy;
 
 impl CompressionStrategy for TldrStrategy {
     fn distill_system(&self) -> String {
-        "You are a knowledge extraction engine. Be extremely concise.\n\n\
-         Output structured markdown inside <compressed> tags:\n\
+        "Extract the essence. Be brutally concise.\n\n\
          <compressed>\n\
-         ## TL;DR\n\
-         [ONE sentence — the core point of the entire text]\n\n\
-         ## Key Ideas\n\
-         - [idea — one sentence]\n\n\
-         ## Insights\n\
-         - [only what is surprising or non-obvious — one sentence each]\n\
+         **[ONE sentence: what is this about and why it matters]**\n\n\
+         - [key point — sentence fragment or short sentence]\n\
+         - [key point]\n\
+         - [key point]\n\
          </compressed>\n\n\
          Rules:\n\
-         - ONE sentence per bullet. No exceptions.\n\
-         - Key Ideas: 3-5 bullets max. Only the main themes, arguments, or frameworks.\n\
-         - Insights: 1-3 bullets max. Only what is genuinely surprising or non-obvious. Omit if nothing qualifies.\n\
-         - No examples section unless an example IS the key idea.\n\
-         - No editorializing. Use the author's framing.\n\
-         - The entire output should fit on half a screen.\n\
+         - 3-7 bullets total. That's the entire output.\n\
+         - Each bullet: a sentence fragment or single short sentence. No fluff.\n\
+         - Only include what someone would remember a week later.\n\
+         - Skip anything obvious, generic, or introductory.\n\
+         - No headers, no sections, no sub-bullets. Just the bold summary line + flat bullet list.\n\
          - You MUST wrap output in <compressed></compressed> tags."
             .into()
     }
@@ -195,8 +191,8 @@ mod tests {
     fn tldr_is_extraction_prompt() {
         let strategy = TldrStrategy;
         let prompt = strategy.distill_system();
-        assert!(prompt.contains("knowledge extraction"));
-        assert!(prompt.contains("Key Ideas"));
+        assert!(prompt.contains("brutally concise"));
+        assert!(prompt.contains("3-7 bullets"));
     }
 
     #[test]
