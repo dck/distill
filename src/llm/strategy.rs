@@ -106,8 +106,9 @@ impl CompressionStrategy for TldrStrategy {
          The output must make sense to someone who hasn't read the article and is re-reading this note weeks later.\n\n\
          Output format (inside <compressed> tags):\n\n\
          <compressed>\n\
-         ## One-sentence summary with who/what/why — enough context that the note stands alone\n\n\
-         2-4 sentence paragraph explaining the core idea, mechanism, or argument. Use concrete details: names, numbers, \
+         # Title: Concise, descriptive title of the article\n\n\
+         One-sentence summary with who/what/why — enough context that the note stands alone\n\n\n\n\
+         2-3 sentence paragraph explaining the core idea, mechanism, or argument. Use concrete details: names, numbers, \
          how things work. Connect the dots — don't just list facts, show why they matter or how they relate. \
          This paragraph is the main knowledge extract.\n\n\
          ### Takeaways\n\n\
