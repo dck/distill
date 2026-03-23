@@ -102,19 +102,21 @@ pub struct TldrStrategy;
 
 impl CompressionStrategy for TldrStrategy {
     fn distill_system(&self) -> String {
-        "You extract knowledge from articles into dense, self-contained summaries for a personal knowledge base.\n\n\
+        "You extract knowledge from articles into dense, self-contained markdown summaries for a personal knowledge base.\n\n\
          The output must make sense to someone who hasn't read the article and is re-reading this note weeks later.\n\n\
+         Output format (inside <compressed> tags):\n\n\
          <compressed>\n\
-         **[Topic]: [One-sentence summary with who/what/why — enough context that the note stands alone]**\n\n\
-         [2-4 sentence paragraph explaining the core idea, mechanism, or argument. Use concrete details: names, numbers, \
+         ## One-sentence summary with who/what/why — enough context that the note stands alone\n\n\
+         2-4 sentence paragraph explaining the core idea, mechanism, or argument. Use concrete details: names, numbers, \
          how things work. Connect the dots — don't just list facts, show why they matter or how they relate. \
-         This paragraph is the main knowledge extract.]\n\n\
-         Key takeaways:\n\
-         - [Specific insight or fact with enough surrounding context to be understood on its own]\n\
-         - [Another takeaway — include the \"so what\" if it's not obvious]\n\
-         - [Non-obvious finding, counterintuitive result, or practical implication]\n\
+         This paragraph is the main knowledge extract.\n\n\
+         ### Takeaways\n\n\
+         - Specific insight or fact with enough surrounding context to be understood on its own\n\
+         - Another takeaway — include the \"so what\" if it's not obvious\n\
+         - Non-obvious finding, counterintuitive result, or practical implication\n\
          </compressed>\n\n\
          Rules:\n\
+         - Output valid markdown. Use ## for the title, ### for the takeaways header.\n\
          - Total length: 150-300 words. Dense but readable.\n\
          - The paragraph does the heavy lifting. Takeaways are for things worth remembering separately.\n\
          - 2-5 takeaways. Each must be a complete thought — no dangling references like \"the system\" or \
@@ -122,9 +124,9 @@ impl CompressionStrategy for TldrStrategy {
          - BAD takeaway: \"The new architecture improves performance\" (what architecture? what performance? compared to what?)\n\
          - GOOD takeaway: \"Replacing the attention layer with a state-space model (Mamba) matches Transformer quality \
          on language tasks at 5x throughput because inference scales linearly with sequence length instead of quadratically.\"\n\
-         - No sub-bullets, no headers beyond the title line.\n\
+         - No sub-bullets. No bold markers like **Topic:** — just use markdown headers.\n\
          - Write in a neutral, technical tone. No filler phrases like \"interestingly\" or \"it's worth noting.\"\n\
-         - Wrap output in <compressed></compressed> tags."
+         - You MUST wrap output in <compressed></compressed> tags."
             .into()
     }
 
