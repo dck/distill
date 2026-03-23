@@ -81,22 +81,36 @@ impl LlmClient {
     pub async fn complete(&self, system: &str, user: &str) -> Result<String> {
         let url = format!("{}/chat/completions", self.api_base);
 
-        // -v: show request info
+        // -v: show request destination, model, sizes, truncated prompt
         if self.verbosity >= 1 {
+            let system_preview = if system.len() > 200 {
+                format!("{}...", &system[..200])
+            } else {
+                system.to_string()
+            };
+            let user_preview = if user.len() > 200 {
+                format!("{}...", &user[..200])
+            } else {
+                user.to_string()
+            };
             eprintln!(
-                "{} POST {} | model={} | system={}B user={}B",
+                "{} POST {} model={} system={}B user={}B",
                 "[llm]".dimmed(),
                 url,
                 self.model,
                 system.len(),
                 user.len()
             );
+            eprintln!("{} system: {}", "[llm]".dimmed(), system_preview.dimmed());
+            eprintln!("{} user: {}", "[llm]".dimmed(), user_preview.dimmed());
         }
 
         // -vv: show full prompts
         if self.verbosity >= 2 {
-            eprintln!("{}\n{system}", "[llm] system prompt:".dimmed());
-            eprintln!("{}\n{user}", "[llm] user prompt:".dimmed());
+            eprintln!("{}", "[llm] === FULL SYSTEM PROMPT ===".dimmed());
+            eprintln!("{system}");
+            eprintln!("{}", "[llm] === FULL USER PROMPT ===".dimmed());
+            eprintln!("{user}");
         }
 
         let body = ChatRequest {
@@ -118,13 +132,11 @@ impl LlmClient {
 
         for attempt in 0..=MAX_RETRIES {
             if attempt > 0 {
-                if self.verbosity >= 1 {
-                    eprintln!(
-                        "{} retry {attempt}/{MAX_RETRIES} after {:?}",
-                        "[llm]".dimmed(),
-                        self.retry_delays[(attempt - 1) as usize]
-                    );
-                }
+                eprintln!(
+                    "{} retry {attempt}/{MAX_RETRIES} after {:?}",
+                    "[llm]".dimmed(),
+                    self.retry_delays[(attempt - 1) as usize]
+                );
                 tokio::time::sleep(self.retry_delays[(attempt - 1) as usize]).await;
             }
 
@@ -208,9 +220,7 @@ impl LlmClient {
                         format!("HTTP {status}\n  -> body: {preview}")
                     };
 
-                    if self.verbosity >= 1 {
-                        eprintln!("{} error: {err_msg}", "[llm]".dimmed());
-                    }
+                    eprintln!("{} error: {err_msg}", "[llm]".dimmed());
 
                     if should_retry && attempt < MAX_RETRIES {
                         last_err = Some(err_msg);
