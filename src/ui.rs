@@ -79,22 +79,6 @@ impl Console {
         }
     }
 
-    pub fn compressed(&self, chunks: usize) {
-        if self.quiet {
-            return;
-        }
-        if self.color {
-            self.check(format!(
-                "{} {} {}",
-                "Compressed".bold(),
-                chunks.to_string().white().bold(),
-                "chunks".bold(),
-            ));
-        } else {
-            self.check(format!("Compressed {chunks} chunks"));
-        }
-    }
-
     pub fn pass_done(&self, label: &str, detail: &str) {
         if self.quiet {
             return;

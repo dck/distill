@@ -114,7 +114,7 @@ async fn run() -> error::Result<()> {
 
     if cli.verbose >= 1 {
         eprintln!(
-            "{} level={level:?} pipeline={pipeline} chunks={chunk_count}",
+            "{} level={level:?} pipeline={pipeline} chapters={chunk_count}",
             "[pipeline]".dimmed()
         );
     }
@@ -143,10 +143,9 @@ async fn run() -> error::Result<()> {
         };
         compress::hierarchical(client, chunks, strategy, jobs, &console, checkpoint).await?
     } else {
-        let sp = console.spinner(&format!("Compressing {chunk_count} chunks..."));
+        let sp = console.spinner("Distilling...");
         let result = compress::single_pass(&client, chunks, strategy.as_ref()).await?;
         sp.finish();
-        console.compressed(chunk_count);
         result
     };
 
