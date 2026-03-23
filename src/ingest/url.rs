@@ -8,7 +8,7 @@ use tempfile::NamedTempFile;
 
 const REQUEST_TIMEOUT: Duration = Duration::from_secs(60);
 const RETRY_DELAYS: [Duration; 2] = [Duration::from_secs(1), Duration::from_secs(3)];
-const USER_AGENT: &str = concat!("distill/", env!("CARGO_PKG_VERSION"));
+const USER_AGENT: &str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
 
 pub async fn ingest_url(url: &str) -> Result<Document> {
     let client = reqwest::Client::builder()
@@ -102,9 +102,17 @@ async fn fetch_with_retry(client: &reqwest::Client, url: &str) -> Result<reqwest
                     last_error = Some(message);
                     continue;
                 }
+                let cause = if status.as_u16() == 403 {
+                    format!(
+                        "HTTP 403 Forbidden — this site blocks automated access.\n  \
+                        Try saving the page as HTML or PDF and running distill on the file instead."
+                    )
+                } else {
+                    message
+                };
                 return Err(DistillError::Ingestion {
                     source: url.into(),
-                    cause: message,
+                    cause,
                 }
                 .into());
             }
