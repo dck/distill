@@ -79,10 +79,6 @@ async fn run() -> error::Result<()> {
         &format!("{level:?}"),
     );
 
-    // Segment
-    let chunks = segment::segment(&doc.content);
-    let chunk_count = chunks.len();
-
     // Create LLM client and compression strategy
     let model_name = config.model.clone();
     let client = Arc::new(llm::LlmClient::new(
@@ -92,9 +88,22 @@ async fn run() -> error::Result<()> {
         cli.verbose,
     ));
     let strategy = llm::strategy::strategy_for(&level);
+    let is_multi = detected_mode == Mode::Book && strategy.supports_multi_pass();
+
+    // Segment (books only — articles go as one chunk)
+    let chunks = if is_multi {
+        segment::segment(&doc.content)
+    } else {
+        vec![segment::Chunk {
+            index: 0,
+            header_path: vec![],
+            content: doc.content.clone(),
+            token_estimate: doc.estimated_tokens,
+        }]
+    };
+    let chunk_count = chunks.len();
 
     // Compress
-    let is_multi = detected_mode == Mode::Book && strategy.supports_multi_pass();
     let pipeline = if is_multi {
         "hierarchical (distill → refine)"
     } else {
