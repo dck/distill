@@ -156,7 +156,7 @@ mod tests {
     fn sample_checkpoint() -> Checkpoint {
         let mut checkpoint = Checkpoint::new(
             "abc123".into(),
-            CompressionLevel::Dense,
+            CompressionLevel::Medium,
             "test-model".into(),
             &["original text".into(), "more text".into()],
         );
@@ -206,7 +206,7 @@ mod tests {
         let originals = vec!["changed".to_string(), "more text".to_string()];
         assert!(!checkpoint.matches_run(
             "abc123",
-            &CompressionLevel::Dense,
+            &CompressionLevel::Medium,
             "test-model",
             &originals
         ));

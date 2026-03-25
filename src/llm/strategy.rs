@@ -18,21 +18,21 @@ pub struct ProseStrategy {
 }
 
 impl ProseStrategy {
-    pub fn tight() -> Self {
+    pub fn light() -> Self {
         Self {
             policy: "TARGET: Retain ~80% of original length.\n\
                      Remove only clear filler and redundancy. Preserve original phrasing.",
             article_system: None,
         }
     }
-    pub fn dense() -> Self {
+    pub fn medium() -> Self {
         Self {
             policy: "TARGET: Retain ~50% of original length.\n\
                      Compress explanations, merge paragraphs covering the same point.",
             article_system: None,
         }
     }
-    pub fn distilled() -> Self {
+    pub fn heavy() -> Self {
         Self {
             policy: "TARGET: Retain ~30% of original length.\n\
                      Aggressive compression. Keep only the strongest example per concept.",
@@ -175,9 +175,9 @@ impl CompressionStrategy for TldrStrategy {
 /// Create the right strategy for a given compression level.
 pub fn strategy_for(level: &CompressionLevel) -> Box<dyn CompressionStrategy> {
     match level {
-        CompressionLevel::Tight => Box::new(ProseStrategy::tight()),
-        CompressionLevel::Dense => Box::new(ProseStrategy::dense()),
-        CompressionLevel::Distilled => Box::new(ProseStrategy::distilled()),
+        CompressionLevel::Light => Box::new(ProseStrategy::light()),
+        CompressionLevel::Medium => Box::new(ProseStrategy::medium()),
+        CompressionLevel::Heavy => Box::new(ProseStrategy::heavy()),
         CompressionLevel::Tldr => Box::new(TldrStrategy),
     }
 }
@@ -187,8 +187,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn prose_tight_contains_research_prompt() {
-        let strategy = ProseStrategy::tight();
+    fn prose_light_contains_research_prompt() {
+        let strategy = ProseStrategy::light();
         let prompt = strategy.distill_system();
         assert!(prompt.contains("distilling a book chapter"));
         assert!(prompt.contains("REMOVE:"));
@@ -197,15 +197,15 @@ mod tests {
     }
 
     #[test]
-    fn prose_dense_contains_policy() {
-        let strategy = ProseStrategy::dense();
+    fn prose_medium_contains_policy() {
+        let strategy = ProseStrategy::medium();
         let prompt = strategy.distill_system();
         assert!(prompt.contains("~50%"));
     }
 
     #[test]
     fn prose_refinement_prompt_exists() {
-        let strategy = ProseStrategy::tight();
+        let strategy = ProseStrategy::light();
         let prompt = strategy.refinement_system();
         assert!(prompt.contains("coherence refinement"));
         assert!(prompt.contains("dangling references"));
@@ -213,7 +213,7 @@ mod tests {
 
     #[test]
     fn prose_supports_multi_pass() {
-        let strategy = ProseStrategy::tight();
+        let strategy = ProseStrategy::light();
         assert!(strategy.supports_multi_pass());
     }
 
@@ -233,8 +233,8 @@ mod tests {
 
     #[test]
     fn strategy_for_returns_correct_types() {
-        let dense = strategy_for(&CompressionLevel::Dense);
-        assert!(dense.supports_multi_pass());
+        let medium = strategy_for(&CompressionLevel::Medium);
+        assert!(medium.supports_multi_pass());
 
         let tldr = strategy_for(&CompressionLevel::Tldr);
         assert!(!tldr.supports_multi_pass());
@@ -242,7 +242,7 @@ mod tests {
 
     #[test]
     fn distill_user_wraps_content() {
-        let strategy = ProseStrategy::tight();
+        let strategy = ProseStrategy::light();
         let prompt = strategy.distill_user("some chapter text");
         assert!(prompt.contains("some chapter text"));
     }

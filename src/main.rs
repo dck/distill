@@ -59,8 +59,8 @@ async fn run() -> error::Result<()> {
         .clone()
         .or(file_level)
         .unwrap_or(match detected_mode {
-            Mode::Book => CompressionLevel::Dense,
-            Mode::Article => CompressionLevel::Tight,
+            Mode::Book => CompressionLevel::Medium,
+            Mode::Article => CompressionLevel::Light,
         });
     let jobs = if cli.jobs != 1 {
         cli.jobs

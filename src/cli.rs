@@ -21,9 +21,9 @@ pub enum OutputFormat {
 
 #[derive(Debug, Clone, ValueEnum, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum CompressionLevel {
-    Tight,
-    Dense,
-    Distilled,
+    Light,
+    Medium,
+    Heavy,
     Tldr,
 }
 
@@ -31,9 +31,9 @@ impl std::str::FromStr for CompressionLevel {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
-            "tight" => Ok(Self::Tight),
-            "dense" => Ok(Self::Dense),
-            "distilled" => Ok(Self::Distilled),
+            "light" => Ok(Self::Light),
+            "medium" => Ok(Self::Medium),
+            "heavy" => Ok(Self::Heavy),
             "tldr" => Ok(Self::Tldr),
             _ => Err(format!("unknown compression level: {s}")),
         }
@@ -120,7 +120,7 @@ mod tests {
             "-f",
             "epub",
             "-l",
-            "dense",
+            "medium",
             "-m",
             "book",
             "-j",
@@ -130,7 +130,7 @@ mod tests {
         ]);
         assert_eq!(args.output, Some("out.epub".into()));
         assert_eq!(args.format, Some(OutputFormat::Epub));
-        assert_eq!(args.level, Some(CompressionLevel::Dense));
+        assert_eq!(args.level, Some(CompressionLevel::Medium));
         assert_eq!(args.mode, Some(Mode::Book));
         assert_eq!(args.jobs, 8);
         assert_eq!(args.verbose, 1);
