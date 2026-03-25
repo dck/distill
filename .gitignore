@@ -1,5 +1,8 @@
 /docs/plans
 /target
 *.distill-cache
+*-distilled.epub
+*-distilled.html
+*-distilled.md
 .env
 .worktrees
