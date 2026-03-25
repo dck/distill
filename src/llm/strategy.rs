@@ -3,6 +3,10 @@ use crate::cli::CompressionLevel;
 pub trait CompressionStrategy: Send + Sync {
     fn distill_system(&self) -> String;
     fn distill_user(&self, content: &str) -> String;
+    /// System prompt for article mode. Defaults to distill_system() if not overridden.
+    fn article_system(&self) -> String {
+        self.distill_system()
+    }
     fn refinement_system(&self) -> String;
     fn refinement_user(&self, combined_distilled: &str) -> String;
     fn supports_multi_pass(&self) -> bool;
@@ -10,6 +14,7 @@ pub trait CompressionStrategy: Send + Sync {
 
 pub struct ProseStrategy {
     policy: &'static str,
+    article_system: Option<&'static str>,
 }
 
 impl ProseStrategy {
@@ -17,18 +22,30 @@ impl ProseStrategy {
         Self {
             policy: "TARGET: Retain ~80% of original length.\n\
                      Remove only clear filler and redundancy. Preserve original phrasing.",
+            article_system: None,
         }
     }
     pub fn dense() -> Self {
         Self {
             policy: "TARGET: Retain ~50% of original length.\n\
                      Compress explanations, merge paragraphs covering the same point.",
+            article_system: None,
         }
     }
     pub fn distilled() -> Self {
         Self {
             policy: "TARGET: Retain ~30% of original length.\n\
                      Aggressive compression. Keep only the strongest example per concept.",
+            article_system: Some(
+                "Please summarize the selection using precise and concise language. \
+                 Use headers and bulleted lists in the summary, to make it scannable. \
+                 Maintain the meaning and factual accuracy.\n\n\
+                 RESPONSE FORMAT:\n\
+                 Return your response in exactly this format:\n\
+                 <compressed>\n\
+                 [summarized markdown here]\n\
+                 </compressed>",
+            ),
         }
     }
 }
@@ -82,6 +99,13 @@ impl CompressionStrategy for ProseStrategy {
 
     fn distill_user(&self, content: &str) -> String {
         format!("CHAPTER TO DISTILL:\n\n{content}")
+    }
+
+    fn article_system(&self) -> String {
+        match self.article_system {
+            Some(prompt) => prompt.into(),
+            None => self.distill_system(),
+        }
     }
 
     fn refinement_system(&self) -> String {

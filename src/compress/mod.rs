@@ -18,7 +18,7 @@ pub async fn single_pass(
 ) -> Result<String> {
     let mut compressed = Vec::new();
     for chunk in &chunks {
-        let result = pass1::distill_chunk(client, chunk, strategy).await?;
+        let result = pass1::distill_chunk(client, chunk, strategy, true).await?;
         compressed.push(result);
     }
     let output = compressed
@@ -108,7 +108,7 @@ async fn run_pass1(
                         section: section.clone(),
                         cause: e.to_string(),
                     })?;
-                    pass1::distill_chunk(&client, &chunk, strategy.as_ref()).await
+                    pass1::distill_chunk(&client, &chunk, strategy.as_ref(), false).await
                 }),
             ));
         }
@@ -129,7 +129,7 @@ async fn run_pass1(
                 continue;
             }
 
-            let result = pass1::distill_chunk(&client, chunk, strategy.as_ref()).await?;
+            let result = pass1::distill_chunk(&client, chunk, strategy.as_ref(), false).await?;
             results[chunk.index] = Some(result.clone());
             persist_chunk(&mut checkpoint, &result)?;
             progress.inc();

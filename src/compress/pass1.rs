@@ -10,8 +10,13 @@ pub async fn distill_chunk(
     client: &LlmClient,
     chunk: &Chunk,
     strategy: &dyn CompressionStrategy,
+    is_article: bool,
 ) -> Result<CompressedChunk> {
-    let system = strategy.distill_system();
+    let system = if is_article {
+        strategy.article_system()
+    } else {
+        strategy.distill_system()
+    };
     let user = strategy.distill_user(&chunk.content);
 
     let response = client.complete(&system, &user).await?;
