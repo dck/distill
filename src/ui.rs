@@ -60,22 +60,26 @@ impl Console {
         Progress { bar: Some(bar) }
     }
 
-    pub fn ingested(&self, tokens: usize, mode: &str, level: &str) {
+    pub fn ingested(&self, tokens: usize, mode: &str, level: &str, model: &str) {
         if self.quiet {
             return;
         }
         if self.color {
             self.check(format!(
-                "{} ~{} tokens {} {} {} {}",
+                "{} ~{} tokens {} {} {} {} {} {}",
                 "Ingested".bold(),
                 tokens.to_string().white().bold(),
                 "·".dimmed(),
                 mode.cyan(),
                 "·".dimmed(),
                 level.yellow(),
+                "·".dimmed(),
+                model.dimmed(),
             ));
         } else {
-            self.check(format!("Ingested ~{tokens} tokens · {mode} · {level}"));
+            self.check(format!(
+                "Ingested ~{tokens} tokens · {mode} · {level} · {model}"
+            ));
         }
     }
 

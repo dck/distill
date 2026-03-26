@@ -73,14 +73,16 @@ async fn run() -> error::Result<()> {
     });
 
     sp.finish();
+
+    // Create LLM client and compression strategy
+    let model_name = config.model.clone();
+
     console.ingested(
         doc.estimated_tokens,
         &format!("{detected_mode:?}"),
         &format!("{level:?}"),
+        &model_name,
     );
-
-    // Create LLM client and compression strategy
-    let model_name = config.model.clone();
     let client = Arc::new(llm::LlmClient::new(
         config.api_key,
         config.api_base,
