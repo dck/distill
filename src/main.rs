@@ -90,10 +90,11 @@ async fn run() -> error::Result<()> {
         cli.verbose,
     ));
     let strategy = llm::strategy::strategy_for(&level);
-    let is_multi = detected_mode == Mode::Book && strategy.supports_multi_pass();
+    let is_book_tldr = detected_mode == Mode::Book && level == CompressionLevel::Tldr;
+    let is_multi = !is_book_tldr && detected_mode == Mode::Book && strategy.supports_multi_pass();
 
     // Segment (books only — articles go as one chunk)
-    let chunks = if is_multi {
+    let chunks = if is_multi || is_book_tldr {
         segment::segment(&doc.content)
     } else {
         vec![segment::Chunk {
@@ -106,13 +107,15 @@ async fn run() -> error::Result<()> {
     let chunk_count = chunks.len();
 
     // Compress
-    let pipeline = if is_multi {
+    let pipeline = if is_book_tldr {
+        "book-tldr (light compress → extract)"
+    } else if is_multi {
         "hierarchical (distill → refine)"
     } else {
         "single-pass"
     };
-    let checkpoint_path =
-        is_multi.then(|| state::checkpoint::Checkpoint::cache_path_for_input(&cli.input));
+    let checkpoint_path = (is_multi || is_book_tldr)
+        .then(|| state::checkpoint::Checkpoint::cache_path_for_input(&cli.input));
 
     if cli.verbose >= 1 {
         eprintln!(
@@ -128,7 +131,39 @@ async fn run() -> error::Result<()> {
         );
     }
 
-    let compressed = if is_multi {
+    let compressed = if is_book_tldr {
+        let light_strategy: Arc<dyn llm::strategy::CompressionStrategy> =
+            llm::strategy::strategy_for(&CompressionLevel::Light).into();
+        let originals = chunks
+            .iter()
+            .map(|chunk| chunk.content.clone())
+            .collect::<Vec<_>>();
+        let input_hash = state::checkpoint::Checkpoint::input_hash(&doc.content);
+        let checkpoint = checkpoint_path.as_ref().map(|path| {
+            prepare_checkpoint(
+                path,
+                &input_hash,
+                &CompressionLevel::Light,
+                &model_name,
+                &originals,
+            )
+        });
+        let checkpoint = match checkpoint {
+            Some(Ok(state)) => Some(state),
+            Some(Err(e)) => return Err(e),
+            None => None,
+        };
+        compress::book_tldr(
+            client,
+            chunks,
+            light_strategy,
+            strategy.as_ref(),
+            jobs,
+            &console,
+            checkpoint,
+        )
+        .await?
+    } else if is_multi {
         let strategy: Arc<dyn llm::strategy::CompressionStrategy> = strategy.into();
         let originals = chunks
             .iter()

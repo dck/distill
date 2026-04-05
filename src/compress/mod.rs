@@ -11,6 +11,43 @@ use crate::ui::Console;
 use std::path::PathBuf;
 use std::sync::Arc;
 
+/// Book TLDR pipeline: pre-compress with a light hierarchical pass, then
+/// extract theme-grouped takeaways in a single TLDR pass.
+pub async fn book_tldr(
+    client: Arc<LlmClient>,
+    chunks: Vec<Chunk>,
+    light_strategy: Arc<dyn CompressionStrategy>,
+    tldr_strategy: &dyn CompressionStrategy,
+    jobs: usize,
+    console: &Console,
+    checkpoint: Option<(PathBuf, Checkpoint)>,
+) -> Result<String> {
+    // Stage 1: light hierarchical pass
+    let pre_compressed = hierarchical(
+        client.clone(),
+        chunks,
+        light_strategy,
+        jobs,
+        console,
+        checkpoint,
+    )
+    .await?;
+
+    // Stage 2: TLDR extraction over combined compressed text
+    let sp = console.spinner("Extracting takeaways...");
+    let tldr_chunk = vec![Chunk {
+        index: 0,
+        header_path: vec![],
+        content: pre_compressed,
+        token_estimate: 0,
+    }];
+    let result = single_pass(&client, tldr_chunk, tldr_strategy).await?;
+    sp.finish();
+    console.pass_done("TLDR", "Takeaways extracted");
+
+    Ok(result)
+}
+
 pub async fn single_pass(
     client: &LlmClient,
     chunks: Vec<Chunk>,

@@ -2,7 +2,7 @@
 mod helpers;
 
 use distill::llm::LlmClient;
-use distill::llm::strategy::{CompressionStrategy, TldrStrategy};
+use distill::llm::strategy;
 use std::time::Duration;
 
 #[tokio::test]
@@ -39,8 +39,8 @@ async fn tldr_strategy_produces_structured_extraction() {
         0,
     );
 
-    let strategy = TldrStrategy;
-    let system = strategy.distill_system();
+    let strategy = strategy::strategy_for(&distill::cli::CompressionLevel::Tldr);
+    let system = strategy.article_system();
     let user = strategy.distill_user("Some article about testing.");
 
     let result = client.complete(&system, &user).await;
